@@ -3,8 +3,7 @@
 from typing import List
 
 from django.contrib.auth.models import User
-from ninja import ModelSchema, Schema
-from pydantic import EmailStr
+from ninja import ModelSchema
 
 
 class Login(ModelSchema):
@@ -14,8 +13,6 @@ class Login(ModelSchema):
 
 
 class CreateUser(ModelSchema):
-    groups: List[Login] = []
-
     class Config:
         model = User
-        model_fields = ['email']
+        model_fields = ['username', 'password', 'email']

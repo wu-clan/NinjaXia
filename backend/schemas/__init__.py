@@ -6,6 +6,7 @@ from ninja import Schema
 
 
 class ResponseBase(Schema):
+    code: int = None
     data: Any = None
 
 
@@ -14,5 +15,4 @@ class Token(ResponseBase):
 
 
 class Message(ResponseBase):
-    code: int = None
     msg: str = None
