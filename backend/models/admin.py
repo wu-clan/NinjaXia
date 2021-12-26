@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from backend.models.case import Case
 from backend.models.project import Project
 
 
@@ -16,11 +15,3 @@ class ProjectAdmin(admin.ModelAdmin):
         'created_time',
         'modified_time'
     )
-
-
-@admin.register(Case)
-class CaseAdmin(admin.ModelAdmin):
-    """
-    测试用例
-    """
-    pass

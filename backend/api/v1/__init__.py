@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from backend.api.v1.tester import tester
-from backend.api.v1.user import user
 from ninja import NinjaAPI
 
+from backend.api.v1.tester import tester
+from backend.api.v1.user import user
 from backend.autoproject import settings
 
 v1 = NinjaAPI(
