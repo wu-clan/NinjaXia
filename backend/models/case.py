@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from asgiref.sync import sync_to_async
 from django.db import models
 
 from .project import Project
 
 
-class Cases(models.Model):
+class Case(models.Model):
     """
     用例表
     """
@@ -35,6 +34,8 @@ class Cases(models.Model):
         return self.name
 
 
-@sync_to_async
-def get_all() -> list:
-    return Cases.objects.all()
+class CaseCRUD:
+
+    @staticmethod
+    def get_all() -> list:
+        return Cases.objects.all()

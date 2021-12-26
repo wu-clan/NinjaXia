@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from asgiref.sync import sync_to_async
 from django.db import models
+from django.shortcuts import get_object_or_404
 
+from backend.schemas.project import ProjectBase
 
-# Create your models here.
 
 class Project(models.Model):
     """
@@ -18,9 +18,20 @@ class Project(models.Model):
         return self.name
 
 
-@sync_to_async
-def get_all() -> list:
-    return Project.objects.all()
+class ProjectCRUD:
 
+    @staticmethod
+    def get_all_projects() -> list:
+        return Project.objects.all()
 
+    @staticmethod
+    def get_project_name(post: ProjectBase) -> bool:
+        return Project.objects.filter(name=post.name)
 
+    @staticmethod
+    def get_project_name_by_id(pid: int) -> str:
+        return Project.objects.filter(id=pid).first().name
+
+    @staticmethod
+    def get_project_by_id(pid: int) -> Project:
+        return get_object_or_404(Project, id=pid)

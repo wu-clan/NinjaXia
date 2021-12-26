@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from backend.api.v1.tester import tester
 from backend.api.v1.user import user
 from ninja import NinjaAPI
 
@@ -15,3 +16,4 @@ v1 = NinjaAPI(
 )
 
 v1.add_router('/user/', user, tags=['用户'])
+v1.add_router('/tester/', tester, tags=['测试人员'])
