@@ -26,13 +26,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # models app
+    # 跨域
+    'corsheaders',
+    # apps
     'models.apps.ModelsConfig'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # 跨域
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -133,5 +136,18 @@ NJ_DOCS_URL: str = '/docs'
 NJ_OPENAPI_URL: str = '/openapi'
 NJ_CSRF: bool = False
 
-# pathConf
+# PathConf
 LOG_PATH = BASE_DIR / 'logs'
+
+# 跨域
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+)
+CORS_ALLOW_HEADERS = (
+    '*'
+)
