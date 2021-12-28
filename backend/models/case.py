@@ -17,8 +17,16 @@ class Case(models.Model):
         (0, '失败'),
         (1, '通过'),
     )
+    REQUEST_TYPE = (
+        (0, 'GET'),
+        (1, 'POST'),
+        (2, 'PUT'),
+        (3, 'DELETE'),
+    )
     name = models.CharField(max_length=128, unique=True, verbose_name='用例名称')
     description = models.TextField(blank=True, null=True, verbose_name='用例描述')
+    url = models.CharField(max_length=255, verbose_name='请求地址')
+    method = models.SmallIntegerField(choices=REQUEST_TYPE, default=0, verbose_name='请求类型')
     header = models.TextField(blank=True, null=True, verbose_name='请求头')
     body_type = models.SmallIntegerField(choices=TYPE, default=0, verbose_name='请求参数类型')
     body = models.TextField(blank=True, null=True, verbose_name='请求参数')

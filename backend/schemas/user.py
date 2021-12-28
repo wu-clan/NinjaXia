@@ -16,3 +16,9 @@ class CreateUser(ModelSchema):
     class Config:
         model = User
         model_fields = ['username', 'password', 'email']
+
+
+class GetUsers(ModelSchema):
+    class Config:
+        model = User
+        model_exclude = ['password', 'groups', 'user_permissions']
