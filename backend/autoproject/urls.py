@@ -17,13 +17,21 @@ Including another URLconf
 import sys
 
 from django.contrib import admin
+from django.contrib.staticfiles.views import serve
 from django.urls import path
+
+from backend.autoproject import settings
 
 sys.path.append('../')
 
 from backend.api.v1 import v1
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('v1/', v1.urls)
+    # path('admin/', admin.site.urls),
+
+    # Ninja-API
+    path('v1/', v1.urls),
+
+    path(r'static/<path:path>', serve, {'document_root': settings.STATIC_ROOT, }, ),
+    path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}, ),
 ]

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from ninja import NinjaAPI
 
-from backend.api.v1.tester import tester
+from backend.api.v1.project import project
 from backend.api.v1.user import user
 from backend.autoproject import settings
 
@@ -15,5 +15,5 @@ v1 = NinjaAPI(
     csrf=settings.NJ_CSRF
 )
 
-v1.add_router('/user/', user, tags=['用户'])
-v1.add_router('/tester/', tester, tags=['测试人员'])
+v1.add_router('user/', user, tags=['用户'])
+v1.add_router('project/', project, tags=['项目管理'])

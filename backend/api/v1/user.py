@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from typing import List
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.utils import timezone
 from email_validator import EmailNotValidError, validate_email
 from ninja import Router
 from ninja.errors import HttpError
 from ninja.responses import codes_4xx
 
+from backend.api.security import AuthBearer
+from backend.common.log import log
 from backend.schemas import Message
 from backend.schemas.token import Token
-from backend.schemas.user import CreateUser, Login
+from backend.schemas.user import CreateUser, Login, GetUsers
 
 user = Router()
 
@@ -23,7 +28,9 @@ def login(request, post: Login):
         return 403, dict(code=403, msg='用户已被锁定')
     if not authenticate(username=post.username, password=post.password):
         return 403, dict(code=403, msg='密码错误, 请重新输入')
-    return 200, dict(code=200, msg='登陆成功', token='xxx')
+    User.objects.filter(username=post.username).update(last_login=timezone.now())
+    log.success(f'用户 {post.username} 登陆成功')
+    return 200, dict(code=200, msg='登陆成功', token='框架jwt开发中，等待作者更新')
 
 
 @user.post('/register', summary='用户注册', response=Message)
@@ -37,4 +44,18 @@ def register(request, post: CreateUser):
     except EmailNotValidError:
         raise HttpError(403, '邮箱格式错误,情重新输入')
     User.objects.create_user(**post.dict())
+    log.success(f'用户 {post.username} 注册成功')
     return dict(code=200, msg='注册成功', data=dict(username=post.username, email=post.email))
+
+
+@user.post('/logout', summary='用户退出', auth=AuthBearer(), response=Message)
+def logout(request):
+    return dict(code=200, msg='用户退出成功')
+
+
+@user.get('/users', summary='获取所有用户信息', auth=AuthBearer(), response=List[GetUsers])
+def get_users(request):
+    user_list = User.objects.all()
+    log.success('获取所有用户信息成功')
+    return user_list
+
