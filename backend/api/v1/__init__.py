@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from ninja import NinjaAPI
 
+from backend.api.v1.interface import interface
 from backend.api.v1.project import project
 from backend.api.v1.user import user
 from backend.autoproject import settings
@@ -17,3 +18,4 @@ v1 = NinjaAPI(
 
 v1.add_router('user/', user, tags=['用户'])
 v1.add_router('project/', project, tags=['项目管理'])
+v1.add_router('interface/', interface, tags=['接口组管理'])

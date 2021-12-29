@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from backend.ninja_models.models.api_auto.project import Project
+from backend.schemas.interface import InterfaceBase, CreateInterface
 
 
 class Interface(models.Model):
@@ -20,4 +22,23 @@ class Interface(models.Model):
 
 
 class InterfaceCRUD:
-    pass
+
+    @staticmethod
+    def get_interface_name(name: str) -> bool:
+        return Interface.objects.filter(name=name)
+
+    @staticmethod
+    def create_interface(post, pid: int) -> Interface:
+        return Interface.objects.create(**post.dict(), project_id=pid)
+
+    @staticmethod
+    def select_project_by_pt_id() -> list:
+        return list(Project.objects.values_list('name'))
+
+    @staticmethod
+    def get_project_id_by_name(name: CreateInterface) -> int:
+        return Project.objects.filter(name=name).first().id
+
+    @staticmethod
+    def get_all_interfaces() -> list:
+        return Interface.objects.all()

@@ -1,9 +1,7 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import get_object_or_404
-
-from backend.schemas.project import ProjectBase
 
 
 class Project(models.Model):
