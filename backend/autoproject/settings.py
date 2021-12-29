@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     # 跨域
     'corsheaders',
     # apps
-    'models.apps.ModelsConfig'
+    'ninja_models.apps.ModelsConfig'
 ]
 
 MIDDLEWARE = [

@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 class ModelsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'backend.models'
+    name = 'backend.ninja_models'

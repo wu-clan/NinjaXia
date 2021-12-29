@@ -6,7 +6,7 @@ from django.http import Http404
 from ninja import Router
 
 from backend.common.log import log
-from backend.models.project import ProjectCRUD
+from backend.ninja_models.models.api_auto.project import ProjectCRUD
 from backend.schemas import Message
 from backend.schemas.project import ProjectBase, GetProject
 
