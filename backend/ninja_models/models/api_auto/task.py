@@ -16,12 +16,12 @@ class Task(models.Model):
         (3, '执行完成')
     )
     project_id = models.ForeignKey(Project, verbose_name='关联项目', on_delete=models.CASCADE)
-    name = models.CharField(blank=True, default='', verbose_name='测试任务名称')
+    name = models.CharField(max_length=128, blank=True, default='', verbose_name='测试任务名称')
     description = models.TextField(blank=True, null=True, verbose_name='任务描述')
     status = models.SmallIntegerField(choices=STATUS, default=0, verbose_name='任务状态')
     cases = models.TextField(default="", verbose_name='关联接口用例')
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    modified_time = models.DateTimeField(auto_add=True, verbose_name='修改时间')
+    created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
 
     def __str__(self):
         return self.name
