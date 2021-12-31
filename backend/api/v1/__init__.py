@@ -16,6 +16,6 @@ v1 = NinjaAPI(
     csrf=settings.NJ_CSRF
 )
 
-v1.add_router('user/', user, tags=['用户'])
-v1.add_router('project/', project, tags=['项目管理'])
-v1.add_router('interface/', interface, tags=['接口组管理'])
+v1.add_router('', user, tags=['用户'])
+v1.add_router('', project, tags=['项目管理'])
+v1.add_router('', interface, tags=['接口组管理'])

@@ -4,7 +4,6 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 
 from backend.ninja_models.models.api_auto.project import Project
-from backend.schemas.interface import InterfaceBase, CreateInterface
 
 
 class Interface(models.Model):
@@ -24,20 +23,28 @@ class Interface(models.Model):
 class InterfaceCRUD:
 
     @staticmethod
-    def get_interface_name(name: str) -> bool:
+    def get_interface_name_by_name(name: str) -> bool:
         return Interface.objects.filter(name=name)
 
     @staticmethod
-    def create_interface(post, pid: int) -> Interface:
+    def get_interface_name_by_id(pk: int) -> str:
+        return Interface.objects.filter(id=pk).first().name
+
+    @staticmethod
+    def get_project_id_by_name(name: str) -> Project:
+        return Project.objects.filter(name=name).first()
+
+    @staticmethod
+    def create_interface(post, pid: Project) -> Interface:
         return Interface.objects.create(**post.dict(), project_id=pid)
 
     @staticmethod
-    def select_project_by_pt_id() -> list:
-        return list(Project.objects.values_list('name'))
+    def get_interface_by_id(pk: int) -> bool:
+        return Interface.objects.filter(id=pk)
 
     @staticmethod
-    def get_project_id_by_name(name: CreateInterface) -> int:
-        return Project.objects.filter(name=name).first().id
+    def get_interface(pk: int):
+        return get_object_or_404(Interface, id=pk)
 
     @staticmethod
     def get_all_interfaces() -> list:

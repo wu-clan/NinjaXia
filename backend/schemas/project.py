@@ -15,7 +15,10 @@ class UpdateProject(ProjectBase):
     name: str = None
 
 
-class GetProject(ProjectBase):
+class GetProject(Schema):
+    id: int
+    name: str
     is_active: bool
+    description: str
     created_time: datetime.datetime
     modified_time: datetime.datetime

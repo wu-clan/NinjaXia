@@ -22,7 +22,7 @@ def add_project(request, post: ProjectBase):
     return dict(code=403, msg='项目已存在,请更换项目名')
 
 
-@project.put('/project', summary='更新项目', response=Message)
+@project.put('/project/{pid}', summary='更新项目', response=Message)
 def update_project(request, pid: int, put: ProjectBase):
     try:
         _project = ProjectCRUD.get_project_by_id(pid)
@@ -41,7 +41,7 @@ def update_project(request, pid: int, put: ProjectBase):
     return dict(code=200, msg='更新项目成功', data=put)
 
 
-@project.delete('/project', summary='删除项目', response=Message)
+@project.delete('/project/{pid}', summary='删除项目', response=Message)
 def delete_project(request, pid: int):
     try:
         _project = ProjectCRUD.get_project_by_id(pid)
@@ -51,7 +51,7 @@ def delete_project(request, pid: int):
         return dict(code=404, msg='项目不存在,请重新输入')
     _project.delete()
     log.success(f'删除项目 {_name} 成功')
-    return dict(code=200, msg='删除项目成功', data=dict(id=1, name=_name))
+    return dict(code=200, msg='删除项目成功', data=dict(name=_name))
 
 
 @project.get('/project', summary='获取所有项目', response=List[GetProject])
