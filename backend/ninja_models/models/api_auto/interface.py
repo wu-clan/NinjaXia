@@ -12,7 +12,7 @@ class Interface(models.Model):
     """
     name = models.CharField(max_length=32, verbose_name='接口组名称')
     description = models.TextField(blank=True, null=True, verbose_name='接口组描述')
-    project_id = models.ForeignKey(Project, verbose_name='所属项目', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name='所属项目', on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
 
@@ -31,12 +31,12 @@ class InterfaceCRUD:
         return Interface.objects.filter(id=pk).first().name
 
     @staticmethod
-    def get_project_id_by_name(name: str) -> Project:
-        return Project.objects.filter(name=name).first()
+    def get_project_for_interface(pk: int) -> Project:
+        return get_object_or_404(Project, id=pk)
 
     @staticmethod
-    def create_interface(post, pid: Project) -> Interface:
-        return Interface.objects.create(**post.dict(), project_id=pid)
+    def create_interface(post, pt: int) -> Interface:
+        return Interface.objects.create(**post.dict(), project_id=pt)
 
     @staticmethod
     def get_interface_by_id(pk: int) -> bool:

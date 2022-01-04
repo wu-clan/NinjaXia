@@ -125,7 +125,10 @@ NJ_DOCS_URL: str = '/docs'
 NJ_OPENAPI_URL: str = '/openapi'
 NJ_CSRF: bool = False
 
-# PathConf
+# Ninja分页
+NINJA_PAGINATION_PER_PAGE = 10
+
+# 路径配置
 LOG_PATH = BASE_DIR / 'logs'
 
 # Token

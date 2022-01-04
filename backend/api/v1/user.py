@@ -29,7 +29,7 @@ def login(request, post: Login):
     if not authenticate(username=post.username, password=post.password):
         return 403, dict(code=403, msg='密码错误, 请重新输入')
     User.objects.filter(username=post.username).update(last_login=timezone.now())
-    log.success(f'用户 {post.username} 登陆成功')
+    log.success(f'user {post.username} landed successfully')
     return 200, dict(code=200, msg='登陆成功', token='框架jwt开发中，等待作者更新')
 
 
@@ -44,7 +44,7 @@ def register(request, post: CreateUser):
     except EmailNotValidError:
         raise HttpError(403, '邮箱格式错误,情重新输入')
     User.objects.create_user(**post.dict())
-    log.success(f'用户 {post.username} 注册成功')
+    log.success(f'user {post.username} registration success')
     return dict(code=200, msg='注册成功', data=dict(username=post.username, email=post.email))
 
 
@@ -56,6 +56,6 @@ def logout(request):
 @user.get('/users', summary='获取所有用户信息', auth=AuthBearer(), response=List[GetUsers])
 def get_users(request):
     user_list = User.objects.all()
-    log.success('获取所有用户信息成功')
+    log.success('get all user information successfully')
     return user_list
 

@@ -4,6 +4,7 @@ import datetime
 from enum import Enum
 
 from ninja import Schema
+from pydantic import Field
 
 
 class InterfaceBase(Schema):
@@ -11,6 +12,11 @@ class InterfaceBase(Schema):
     description: str = None
 
 
+class CreateInterface(Schema):
+    id: int = Field(default=1, description='外键项目主键')
+
+
 class GetInterface(InterfaceBase):
+    id: int
     created_time: datetime.datetime
     modified_time: datetime.datetime
