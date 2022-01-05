@@ -41,5 +41,9 @@ class CreateCase(Schema):
     id: int = Field(default=1, description='接口组主键')
 
 
+class UpdateCase(CreateCase):
+    pass
+
+
 class GetCase(CaseBase):
     id: int

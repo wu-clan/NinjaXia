@@ -4,12 +4,13 @@ from typing import List
 
 from django.http import Http404
 from ninja import Router
+from ninja.errors import HttpError
 from ninja.pagination import paginate
 
 from backend.common.log import log
 from backend.ninja_models.models.api_auto.case import CaseCRUD
 from backend.schemas import Message
-from backend.schemas.case import CaseBase, CreateCase, GetCase
+from backend.schemas.case import CaseBase, CreateCase, GetCase, UpdateCase
 
 case = Router()
 
@@ -29,14 +30,41 @@ def create_case(request, post: CaseBase, ifc: CreateCase):
     return dict(code=403, msg='用例已存在，请更该用例名称后重新提交')
 
 
-@case.put('/case', summary='更新测试用例', response=Message)
-def update_case(request, ):
-    pass
+@case.put('/case/{cid}', summary='更新测试用例', response=Message)
+def update_case(request, cid: int, put: CaseBase, iid: UpdateCase):
+    try:
+        _case = CaseCRUD.get_case_by_id(cid)
+    except Http404:
+        log.error('use case does not exist please re enter')
+        raise HttpError(404, '用例不存在，请重新输输入')
+    if not CaseCRUD.get_case_name_by_id(cid) == put.name:
+        if CaseCRUD.get_case_by_name(put.name):
+            log.error(f'Use case name {put.name} already exists, please change and resubmit')
+            return dict(code=403, msg='用例名已存在，请更改后重新提交')
+    try:
+        CaseCRUD.get_interface_for_case(iid.id)
+    except Http404:
+        log.error('The interface group does not exist, please re-enter')
+        raise HttpError(404, '接口组不存在，请重新输入')
+    for attr, value in put.dict().items():
+        setattr(_case, attr, value)
+    _case.interface_id = iid.id
+    _case.save()
+    log.success(f'successfully updated the use case {_case.id}:{_case.name}')
+    return dict(code=200, msg='更新用例成功', data=put)
 
 
-@case.delete('/case', summary='删除测试用例', response=Message)
-def delete_case(request, ):
-    pass
+@case.delete('/case/{cid}', summary='删除测试用例', response=Message)
+def delete_case(request, cid: int):
+    try:
+        _case = CaseCRUD.get_case_by_id(cid)
+        _name = CaseCRUD.get_case_name_by_id(cid)
+    except Http404:
+        log.error('use case does not exist please re enter')
+        raise HttpError(404, '用例不存在，请重新输输入')
+    _case.delete()
+    log.success(f'use case {_name} deleted successfully')
+    return dict(code=200, msg='删除用例成功')
 
 
 @case.get('/case', summary='获取所有测试用例', response=List[GetCase])

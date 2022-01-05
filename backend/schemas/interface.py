@@ -16,6 +16,10 @@ class CreateInterface(Schema):
     id: int = Field(default=1, description='外键项目主键')
 
 
+class UpdateInterface(CreateInterface):
+    pass
+
+
 class GetInterface(InterfaceBase):
     id: int
     created_time: datetime.datetime

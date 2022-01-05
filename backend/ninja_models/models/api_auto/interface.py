@@ -23,7 +23,7 @@ class Interface(models.Model):
 class InterfaceCRUD:
 
     @staticmethod
-    def get_interface_name_by_name(name: str) -> bool:
+    def get_interface_by_name(name: str) -> bool:
         return Interface.objects.filter(name=name)
 
     @staticmethod

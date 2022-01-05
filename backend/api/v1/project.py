@@ -4,6 +4,7 @@ from typing import List
 
 from django.http import Http404
 from ninja import Router
+from ninja.pagination import paginate
 
 from backend.common.log import log
 from backend.ninja_models.models.api_auto.project import ProjectCRUD
@@ -56,7 +57,8 @@ def delete_project(request, pid: int):
 
 
 @project.get('/project', summary='获取所有项目', response=List[GetProject])
-def get_project(request, ):
+@paginate
+def get_project(request, **kwargs):
     _projects = ProjectCRUD.get_all_projects()
     log.success('get all items successful')
     return _projects

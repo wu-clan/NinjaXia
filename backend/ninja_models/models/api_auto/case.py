@@ -47,6 +47,14 @@ class CaseCRUD:
     @staticmethod
     def get_case_by_name(name: str) -> bool:
         return Case.objects.filter(name=name)
+
+    @staticmethod
+    def get_case_by_id(pk: int):
+        return get_object_or_404(Case, id=pk)
+
+    @staticmethod
+    def get_case_name_by_id(pk: id) -> str:
+        return Case.objects.filter(id=pk).first().name
     
     @staticmethod
     def create_case(post: CaseBase, iid: int) -> Case:
