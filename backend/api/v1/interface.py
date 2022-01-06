@@ -26,7 +26,8 @@ def add_interface(request, post: InterfaceBase, project: CreateInterface):
         InterfaceCRUD.create_interface(post, project.id)
         log.success(f'add interface group {post.name} success')
         return dict(code=200, msg='添加接口组成功', data=post)
-    log.error(f'add interface group {post.name} fail，interface group already exists，please change the interface group name')
+    log.error(
+        f'add interface group {post.name} fail，interface group already exists，please change the interface group name')
     return dict(code=403, msg='添加接口组失败，接口组已存在，请更换接口组名')
 
 
@@ -40,7 +41,8 @@ def update_interface(request, iid: int, put: InterfaceBase, pid: UpdateInterface
     _name = InterfaceCRUD.get_interface_name_by_id(iid)
     if not _name == put.name:
         if InterfaceCRUD.get_interface_by_name(put.name):
-            log.error(f'update interface group name {_name} to {put.name} fail， {put.name} interface group already exists')
+            log.error(
+                f'update interface group name {_name} to {put.name} fail， {put.name} interface group already exists')
             return dict(code=403, msg='接口组已存在，请更换接口组名')
     try:
         InterfaceCRUD.get_project_for_interface(pid.id)
@@ -74,3 +76,10 @@ def get_interface(request, **kwargs):
     _interfaces = InterfaceCRUD.get_all_interfaces()
     log.success('get all interface groups successfully')
     return _interfaces
+
+
+@interface.get('/interface/{iid}', summary='获取单个接口组', response=GetInterface)
+def get_one_interface(request, iid: int):
+    inter = InterfaceCRUD.get_interface(iid)
+    log.success('get one interface groups successfully')
+    return inter
