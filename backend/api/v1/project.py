@@ -4,6 +4,7 @@ from typing import List
 
 from django.http import Http404
 from ninja import Router
+from ninja.errors import HttpError
 from ninja.pagination import paginate
 
 from backend.common.log import log
@@ -62,3 +63,13 @@ def get_project(request, **kwargs):
     _projects = ProjectCRUD.get_all_projects()
     log.success('get all items successful')
     return _projects
+
+
+@project.get('/project/{pid}', summary='获取单个项目', response=GetProject)
+def get_one_project(request, pid: int):
+    try:
+        p = ProjectCRUD.get_project_by_id(pid)
+    except Http404:
+        raise HttpError(404, '没有此项目')
+    log.success(f'get {pid} project successful')
+    return p
