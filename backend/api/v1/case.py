@@ -76,7 +76,7 @@ def get_case(request, **kwargs):
 
 
 @case.get('/case/{cid}', summary='获取单个测试用例', response=GetCase)
-def get_case(request, cid: int):
+def get_one_case(request, cid: int):
     _case = CaseCRUD.get_case_by_id(cid)
     log.success('get one case successful')
     return _case
