@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from backend.ninja_models.models.api_auto.case import Case
-from backend.ninja_models.models.api_auto.interface import Interface
-from backend.ninja_models.models.api_auto.project import Project
-from backend.ninja_models.models.api_auto.result import Result
-from backend.ninja_models.models.api_auto.task import Task
+from backend.ninja_models.models.api_auto.api_project import ApiProject
+from backend.ninja_models.models.api_auto.api_module import ApiModule
+from backend.ninja_models.models.api_auto.api_environment import ApiEnvironment
+from backend.ninja_models.models.api_auto.api_business_test import ApiBusinessTest, ApiBusinessTestAssociated
+from backend.ninja_models.models.api_auto.api_test_case import ApiTestCase
+from backend.ninja_models.models.api_auto.api_test_task import ApiTestTask
+from backend.ninja_models.models.api_auto.api_test_report import ApiTestReport, ApiTestReportDetail

@@ -4,7 +4,7 @@ import os
 
 from loguru import logger
 
-from backend.autoproject import settings
+from backend.ninja_xia import settings
 
 
 class Logger(object):
