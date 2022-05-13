@@ -8,7 +8,7 @@ from jose import jwt
 from ninja.security import HttpBearer
 from pydantic import ValidationError
 
-from backend.crud.crud_sys.crud_sys_user import crud_user
+from backend.crud.v1.crud_sys.crud_sys_user import crud_user
 from backend.ninja_xia import settings
 from backend.schemas import TokenError, AuthorizationError
 

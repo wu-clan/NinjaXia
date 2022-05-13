@@ -11,7 +11,7 @@ class ApiTestProject(models.Model):
     description = models.TextField(null=True, verbose_name='项目描述')
     status = models.BooleanField(default=1, verbose_name='项目状态')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    modified_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
 
     class Meta:
         db_table = 'sys_api_test_project'

@@ -19,7 +19,7 @@ class ApiTestTask(models.Model):
     cases = models.TextField(default="", verbose_name='关联API用例')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
-    project = models.ForeignKey('ApiTestProject', verbose_name='关联项目', on_delete=models.CASCADE)
+    api_project = models.ForeignKey('ApiTestProject', verbose_name='关联项目', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'sys_api_test_task'

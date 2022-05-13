@@ -12,8 +12,8 @@ class ApiTestReport(models.Model):
     pass_num = models.BigIntegerField(null=True, verbose_name='成功总数')
     api_number = models.BigIntegerField(null=True, verbose_name='API总数')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
+    modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    api_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
 
     class Meta:
         db_table = 'sys_api_test_report'
@@ -36,8 +36,8 @@ class ApiTestReportDetail(models.Model):
     response_data = models.TextField(null=True, verbose_name='测试用例返回数据')
     assert_result = models.TextField(null=True, verbose_name='测试用例断言结果')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    api_test_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
-    api_test_report = models.ForeignKey('ApiTestReport', on_delete=models.CASCADE, verbose_name='所属报告')
+    api_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
+    api_report = models.ForeignKey('ApiTestReport', on_delete=models.CASCADE, verbose_name='所属报告')
 
     class Meta:
         db_table = 'sys_api_test_report_detail'

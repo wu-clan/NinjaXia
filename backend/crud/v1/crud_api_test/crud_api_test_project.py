@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from backend.ninja_models.models import ApiTestProject
-from backend.schemas.sm_api_test.sm_api_test_project import CreateProject, UpdateProject
+from django.db.models import QuerySet
+
 from backend.crud.base import CRUDBase
+from backend.ninja_models.models.v1.api_test.api_test_project import ApiTestProject
+from backend.schemas.v1.sm_api_test.sm_api_test_project import CreateApiTestProject, UpdateApiTestProject
 
 
-class CRUDProject(CRUDBase[ApiTestProject, CreateProject, UpdateProject]):
+class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateApiTestProject]):
 
-    def get_all_projects(self) -> ApiTestProject:
+    def get_all_projects(self) -> QuerySet:
         return super().get_all()
 
     def get_project_by_name(self, name: str) -> ApiTestProject:
@@ -22,14 +24,14 @@ class CRUDProject(CRUDBase[ApiTestProject, CreateProject, UpdateProject]):
     def get_project_status(self, pk: int) -> str:
         return super().get(pk=pk).status
 
-    def create_project(self, project: CreateProject) -> ApiTestProject:
+    def create_project(self, project: CreateApiTestProject) -> ApiTestProject:
         return super().create(project)
 
-    def update_project(self, pk: int, project: UpdateProject) -> ApiTestProject:
+    def update_project(self, pk: int, project: UpdateApiTestProject) -> ApiTestProject:
         return super().update_one(pk, project)
 
     def delete_project(self, pk: int) -> ApiTestProject:
         return super().delete_one(pk)
 
 
-crud_project = CRUDProject(ApiTestProject)
+crud_api_test_project = CRUDApiTestProject(ApiTestProject)

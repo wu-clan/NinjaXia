@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
+from django.db.models import QuerySet
 from django.utils import timezone
 
-from backend.schemas.sm_sys.sm_sys_user import CreateUser, UpdateUser
 from backend.crud.base import CRUDBase
+from backend.schemas.v1.sm_sys.sm_sys_user import CreateUser, UpdateUser
 
 
 class CRUDUser(CRUDBase[User, CreateUser, UpdateUser]):
@@ -33,7 +34,7 @@ class CRUDUser(CRUDBase[User, CreateUser, UpdateUser]):
     def create_user(create_user: CreateUser) -> User:
         return User.objects.create_user(**create_user.dict())
 
-    def get_all_users(self) -> User:
+    def get_all_users(self) -> QuerySet:
         return super().get_all()
 
 

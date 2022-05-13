@@ -11,15 +11,15 @@ from ninja.pagination import paginate
 
 from backend.api.security import create_access_token, GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
-from backend.crud.crud_sys.crud_sys_user import crud_user
+from backend.crud.v1.crud_sys.crud_sys_user import crud_user
 from backend.schemas import Response200, Response404, Response403
-from backend.schemas.sm_api_test.sm_api_test_token import Token
-from backend.schemas.sm_sys.sm_sys_user import CreateUser, Login, GetUsers, UpdateUser
+from backend.schemas.v1.sm_sys.sm_sys_token import Token
+from backend.schemas.v1.sm_sys.sm_sys_user import CreateUser, Login, GetAllUsers, UpdateUser
 
-user = Router()
+v1_sys_user = Router()
 
 
-@user.post('/login', summary='登录', description='Auth登录')
+@v1_sys_user.post('/login', summary='登录', description='Auth登录')
 def login(request, obj: Login) -> Any:
     current_user = crud_user.get_user_by_username(obj.username)
     if not current_user:
@@ -38,7 +38,7 @@ def login(request, obj: Login) -> Any:
     )
 
 
-@user.post('/register', summary='用户注册')
+@v1_sys_user.post('/register', summary='用户注册')
 def register(request, obj: CreateUser):
     if crud_user.get_user_by_username(obj.username):
         return Response403(msg='用户名已注册，请修改后重新提交')
@@ -55,7 +55,7 @@ def register(request, obj: CreateUser):
     })
 
 
-@user.put('/users', summary='更新用户信息', auth=GetCurrentUser())
+@v1_sys_user.put('/users', summary='更新用户信息', auth=GetCurrentUser())
 def update_user(request, obj: UpdateUser):
     current_user = request.auth
     if obj.username != current_user.username:
@@ -72,18 +72,18 @@ def update_user(request, obj: UpdateUser):
     return Response200(data=obj)
 
 
-@user.post('/logout', summary='用户退出', auth=GetCurrentUser())
+@v1_sys_user.post('/logout', summary='用户退出', auth=GetCurrentUser())
 def logout(request):
     return Response200()
 
 
-@user.get('/userinfo', summary='获取用户信息', auth=GetCurrentUser())
+@v1_sys_user.get('/userinfo', summary='获取用户信息', auth=GetCurrentUser())
 def get_user_info(request):
     data = orjson.loads(serializers.serialize('json', [request.auth]))[0]
     return Response200(data=data)
 
 
-@user.get('/users', summary='获取所有用户信息', auth=GetCurrentIsSuperuser(), response=List[GetUsers])
+@v1_sys_user.get('/users', summary='获取所有用户信息', auth=GetCurrentIsSuperuser(), response=List[GetAllUsers])
 @paginate(CustomPagination)
 def get_users(request):
     return crud_user.get_all_users()
