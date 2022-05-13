@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 from ninja import Router
 
-from backend.api.v1.v1_project import project
-from backend.api.v1.v1_user import user
+from backend.api.v1.api_test.v1_project import project
+from backend.api.v1.v1_sys.v1_sys_user import user
 
 v1 = Router()
 

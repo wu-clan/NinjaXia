@@ -34,8 +34,8 @@ class ApiTestCase(models.Model):
     assert_text = models.TextField(verbose_name='断言内容')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    api_model = models.ForeignKey('ApiModule', on_delete=models.CASCADE, verbose_name='所属模块')
-    api_environment = models.ForeignKey('ApiEnvironment', on_delete=models.CASCADE, verbose_name='所属环境')
+    api_model = models.ForeignKey('ApiTestModule', on_delete=models.CASCADE, verbose_name='所属模块')
+    api_environment = models.ForeignKey('ApiTestEnvironment', on_delete=models.CASCADE, verbose_name='所属环境')
 
     class Meta:
         db_table = 'sys_api_test_case'

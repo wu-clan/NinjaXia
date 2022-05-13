@@ -3,7 +3,7 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from backend.schemas.sm_user import CreateUser, UpdateUser
+from backend.schemas.sm_sys.sm_sys_user import CreateUser, UpdateUser
 from backend.crud.base import CRUDBase
 
 

@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class ApiProject(models.Model):
+class ApiTestProject(models.Model):
     """
     API项目表
     """
@@ -14,7 +14,7 @@ class ApiProject(models.Model):
     modified_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
-        db_table = 'sys_api_project'
+        db_table = 'sys_api_test_project'
 
     def __str__(self):
         return self.name

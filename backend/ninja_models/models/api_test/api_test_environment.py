@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class ApiEnvironment(models.Model):
+class ApiTestEnvironment(models.Model):
     """
     API环境表
     """
@@ -14,7 +14,7 @@ class ApiEnvironment(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
-        db_table = 'sys_api_environment'
+        db_table = 'sys_api_test_environment'
 
     def __str__(self):
         return self.name

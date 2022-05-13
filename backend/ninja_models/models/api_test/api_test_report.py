@@ -38,3 +38,9 @@ class ApiTestReportDetail(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     api_test_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
     api_test_report = models.ForeignKey('ApiTestReport', on_delete=models.CASCADE, verbose_name='所属报告')
+
+    class Meta:
+        db_table = 'sys_api_test_report_detail'
+
+    def __str__(self):
+        return self.name

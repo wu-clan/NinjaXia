@@ -3,13 +3,12 @@
 from datetime import timedelta, datetime
 from typing import Optional
 
-from django.contrib import auth
 from django.contrib.auth.models import User
 from jose import jwt
 from ninja.security import HttpBearer
 from pydantic import ValidationError
 
-from backend.crud.crud_user import crud_user
+from backend.crud.crud_sys.crud_sys_user import crud_user
 from backend.ninja_xia import settings
 from backend.schemas import TokenError, AuthorizationError
 

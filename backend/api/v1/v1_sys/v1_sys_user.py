@@ -11,10 +11,10 @@ from ninja.pagination import paginate
 
 from backend.api.security import create_access_token, GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
-from backend.crud.crud_user import crud_user
+from backend.crud.crud_sys.crud_sys_user import crud_user
 from backend.schemas import Response200, Response404, Response403
-from backend.schemas.sm_token import Token
-from backend.schemas.sm_user import CreateUser, Login, GetUsers, UpdateUser
+from backend.schemas.sm_api_test.sm_api_test_token import Token
+from backend.schemas.sm_sys.sm_sys_user import CreateUser, Login, GetUsers, UpdateUser
 
 user = Router()
 
