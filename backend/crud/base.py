@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from typing import TypeVar, Generic, Type, Union, Dict, Any
+from typing import TypeVar, Generic, Type, Union, Dict, Any, List
 
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from django.shortcuts import get_object_or_404
 from ninja import Schema
 
@@ -21,8 +21,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get_object_or_404(self, pk: int) -> ModelType:
         return get_object_or_404(self.model, id=pk)
 
-    def get_all(self) -> ModelType:
+    def get_all(self) -> QuerySet:
         return self.model.objects.all()
+
+    def get_values(self, *fields: str) -> List[dict]:
+        return self.model.objects.values(*fields)
+
+    def get_values_list(self, *fields, flat=False) -> List[Any]:
+        return self.model.objects.values_list(*fields, flat=flat)
 
     def create(self, obj_in: CreateSchemaType) -> ModelType:
         return self.model.objects.create(**obj_in.dict())
