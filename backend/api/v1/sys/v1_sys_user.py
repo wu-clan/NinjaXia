@@ -15,6 +15,7 @@ from backend.crud.v1.crud_sys.crud_sys_user import crud_user
 from backend.schemas import Response200, Response404, Response403
 from backend.schemas.v1.sm_sys.sm_sys_token import Token
 from backend.schemas.v1.sm_sys.sm_sys_user import CreateUser, Login, GetAllUsers, UpdateUser
+from backend.utils.serialize_data import serialize_data
 
 v1_sys_user = Router()
 
@@ -79,7 +80,7 @@ def logout(request):
 
 @v1_sys_user.get('/userinfo', summary='获取用户信息', auth=GetCurrentUser())
 def get_user_info(request):
-    data = orjson.loads(serializers.serialize('json', [request.auth]))[0]
+    data = serialize_data(request.auth)
     return Response200(data=data)
 
 
