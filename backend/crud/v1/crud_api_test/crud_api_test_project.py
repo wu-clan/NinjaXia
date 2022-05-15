@@ -33,5 +33,8 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
     def delete_project(self, pk: int) -> ApiTestProject:
         return super().delete_one(pk)
 
+    def get_project_modules(self, pk: int) -> QuerySet:
+        return self.model.objects.filter(api_test_module__api_project=pk).all()
+
 
 crud_api_test_project = CRUDApiTestProject(ApiTestProject)
