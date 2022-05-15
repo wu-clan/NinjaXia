@@ -148,7 +148,7 @@ def register_exception(app: NinjaAPI):
         """
         return app.create_response(
             request,
-            data=Response400(code=exc.status_code, msg=exc.args),
+            data=Response400(code=exc.status_code, msg="".join(exc.args)),
             status=exc.status_code,
         )
 
@@ -162,7 +162,7 @@ def register_exception(app: NinjaAPI):
         """
         return app.create_response(
             request,
-            data=Response404(msg=exc.args),
+            data=Response404(msg="".join(exc.args)),
             status=404,
         )
 
@@ -176,7 +176,7 @@ def register_exception(app: NinjaAPI):
     #     """
     #     return app.create_response(
     #         request,
-    #         data=Response500(msg=exc.args),
+    #         data=Response500(msg="".join(exc.args)),
     #         status=500,
     #     )
 
