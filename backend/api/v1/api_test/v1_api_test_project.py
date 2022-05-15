@@ -22,7 +22,7 @@ def get_all_project(request) -> Any:
     return crud_api_test_project.get_all_projects()
 
 
-@v1_api_test_project.get('/{pk}', summary='获取单个项目')
+@v1_api_test_project.get('/{int:pk}', summary='获取单个项目')
 def get_one_project(request, pk: int) -> Any:
     try:
         _project = crud_api_test_project.get_project_by_id(pk)
