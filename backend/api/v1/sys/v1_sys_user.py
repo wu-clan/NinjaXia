@@ -51,7 +51,7 @@ def register(request, obj: CreateUser):
     crud_user.create_user(obj)
     return Response200(data={
         'username': obj.username,
-        'email': obj.emial
+        'email': obj.email
     })
 
 
