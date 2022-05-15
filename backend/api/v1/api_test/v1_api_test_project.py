@@ -16,13 +16,13 @@ from backend.utils.serialize_data import serialize_data
 v1_api_test_project = Router()
 
 
-@v1_api_test_project.get('/all', summary='获取所有项目', response=List[GetAllApiTestProjects])
+@v1_api_test_project.get('/all', summary='获取所有项目', response=List[GetAllApiTestProjects], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_project(request) -> Any:
     return crud_api_test_project.get_all_projects()
 
 
-@v1_api_test_project.get('/{int:pk}', summary='获取单个项目')
+@v1_api_test_project.get('/{int:pk}', summary='获取单个项目', auth=GetCurrentUser())
 def get_one_project(request, pk: int) -> Any:
     try:
         _project = crud_api_test_project.get_project_by_id(pk)
