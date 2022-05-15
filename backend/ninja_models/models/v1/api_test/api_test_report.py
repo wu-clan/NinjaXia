@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from backend.ninja_models.models.v1.api_test.api_test_task import ApiTestTask
+
 
 class ApiTestReport(models.Model):
     """
@@ -13,7 +15,8 @@ class ApiTestReport(models.Model):
     api_number = models.BigIntegerField(null=True, verbose_name='API总数')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
-    api_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
+    api_task = models.ForeignKey(ApiTestTask, on_delete=models.CASCADE, verbose_name='所属任务',
+                                 related_name='api_test_report', related_query_name='api_test_report')
 
     class Meta:
         db_table = 'sys_api_test_report'
@@ -36,8 +39,10 @@ class ApiTestReportDetail(models.Model):
     response_data = models.TextField(null=True, verbose_name='测试用例返回数据')
     assert_result = models.TextField(null=True, verbose_name='测试用例断言结果')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    api_task = models.ForeignKey('ApiTestTask', on_delete=models.CASCADE, verbose_name='所属任务')
-    api_report = models.ForeignKey('ApiTestReport', on_delete=models.CASCADE, verbose_name='所属报告')
+    api_task = models.ForeignKey(ApiTestTask, on_delete=models.CASCADE, verbose_name='所属任务',
+                                 related_name='api_test_report_detail', related_query_name='api_test_report_detail')
+    api_report = models.ForeignKey(ApiTestReport, on_delete=models.CASCADE, verbose_name='所属报告',
+                                   related_name='api_test_report_detail', related_query_name='api_test_report_detail')
 
     class Meta:
         db_table = 'sys_api_test_report_detail'

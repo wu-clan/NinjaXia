@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'ninja_xia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'datest',
+        'NAME': 'ninja_xia',
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1',

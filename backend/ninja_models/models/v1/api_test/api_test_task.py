@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from backend.ninja_models.models.v1.api_test.api_test_project import ApiTestProject
+
 
 class ApiTestTask(models.Model):
     """
@@ -19,7 +21,8 @@ class ApiTestTask(models.Model):
     cases = models.TextField(default="", verbose_name='关联API用例')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
-    api_project = models.ForeignKey('ApiTestProject', verbose_name='关联项目', on_delete=models.CASCADE)
+    api_project = models.ForeignKey(ApiTestProject, verbose_name='关联项目', on_delete=models.CASCADE,
+                                    related_name='api_test_tasks', related_query_name='api_test_task')
 
     class Meta:
         db_table = 'sys_api_test_task'

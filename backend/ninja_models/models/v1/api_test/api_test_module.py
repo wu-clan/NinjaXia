@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from backend.ninja_models.models.v1.api_test.api_test_project import ApiTestProject
+
 
 class ApiTestModule(models.Model):
     """
@@ -11,7 +13,8 @@ class ApiTestModule(models.Model):
     description = models.TextField(null=True, verbose_name='模块描述')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
-    api_project = models.ForeignKey('ApiTestProject', on_delete=models.CASCADE, verbose_name='所属项目')
+    api_project = models.ForeignKey(ApiTestProject, on_delete=models.CASCADE, verbose_name='所属项目',
+                                    related_name='api_test_module', related_query_name='api_test_module')
 
     class Meta:
         db_table = 'sys_api_test_module'
