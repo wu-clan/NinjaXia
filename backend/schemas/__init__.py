@@ -5,10 +5,12 @@ from typing import Any, Optional
 import orjson
 from django.http import Http404
 from ninja import Schema, NinjaAPI
-from ninja.errors import ValidationError, HttpError
+from ninja.errors import ValidationError as NinjaValidationError
+from ninja.errors import HttpError
 from ninja.parser import Parser
 from ninja.renderers import BaseRenderer
 from pydantic import Field
+from pydantic import ValidationError as PydanticValidationError
 
 
 class ORJSONParser(Parser):
@@ -180,10 +182,10 @@ def register_exception(app: NinjaAPI):
     #         status=500,
     #     )
 
-    @app.exception_handler(ValidationError)
-    def validation_error(request, exc: ValidationError):
+    @app.exception_handler(NinjaValidationError)
+    def validation_error(request, exc: NinjaValidationError):
         """
-        全局请求数据验证异常处理
+        Ninja全局请求数据验证异常处理
         :param request:
         :param exc:
         :return:
@@ -191,5 +193,19 @@ def register_exception(app: NinjaAPI):
         return app.create_response(
             request,
             data=Response40001(data={'body': exc.args, 'errors': exc.errors}),
+            status=422,
+        )
+
+    @app.exception_handler(PydanticValidationError)
+    def validation_error(request, exc: PydanticValidationError):
+        """
+        Pydantic全局请求数据验证异常处理
+        :param request:
+        :param exc:
+        :return:
+        """
+        return app.create_response(
+            request,
+            data=Response40001(data={'errors': exc.errors()}),
             status=422,
         )
