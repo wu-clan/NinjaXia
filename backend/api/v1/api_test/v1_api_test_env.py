@@ -12,7 +12,7 @@ from backend.schemas.v1.sm_api_test.sm_api_test_env import GetAllApiTestEnv
 v1_api_test_env = Router()
 
 
-@v1_api_test_env.get('/all', summary='获取所有模块', response=List[GetAllApiTestEnv])
+@v1_api_test_env.get('/api_test_envs', summary='获取所有模块', response=List[GetAllApiTestEnv])
 @paginate(CustomPagination)
 def get_all_envs(request):
     return crud_api_test_env.get_all_envs()

@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 from typing import List, Any
 
-import orjson
 from django.contrib.auth import authenticate
-from django.core import serializers
 from email_validator import validate_email, EmailNotValidError
 from ninja import Router
 from ninja.pagination import paginate
@@ -20,7 +18,7 @@ from backend.utils.serialize_data import serialize_data
 v1_sys_user = Router()
 
 
-@v1_sys_user.post('/login', summary='登录', description='Auth登录')
+@v1_sys_user.post('/sys_user/login', summary='登录', description='Auth登录')
 def login(request, obj: Login) -> Any:
     current_user = crud_user.get_user_by_username(obj.username)
     if not current_user:
@@ -39,7 +37,7 @@ def login(request, obj: Login) -> Any:
     )
 
 
-@v1_sys_user.post('/register', summary='用户注册')
+@v1_sys_user.post('/sys_user/register', summary='用户注册')
 def register(request, obj: CreateUser):
     if crud_user.get_user_by_username(obj.username):
         return Response403(msg='用户名已注册，请修改后重新提交')
@@ -56,7 +54,7 @@ def register(request, obj: CreateUser):
     })
 
 
-@v1_sys_user.put('/users', summary='更新用户信息', auth=GetCurrentUser())
+@v1_sys_user.put('/sys_user', summary='更新用户信息', auth=GetCurrentUser())
 def update_user(request, obj: UpdateUser):
     current_user = request.auth
     if obj.username != current_user.username:
@@ -73,18 +71,18 @@ def update_user(request, obj: UpdateUser):
     return Response200(data=obj)
 
 
-@v1_sys_user.post('/logout', summary='用户退出', auth=GetCurrentUser())
+@v1_sys_user.post('/sys_user/logout', summary='用户退出', auth=GetCurrentUser())
 def logout(request):
     return Response200()
 
 
-@v1_sys_user.get('/userinfo', summary='获取用户信息', auth=GetCurrentUser())
+@v1_sys_user.get('/sys_user', summary='获取用户信息', auth=GetCurrentUser())
 def get_user_info(request):
     data = serialize_data(request.auth)
     return Response200(data=data)
 
 
-@v1_sys_user.get('/users', summary='获取所有用户信息', auth=GetCurrentIsSuperuser(), response=List[GetAllUsers])
+@v1_sys_user.get('/sys_users', summary='获取所有用户信息', auth=GetCurrentIsSuperuser(), response=List[GetAllUsers])
 @paginate(CustomPagination)
 def get_users(request):
     return crud_user.get_all_users()

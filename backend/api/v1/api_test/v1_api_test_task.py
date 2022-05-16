@@ -12,7 +12,7 @@ from backend.schemas.v1.sm_api_test.sm_api_test_task import GetAllApiTestTasks
 v1_api_test_task = Router()
 
 
-@v1_api_test_task.get('/all', summary='获取所有模块', response=List[GetAllApiTestTasks])
+@v1_api_test_task.get('/api_test_tasks', summary='获取所有模块', response=List[GetAllApiTestTasks])
 @paginate(CustomPagination)
 def get_all_tasks(request):
     return crud_api_test_task.get_all_tasks()
