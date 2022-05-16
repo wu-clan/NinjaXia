@@ -67,8 +67,8 @@ def update_user(request, obj: UpdateUser):
         validate_email(obj.email).email
     except EmailNotValidError:
         return Response403(msg='电子邮件格式错误，请重新输入')
-    crud_user.put_user(current_user.pk, obj)
-    return Response200(data=obj)
+    _user = crud_user.put_user(current_user.pk, obj)
+    return Response200(data=serialize_data(_user))
 
 
 @v1_sys_user.post('/sys_user/logout', summary='用户退出', auth=GetCurrentUser())

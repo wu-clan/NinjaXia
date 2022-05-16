@@ -35,8 +35,8 @@ def get_one_project(request, pk: int) -> Any:
 def create_project(request, obj: ApiTestProjectBase) -> Any:
     if crud_api_test_project.get_project_by_name(obj.name):
         return Response403(msg='项目已存在，请更改项目名称')
-    crud_api_test_project.create_project(obj)
-    return Response200(data=obj)
+    _project = crud_api_test_project.create_project(obj)
+    return Response200(data=serialize_data(_project))
 
 
 @v1_api_test_project.put('/api_test_project/{pk}', summary='更新项目', auth=GetCurrentIsSuperuser())
@@ -49,8 +49,8 @@ def update_project(request, pk: int, obj: ApiTestProjectBase) -> Any:
     if not current_name == obj.name:
         if crud_api_test_project.get_project_by_name(obj.name):
             return Response403(msg='项目已存在，请更改项目名称')
-    crud_api_test_project.update_project(pk, obj)
-    return Response200(data=obj)
+    _project = crud_api_test_project.update_project(pk, obj)
+    return Response200(data=serialize_data(_project))
 
 
 @v1_api_test_project.delete('/api_test_project/{pk}', summary='删除项目', auth=GetCurrentIsSuperuser())
