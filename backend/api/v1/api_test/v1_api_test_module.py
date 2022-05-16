@@ -24,7 +24,7 @@ def get_all_modules(request) -> Any:
     return crud_api_test_module.get_all_modules()
 
 
-@v1_api_test_module.get('/api_test_module/{int:pk}', summary='获取单个模块', auth=GetCurrentUser())
+@v1_api_test_module.get('/api_test_module/{pk}', summary='获取单个模块', auth=GetCurrentUser())
 def get_one_module(request, pk: int) -> Any:
     module = crud_api_test_module.get_module_by_id(pk)
     if not module:
