@@ -125,6 +125,11 @@ NINJA_DOCS_URL = '/docs'
 NINJA_OPENAPI_URL = '/openapi'
 NINJA_CSRF = False
 
+# Uvicorn
+UVICORN_HOST = '127.0.0.1'
+UVICORN_PORT = 8000
+UVICORN_RELOAD = True
+
 # PATH 配置
 LOG_PATH = BASE_DIR / 'logs'
 

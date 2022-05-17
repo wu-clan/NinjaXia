@@ -22,11 +22,13 @@ from django.urls import path
 from backend.api import register_app
 from backend.ninja_xia import settings
 
+app = register_app()
+
 urlpatterns = [
     # path('admin/', admin.site.urls),
 
     # Ninja-API
-    path('v1/', register_app().urls),
+    path('v1/', app.urls),
 
     path(r'static/<path:path>', serve, {'document_root': settings.STATIC_ROOT, }, ),
     path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}, ),

@@ -38,4 +38,4 @@ def register_router(app: NinjaAPI):
     :param app:
     :return:
     """
-    app.add_router('/', v1)
+    app.add_router('', v1)
