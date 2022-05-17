@@ -12,7 +12,7 @@ from backend.schemas.v1.sm_api_test.sm_api_test_business import GetAllApiTestBus
 v1_api_test_business = Router()
 
 
-@v1_api_test_business.get('/api_test_businesses', summary='获取所有模块', response=List[GetAllApiTestBusiness])
+@v1_api_test_business.get('', summary='获取所有模块', response=List[GetAllApiTestBusiness])
 @paginate(CustomPagination)
 def get_all_businesses(request):
     return crud_api_test_business.get_all_businesses()

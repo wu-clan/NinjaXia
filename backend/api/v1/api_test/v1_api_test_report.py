@@ -12,7 +12,7 @@ from backend.schemas.v1.sm_api_test.sm_api_test_report import GetAllApiTestRepor
 v1_api_test_report = Router()
 
 
-@v1_api_test_report.get('/api_test_reports', summary='获取所有模块', response=List[GetAllApiTestReports])
+@v1_api_test_report.get('', summary='获取所有模块', response=List[GetAllApiTestReports])
 @paginate(CustomPagination)
 def get_all_reports(request):
     return crud_api_test_report.get_all_reports()
