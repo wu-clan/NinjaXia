@@ -25,7 +25,7 @@ class ReceiverGroup(models.Model):
     """
     收件人组
     """
-    name = models.CharField(max_length=128, verbose_name='收件人组名称')
+    name = models.CharField(max_length=128, unique=True, verbose_name='收件人组名称')
     description = models.TextField(null=True, verbose_name='收件人组描述')
 
     def __str__(self):
@@ -39,8 +39,8 @@ class Receiver(models.Model):
     """
     收件人
     """
-    name = models.CharField(max_length=128, verbose_name='收件人名称')
-    email = models.EmailField(verbose_name='收件人邮箱')
+    name = models.CharField(max_length=128, unique=True, verbose_name='收件人名称')
+    email = models.EmailField(unique=True, verbose_name='收件人邮箱')
     receiver_group = models.ForeignKey(ReceiverGroup, on_delete=models.CASCADE, verbose_name='所属收件人组',
                                        related_name='receiver', related_query_name='receiver')
 
