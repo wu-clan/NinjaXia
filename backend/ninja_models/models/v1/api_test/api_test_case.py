@@ -17,9 +17,14 @@ class ApiTestCase(models.Model):
         (3, 'DELETE'),
     )
     BODY_TYPE = (
-        (0, 'params'),
-        (1, 'json'),
-        (2, 'x-www-form-urlencoded')
+        (0, 'none'),
+        (1, 'form-data'),
+        (2, 'x-www-form-urlencoded'),
+        (3, 'Text'),
+        (4, 'JavaScript'),
+        (5, 'JSON'),
+        (6, 'HTML'),
+        (7, 'XML'),
     )
     ASSERT_TYPE = (
         (0, 'nothing'),  # 不断言
