@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
-from typing import Optional
 
 from ninja import Schema
 
 
 class ApiTestProjectBase(Schema):
     name: str
-    description: Optional[str]
+    description: str = None
     status: bool
 
 
