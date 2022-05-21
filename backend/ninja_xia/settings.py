@@ -34,6 +34,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'middlewares.access_middleware.AccessMiddleware',
 ]
 
 ROOT_URLCONF = 'ninja_xia.urls'

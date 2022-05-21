@@ -18,7 +18,7 @@ from backend.utils.serialize_data import serialize_data
 v1_sys_user = Router()
 
 
-@v1_sys_user.post('/login', summary='登录', response=Token)
+@v1_sys_user.post('/login', summary='登录')
 def login(request, obj: Login) -> Any:
     current_user = crud_user.get_user_by_username(obj.username)
     if not current_user:
