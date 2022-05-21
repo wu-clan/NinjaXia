@@ -8,7 +8,7 @@ from ninja.pagination import paginate
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
-from backend.crud.crud_api_test import crud_api_test_env
+from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
 from backend.schemas import Response404, Response200, Response403
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCase, CreateApiTestCase
