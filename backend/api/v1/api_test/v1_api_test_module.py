@@ -40,8 +40,12 @@ def create_module(request, obj: CreateApiTestModule) -> Any:
         _project = crud_api_test_project.get_project_by_id(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
+    if not _project.status:
+        return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
     module = crud_api_test_module.create_module(obj)
+    module.creator = request.session['username']
+    module.save()
     return Response200(data=serialize_data(module))
 
 
@@ -57,8 +61,12 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
         _project = crud_api_test_project.get_project_by_id(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
+    if not _project.status:
+        return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
     module = crud_api_test_module.update_module(pk, obj)
+    module.modifier = request.session['username']
+    module.save()
     return Response200(data=serialize_data(module))
 
 

@@ -21,5 +21,7 @@ class UpdateApiTestModule(ApiTestModuleBase):
 class GetAllApiTestModules(ApiTestModuleBase):
     id: int
     api_project_id: int
+    creator: str = None
+    modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
