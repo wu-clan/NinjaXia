@@ -10,12 +10,6 @@ class ApiTestTask(models.Model):
     """
     任务表
     """
-    STATUS = (
-        (0, '未执行'),
-        (1, '排队中'),
-        (2, '执行中'),
-        (3, '执行完成')
-    )
     name = models.CharField(max_length=128, unique=True, verbose_name='测试任务名称')
     description = models.TextField(null=True, verbose_name='任务描述')
     starting_time = models.CharField(max_length=64, default='', verbose_name='起始时间')
@@ -26,7 +20,7 @@ class ApiTestTask(models.Model):
     time_interval_seconds = models.IntegerField(default=0, verbose_name='间隔时间-秒')
     is_enable = models.BooleanField(default=1, verbose_name='是否启用任务')
     is_send_email = models.BooleanField(default=1, verbose_name='是否发送邮件测试报告')
-    status = models.SmallIntegerField(choices=STATUS, default=0, verbose_name='任务运行状态')
+    status = models.CharField(max_length=32, verbose_name='任务运行状态')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     api_project = models.ForeignKey(ApiTestProject, verbose_name='所属项目', on_delete=models.CASCADE,
