@@ -13,7 +13,7 @@ class ApiTestBusinessTest(BaseModel):
     """
     name = models.CharField(max_length=128, unique=True, verbose_name='业务测试操作名称')
     description = models.TextField(null=True, verbose_name='业务测试操作描述')
-    api_module = models.ForeignKey(ApiTestModule, on_delete=models.CASCADE, verbose_name='所属模块',
+    api_module = models.ForeignKey(ApiTestModule, on_delete=models.SET_NULL, null=True, verbose_name='所属模块',
                                    related_name='api_test_business_test',
                                    related_query_name='api_test_business_test')
     api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='拥有测试用例',

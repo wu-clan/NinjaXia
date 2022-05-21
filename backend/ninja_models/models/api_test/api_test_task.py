@@ -22,9 +22,9 @@ class ApiTestTask(BaseModel):
     is_enable = models.BooleanField(default=1, verbose_name='是否启用任务')
     is_send_email = models.BooleanField(default=1, verbose_name='是否发送邮件测试报告')
     status = models.CharField(max_length=32, verbose_name='任务运行状态')
-    api_project = models.ForeignKey(ApiTestProject, verbose_name='所属项目', on_delete=models.CASCADE,
+    api_project = models.ForeignKey(ApiTestProject, on_delete=models.SET_NULL, null=True, verbose_name='所属项目',
                                     related_name='api_test_tasks', related_query_name='api_test_task')
-    api_business_test = models.ForeignKey(ApiTestBusinessTest, verbose_name='拥有业务测试', on_delete=models.CASCADE,
+    api_business_test = models.ForeignKey(ApiTestBusinessTest, on_delete=models.CASCADE, verbose_name='拥有业务测试',
                                           related_name='api_test_tasks', related_query_name='api_test_task')
 
     class Meta:
