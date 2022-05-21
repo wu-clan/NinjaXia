@@ -21,7 +21,9 @@ INSTALLED_APPS = [
     # 跨域
     'corsheaders',
     # apps
-    'ninja_models.apps.ModelsConfig'
+    'ninja_models.apps.ModelsConfig',
+    # 本地代理Swagger文档, 详情查看源码
+    'ninja'
 ]
 
 MIDDLEWARE = [
