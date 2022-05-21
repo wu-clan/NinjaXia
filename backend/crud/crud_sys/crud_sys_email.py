@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
 from backend.ninja_models.models import Sender, ReceiverGroup, Receiver
-from backend.schemas.v1.sm_sys.sm_sys_email import CreateSysEmailSender, UpdateSysEmailSender, \
+from backend.schemas.sm_sys.sm_sys_email import CreateSysEmailSender, UpdateSysEmailSender, \
     CreateSysEmailReceiverGroup, UpdateSysEmailReceiverGroup, CreateSysEmailReceiver, UpdateSysEmailReceiver
 
 

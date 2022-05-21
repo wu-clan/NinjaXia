@@ -5,11 +5,11 @@ from typing import List
 from ninja import Router
 from ninja.pagination import paginate
 
-from backend.api.security import GetCurrentUser, GetCurrentIsSuperuser
+from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
-from backend.crud.v1.crud_sys.crud_sys_email import crud_sender, crud_receiver_group, crud_receiver
+from backend.crud.crud_sys.crud_sys_email import crud_sender, crud_receiver_group, crud_receiver
 from backend.schemas import Response200, Response403, Response404
-from backend.schemas.v1.sm_sys.sm_sys_email import GetAllSysEmailReceiverGroup, CreateSysEmailReceiverGroup, \
+from backend.schemas.sm_sys.sm_sys_email import GetAllSysEmailReceiverGroup, CreateSysEmailReceiverGroup, \
     UpdateSysEmailReceiverGroup, GetAllSysEmailReceiver, CreateSysEmailReceiver, UpdateSysEmailReceiver, \
     SysEmailSenderBase
 from backend.utils.serialize_data import serialize_data

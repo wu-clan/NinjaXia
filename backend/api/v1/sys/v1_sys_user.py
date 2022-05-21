@@ -7,18 +7,18 @@ from email_validator import validate_email, EmailNotValidError
 from ninja import Router
 from ninja.pagination import paginate
 
-from backend.api.security import create_access_token, GetCurrentUser, GetCurrentIsSuperuser
+from backend.api.jwt_security import create_access_token, GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
-from backend.crud.v1.crud_sys.crud_sys_user import crud_user
+from backend.crud.crud_sys.crud_sys_user import crud_user
 from backend.schemas import Response200, Response404, Response403
-from backend.schemas.v1.sm_sys.sm_sys_token import Token
-from backend.schemas.v1.sm_sys.sm_sys_user import CreateUser, Login, GetAllUsers, UpdateUser
+from backend.schemas.sm_sys.sm_sys_token import Token
+from backend.schemas.sm_sys.sm_sys_user import CreateUser, Login, GetAllUsers, UpdateUser
 from backend.utils.serialize_data import serialize_data
 
 v1_sys_user = Router()
 
 
-@v1_sys_user.post('/login', summary='登录', description='Auth登录')
+@v1_sys_user.post('/login', summary='登录', response=Token)
 def login(request, obj: Login) -> Any:
     current_user = crud_user.get_user_by_username(obj.username)
     if not current_user:

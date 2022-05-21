@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 from django.utils import timezone
 
 from backend.crud.base import CRUDBase
-from backend.schemas.v1.sm_sys.sm_sys_user import CreateUser, UpdateUser
+from backend.schemas.sm_sys.sm_sys_user import CreateUser, UpdateUser
 
 
 class CRUDUser(CRUDBase[User, CreateUser, UpdateUser]):

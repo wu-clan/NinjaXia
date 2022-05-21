@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.ninja_models.models.v1.api_test.api_test_environment import ApiTestEnvironment
-from backend.ninja_models.models.v1.api_test.api_test_module import ApiTestModule
+from backend.ninja_models.models.base import BaseModel
+from backend.ninja_models.models.api_test.api_test_environment import ApiTestEnvironment
+from backend.ninja_models.models.api_test.api_test_module import ApiTestModule
 
 
-class ApiTestCase(models.Model):
+class ApiTestCase(BaseModel):
     """
     用例表
     """
@@ -19,8 +20,6 @@ class ApiTestCase(models.Model):
     body = models.TextField(null=True, verbose_name='请求参数')
     assert_type = models.CharField(max_length=32, verbose_name='断言类型')
     assert_text = models.TextField(null=True, verbose_name='断言内容')
-    created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     api_module = models.ForeignKey(ApiTestModule, on_delete=models.CASCADE, verbose_name='所属模块',
                                    related_name='api_test_case', related_query_name='api_test_case')
     api_environment = models.ForeignKey(ApiTestEnvironment, on_delete=models.CASCADE, verbose_name='所属环境',

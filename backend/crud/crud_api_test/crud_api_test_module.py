@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
 from backend.ninja_models.models import ApiTestModule
-from backend.schemas.v1.sm_api_test.sm_api_test_module import CreateApiTestModule, UpdateApiTestModule
+from backend.schemas.sm_api_test.sm_api_test_module import CreateApiTestModule, UpdateApiTestModule
 
 
 class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTestModule]):

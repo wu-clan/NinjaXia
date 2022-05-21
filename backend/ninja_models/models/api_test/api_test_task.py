@@ -3,10 +3,11 @@
 from django.db import models
 
 from backend.ninja_models.models import ApiTestBusinessTest
-from backend.ninja_models.models.v1.api_test.api_test_project import ApiTestProject
+from backend.ninja_models.models.base import BaseModel
+from backend.ninja_models.models.api_test.api_test_project import ApiTestProject
 
 
-class ApiTestTask(models.Model):
+class ApiTestTask(BaseModel):
     """
     任务表
     """
@@ -21,8 +22,6 @@ class ApiTestTask(models.Model):
     is_enable = models.BooleanField(default=1, verbose_name='是否启用任务')
     is_send_email = models.BooleanField(default=1, verbose_name='是否发送邮件测试报告')
     status = models.CharField(max_length=32, verbose_name='任务运行状态')
-    created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     api_project = models.ForeignKey(ApiTestProject, verbose_name='所属项目', on_delete=models.CASCADE,
                                     related_name='api_test_tasks', related_query_name='api_test_task')
     api_business_test = models.ForeignKey(ApiTestBusinessTest, verbose_name='拥有业务测试', on_delete=models.CASCADE,

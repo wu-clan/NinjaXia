@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from backend.ninja_models.models.base import BaseModel
 
-class Sender(models.Model):
+
+class Sender(BaseModel):
     """
     发件人
     """
@@ -21,7 +23,7 @@ class Sender(models.Model):
         db_table = 'sys_email_sender'
 
 
-class ReceiverGroup(models.Model):
+class ReceiverGroup(BaseModel):
     """
     收件人组
     """
@@ -35,7 +37,7 @@ class ReceiverGroup(models.Model):
         db_table = 'sys_email_receiver_group'
 
 
-class Receiver(models.Model):
+class Receiver(BaseModel):
     """
     收件人
     """

@@ -6,8 +6,8 @@ from ninja import Router
 from ninja.pagination import paginate
 
 from backend.common.pagination import CustomPagination
-from backend.crud.v1.crud_api_test.crud_api_test_task import crud_api_test_task
-from backend.schemas.v1.sm_api_test.sm_api_test_task import GetAllApiTestTasks
+from backend.crud.crud_api_test.crud_api_test_task import crud_api_test_task
+from backend.schemas.sm_api_test.sm_api_test_task import GetAllApiTestTasks
 
 v1_api_test_task = Router()
 
