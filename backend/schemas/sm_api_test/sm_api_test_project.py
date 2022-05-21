@@ -21,5 +21,7 @@ class UpdateApiTestProject(ApiTestProjectBase):
 
 class GetAllApiTestProjects(ApiTestProjectBase):
     id: int
+    creator: str = None
+    modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
