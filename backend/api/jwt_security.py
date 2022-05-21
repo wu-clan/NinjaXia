@@ -4,6 +4,7 @@ from datetime import timedelta, datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
+from django.http import HttpRequest
 from jose import jwt
 from ninja.security import HttpBearer
 from pydantic import ValidationError
@@ -31,7 +32,7 @@ def create_access_token(data: int, expires_delta: Optional[timedelta] = None) ->
 
 class GetCurrentUser(HttpBearer):
 
-    def authenticate(self, request, token) -> User:
+    def authenticate(self, request: HttpRequest, token: str) -> User:
         """
         验证当前用户并返回
         :param request:
@@ -49,12 +50,13 @@ class GetCurrentUser(HttpBearer):
         user = crud_user.get_user_by_id(user_id)
         # 将用户登录信息存入session
         # auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        request.session['username'] = user.username
         return user
 
 
 class GetCurrentIsSuperuser(GetCurrentUser):
 
-    def authenticate(self, request, token) -> User:
+    def authenticate(self, request: HttpRequest, token: str) -> User:
         """
         验证当前超级用户并返回
         :param request:

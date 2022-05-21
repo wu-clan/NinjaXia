@@ -95,8 +95,7 @@ USE_TZ = False
 
 # static
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'  # 收集静态文件：python manage.py collectstatic
-# STATICFILES_DIRS = [os.path.join(BASE_DIR / 'static')]
+STATIC_ROOT = BASE_DIR / 'static'
 
 # media path
 MEDIA_URL = '/media/'
@@ -113,6 +112,7 @@ CORS_ALLOW_METHODS = (
     'POST',
     'PUT',
     'DELETE',
+    'PATCH',
 )
 
 # NinjaAPI
