@@ -30,5 +30,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
     def delete_module(self, pk: int) -> ApiTestModule:
         return super().delete_one(pk)
 
+    def get_module_cases(self, pk: int) -> QuerySet:
+        return self.model.objects.filter(api_test_case__api_module=pk).all()
+
 
 crud_api_test_module = CRUDApiTestTask(ApiTestModule)

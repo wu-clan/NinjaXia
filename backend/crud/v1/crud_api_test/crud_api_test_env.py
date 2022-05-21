@@ -13,10 +13,10 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
     def get_all_envs(self) -> QuerySet:
         return super().get_all()
 
-    def get_env_by_id(self, pk) -> ApiTestEnvironment:
+    def get_env_by_id(self, pk: int) -> ApiTestEnvironment:
         return super().get(pk)
 
-    def get_env_by_name(self, name) -> ApiTestEnvironment:
+    def get_env_by_name(self, name: str) -> ApiTestEnvironment:
         return self.model.objects.filter(name=name).first()
 
     def create_env(self, data: CreateApiTestEnv) -> ApiTestEnvironment:
@@ -27,6 +27,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
 
     def delete_env(self, pk: int) -> ApiTestEnvironment:
         return super().delete_one(pk)
+
+    def get_env_cases(self, pk: int) -> QuerySet:
+        return self.model.objects.filter(api_test_case__api_environment=pk).all()
 
 
 crud_api_test_env = CRUDApiTestTask(ApiTestEnvironment)

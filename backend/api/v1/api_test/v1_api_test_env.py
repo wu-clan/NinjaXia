@@ -57,3 +57,12 @@ def delete_env(request, pk: int):
         return Response404(msg='环境不存在')
     _env = crud_api_test_env.delete_env(pk)
     return Response200(data=serialize_data(_env))
+
+
+@v1_api_test_env.get('/{int:pk}/cases', summary='获取单个环境所有用例', auth=GetCurrentUser())
+def get_case_env(request, pk: int):
+    _env = crud_api_test_env.get_env_by_id(pk)
+    if not _env:
+        return Response404(msg='环境不存在')
+    cases = crud_api_test_env.get_env_cases(pk)
+    return Response200(data=serialize_data(cases))

@@ -69,3 +69,12 @@ def delete_module(request, pk: int) -> Any:
     except Http404:
         raise Http404("未找到模块")
     return Response200(data=serialize_data(module))
+
+
+@v1_api_test_module.get('/{int:pk}/cases', summary='获取单个模块所有用例', auth=GetCurrentUser())
+def get_case_module(request, pk: int):
+    _module = crud_api_test_module.get_module_by_id(pk)
+    if not _module:
+        return Response404(msg='模块不存在')
+    cases = crud_api_test_module.get_module_cases(pk)
+    return Response200(data=serialize_data(cases))
