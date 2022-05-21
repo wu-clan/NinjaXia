@@ -12,11 +12,11 @@ class ApiTestProjectBase(Schema):
 
 
 class CreateApiTestProject(ApiTestProjectBase):
-    pass
+    ...
 
 
 class UpdateApiTestProject(ApiTestProjectBase):
-    name: str = None
+    ...
 
 
 class GetAllApiTestProjects(ApiTestProjectBase):

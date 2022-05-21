@@ -10,7 +10,8 @@ from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_project
 from backend.schemas import Response200, Response403
-from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects, ApiTestProjectBase
+from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects, CreateApiTestProject, \
+    UpdateApiTestProject
 from backend.utils.serialize_data import serialize_data
 
 v1_api_test_project = Router()
@@ -32,15 +33,17 @@ def get_one_project(request, pk: int) -> Any:
 
 
 @v1_api_test_project.post('', summary='添加项目', auth=GetCurrentIsSuperuser())
-def create_project(request, obj: ApiTestProjectBase) -> Any:
+def create_project(request, obj: CreateApiTestProject) -> Any:
     if crud_api_test_project.get_project_by_name(obj.name):
         return Response403(msg='项目已存在，请更改项目名称')
     _project = crud_api_test_project.create_project(obj)
+    _project.creator = request.session['username']
+    _project.save()
     return Response200(data=serialize_data(_project))
 
 
 @v1_api_test_project.put('/{int:pk}', summary='更新项目', auth=GetCurrentIsSuperuser())
-def update_project(request, pk: int, obj: ApiTestProjectBase) -> Any:
+def update_project(request, pk: int, obj: UpdateApiTestProject) -> Any:
     try:
         _project = crud_api_test_project.get_project_by_id(pk)
     except Http404:
@@ -50,6 +53,8 @@ def update_project(request, pk: int, obj: ApiTestProjectBase) -> Any:
         if crud_api_test_project.get_project_by_name(obj.name):
             return Response403(msg='项目已存在，请更改项目名称')
     _project = crud_api_test_project.update_project(pk, obj)
+    _project.modifier = request.session['username']
+    _project.save()
     return Response200(data=serialize_data(_project))
 
 
