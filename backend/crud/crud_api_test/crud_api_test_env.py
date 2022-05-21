@@ -13,6 +13,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
     def get_all_envs(self) -> QuerySet:
         return super().get_all()
 
+    def get_all_enable_envs(self) -> QuerySet:
+        return self.model.objects.filter(status=True).all()
+
     def get_env_by_id(self, pk: int) -> ApiTestEnvironment:
         return super().get(pk)
 

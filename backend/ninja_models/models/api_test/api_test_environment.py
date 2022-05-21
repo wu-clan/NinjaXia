@@ -10,6 +10,7 @@ class ApiTestEnvironment(BaseModel):
     API环境表
     """
     name = models.CharField(max_length=128, unique=True, verbose_name='环境名称')
+    host = models.CharField(max_length=128, verbose_name='环境地址')
     description = models.TextField(null=True, verbose_name='环境描述')
     status = models.BooleanField(default=1, verbose_name='环境状态')
 

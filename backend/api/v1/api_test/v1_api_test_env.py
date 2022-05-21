@@ -21,6 +21,12 @@ def get_all_envs(request):
     return crud_api_test_env.get_all_envs()
 
 
+@v1_api_test_env.get('/enable', summary='获取所有已启用环境', response=List[GetAllApiTestEnv], auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_all_enable_envs(request):
+    return crud_api_test_env.get_all_enable_envs()
+
+
 @v1_api_test_env.get('/{int:pk}', summary='获取单个环境', auth=GetCurrentUser())
 def get_one_env(request, pk: int):
     env = crud_api_test_env.get_env_by_id(pk)
@@ -35,6 +41,8 @@ def create_env(request, obj: CreateApiTestEnv):
     if env:
         return Response403(msg='环境已存在, 请更换环境名称')
     new_env = crud_api_test_env.create_env(obj)
+    new_env.creator = request.session['username']
+    new_env.save()
     return Response200(data=serialize_data(new_env))
 
 
@@ -47,6 +55,8 @@ def update_env(request, pk: int, obj: CreateApiTestEnv):
         if crud_api_test_env.get_env_by_name(obj.name):
             return Response403(msg='环境已存在, 请更换环境名称')
     new_env = crud_api_test_env.update_env(pk, obj)
+    new_env.modifier = request.session['username']
+    new_env.save()
     return Response200(data=serialize_data(new_env))
 
 
