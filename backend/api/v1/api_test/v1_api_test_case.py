@@ -41,9 +41,13 @@ def create_case(request, obj: CreateApiTestCase):
     _env = crud_api_test_env.get_env_by_id(obj.api_environment)
     if not _env:
         return Response404(msg='环境不存在')
+    if not _env.status:
+        return Response403(msg='所选环境已停用, 请选择其他环境')
     obj.api_module = _module
     obj.api_environment = _env
     case = crud_api_test_case.create_case(obj)
+    case.creator = request.sessionp['username']
+    case.save()
     return Response200(data=serialize_data(case))
 
 
@@ -61,9 +65,13 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     _env = crud_api_test_env.get_env_by_id(obj.api_environment)
     if not _env:
         return Response404(msg='环境不存在')
+    if not _env.status:
+        return Response403(msg='所选环境已停用, 请选择其他环境')
     obj.api_module = _module
     obj.api_environment = _env
     case = crud_api_test_case.update_case(pk, obj)
+    case.modifier = request.sessionp['username']
+    case.save()
     return Response200(data=serialize_data(case))
 
 

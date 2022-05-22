@@ -27,8 +27,5 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
     def delete_case(self, pk: int) -> ApiTestCase:
         return super().delete_one(pk)
 
-    def get_cases_by_env_id(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_environment=pk)
-
 
 crud_api_test_case = CRUDApiTestTask(ApiTestCase)

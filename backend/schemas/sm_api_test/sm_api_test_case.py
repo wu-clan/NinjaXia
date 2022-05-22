@@ -61,5 +61,7 @@ class GetAllApiTestCase(ApiTestCaseBase):
     id: int
     api_module_id: int
     api_environment_id: int
+    creator: str = None
+    modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
