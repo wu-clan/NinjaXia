@@ -13,7 +13,7 @@ class ApiTestReport(BaseModel):
     name = models.CharField(max_length=128, verbose_name='测试报告名称')
     error_num = models.BigIntegerField(null=True, verbose_name='失败总数')
     pass_num = models.BigIntegerField(null=True, verbose_name='成功总数')
-    api_number = models.BigIntegerField(null=True, verbose_name='API总数')
+    case_num = models.BigIntegerField(null=True, verbose_name='用例总数')
     api_task = models.ForeignKey(ApiTestTask, on_delete=models.CASCADE, verbose_name='所属任务',
                                  related_name='api_test_report', related_query_name='api_test_report')
 
@@ -31,12 +31,15 @@ class ApiTestReportDetail(BaseModel):
     name = models.CharField(max_length=128, unique=True, verbose_name='测试用例名称')
     business_test_name = models.CharField(max_length=128, verbose_name='业务测试名称')
     url = models.TextField(verbose_name='测试用例请求URL')
-    method = models.CharField(max_length=128, verbose_name='测试用例请求方法')
-    body = models.TextField(null=True, verbose_name='测试用例请求参数')
-    headers = models.TextField(null=True, verbose_name='测试用例请求头')
-    status_code = models.IntegerField(null=True, verbose_name='测试用例返回状态码')
-    response_data = models.TextField(null=True, verbose_name='测试用例返回数据')
-    assert_result = models.TextField(null=True, verbose_name='测试用例断言结果')
+    method = models.CharField(max_length=128, verbose_name='接口用例请求方法')
+    body = models.TextField(null=True, verbose_name='接口用例请求参数')
+    headers = models.TextField(null=True, verbose_name='接口用例请求头')
+    status_code = models.IntegerField(null=True, verbose_name='接口用例响应状态码')
+    response_data = models.TextField(null=True, verbose_name='接口用例响应结果')
+    execute_time = models.DateTimeField(verbose_name='执行时间')
+    response_time = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='响应时长(ms)')
+    assert_result = models.TextField(null=True, verbose_name='接口用例断言结果')
+    run_status = models.CharField(max_length=32, default='FAIL', verbose_name='执行状态')
     api_task = models.ForeignKey(ApiTestTask, on_delete=models.CASCADE, verbose_name='所属任务',
                                  related_name='api_test_report_detail', related_query_name='api_test_report_detail')
     api_report = models.ForeignKey(ApiTestReport, on_delete=models.CASCADE, verbose_name='所属报告',

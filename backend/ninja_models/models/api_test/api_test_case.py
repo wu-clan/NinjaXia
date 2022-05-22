@@ -15,6 +15,7 @@ class ApiTestCase(BaseModel):
     description = models.TextField(null=True, verbose_name='用例描述')
     url = models.TextField(verbose_name='请求URL')
     method = models.CharField(max_length=32, verbose_name='请求方法')
+    params = models.TextField(null=True, verbose_name='查询参数')
     headers = models.TextField(null=True, verbose_name='请求头')
     body_type = models.CharField(max_length=32, verbose_name='请求参数类型')
     body = models.TextField(null=True, verbose_name='请求参数')
