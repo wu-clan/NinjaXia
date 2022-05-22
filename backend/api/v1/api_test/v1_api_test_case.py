@@ -46,7 +46,7 @@ def create_case(request, obj: CreateApiTestCase):
     obj.api_module = _module
     obj.api_environment = _env
     case = crud_api_test_case.create_case(obj)
-    case.creator = request.sessionp['username']
+    case.creator = request.session['username']
     case.save()
     return Response200(data=serialize_data(case))
 
@@ -70,15 +70,16 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     obj.api_module = _module
     obj.api_environment = _env
     case = crud_api_test_case.update_case(pk, obj)
-    case.modifier = request.sessionp['username']
+    case.modifier = request.session['username']
     case.save()
     return Response200(data=serialize_data(case))
 
 
-@v1_api_test_case.delete('/{int:pk}', summary='删除用例', auth=GetCurrentIsSuperuser())
-def delete_case(request, pk: int):
-    case = crud_api_test_case.get_case_by_id(pk)
-    if not case:
-        return Response404(msg='用例不存在')
-    case = crud_api_test_case.delete_case(pk)
-    return Response200(data=serialize_data(case))
+@v1_api_test_case.delete('', summary='批量删除用例', auth=GetCurrentIsSuperuser())
+def delete_case(request, pk: List[int]):
+    for i in pk:
+        case = crud_api_test_case.get_case_by_id(i)
+        if not case:
+            return Response404(msg=f'用例 {i} 不存在')
+    crud_api_test_case.delete_case(pk)
+    return Response200()

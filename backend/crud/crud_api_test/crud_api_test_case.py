@@ -24,8 +24,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
     def update_case(self, pk: int, data: UpdateApiTestCase) -> ApiTestCase:
         return super().update_one(pk, data)
 
-    def delete_case(self, pk: int) -> ApiTestCase:
-        return super().delete_one(pk)
+    def delete_case(self, pk: list) -> tuple:
+        return self.model.objects.filter(id__in=pk).delete()
 
 
 crud_api_test_case = CRUDApiTestTask(ApiTestCase)
