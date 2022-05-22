@@ -118,6 +118,7 @@ def register_exception(app: NinjaAPI):
     def authorization_error(request, exc: AuthorizationError):
         """
         用户权限异常
+
         :param request:
         :param exc:
         :return:
@@ -132,6 +133,7 @@ def register_exception(app: NinjaAPI):
     def token_error(request, exc: TokenError):
         """
         Token异常
+
         :param request:
         :param exc:
         :return:
@@ -146,6 +148,7 @@ def register_exception(app: NinjaAPI):
     def http_exception_handler(request, exc: HttpError):
         """
         全局HTTP异常处理
+
         :param request:
         :param exc:
         :return:
@@ -162,6 +165,7 @@ def register_exception(app: NinjaAPI):
     def http_exception_handler(request, exc: Http404):
         """
         全局HTTP404异常处理
+
         :param request:
         :param exc:
         :return:
@@ -176,6 +180,7 @@ def register_exception(app: NinjaAPI):
     # def all_exception_handler(request, exc: Exception):
     #     """
     #     全局异常处理
+    #
     #     :param request:
     #     :param exc:
     #     :return:
@@ -192,6 +197,7 @@ def register_exception(app: NinjaAPI):
     def validation_error(request, exc: NinjaValidationError):
         """
         Ninja全局请求数据验证异常处理
+
         :param request:
         :param exc:
         :return:
@@ -206,6 +212,7 @@ def register_exception(app: NinjaAPI):
     def validation_error(request, exc: PydanticValidationError):
         """
         Pydantic全局请求数据验证异常处理
+
         :param request:
         :param exc:
         :return:

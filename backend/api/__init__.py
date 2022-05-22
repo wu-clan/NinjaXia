@@ -35,6 +35,7 @@ def register_app():
 def register_router(app: NinjaAPI):
     """
     注册路由
+
     :param app:
     :return:
     """
