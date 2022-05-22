@@ -10,10 +10,10 @@ from backend.schemas.sm_api_test.sm_api_test_project import CreateApiTestProject
 class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateApiTestProject]):
 
     def get_all_projects(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
     def get_all_enable_projects(self) -> QuerySet:
-        return self.model.objects.filter(status=1).all()
+        return self.model.objects.filter(status=1).all().order_by('-modified_time')
 
     def get_project_by_name(self, name: str) -> ApiTestProject:
         return self.model.objects.filter(name=name).first()
@@ -37,7 +37,7 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
         return super().delete_one(pk)
 
     def get_project_modules(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_test_module__api_project=pk).all()
+        return self.model.objects.filter(api_test_module__api_project=pk).all().order_by('-modified_time')
 
 
 crud_api_test_project = CRUDApiTestProject(ApiTestProject)

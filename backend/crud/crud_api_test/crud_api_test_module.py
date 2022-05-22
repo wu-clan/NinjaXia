@@ -10,7 +10,7 @@ from backend.schemas.sm_api_test.sm_api_test_module import CreateApiTestModule, 
 class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTestModule]):
 
     def get_all_modules(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
     def get_module_by_id(self, pk: int) -> ApiTestModule:
         return super().get(pk=pk)
@@ -31,7 +31,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
         return super().delete_one(pk)
 
     def get_module_cases(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_test_case__api_module=pk).all()
+        return self.model.objects.filter(api_test_case__api_module=pk).all().order_by('-modified_time')
 
 
 crud_api_test_module = CRUDApiTestTask(ApiTestModule)

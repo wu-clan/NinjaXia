@@ -10,7 +10,7 @@ from backend.schemas.sm_api_test.sm_api_test_report import CreateApiTestReport, 
 class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTestReport]):
 
     def get_all_reports(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
 
 crud_api_test_report = CRUDApiTestTask(ApiTestReport)

@@ -11,10 +11,10 @@ from backend.schemas.sm_api_test.sm_api_test_task import UpdateApiTestTask
 class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTestTask]):
 
     def get_all_envs(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
     def get_all_enable_envs(self) -> QuerySet:
-        return self.model.objects.filter(status=True).all()
+        return self.model.objects.filter(status=True).all().order_by('-modified_time')
 
     def get_env_by_id(self, pk: int) -> ApiTestEnvironment:
         return super().get(pk)
@@ -32,7 +32,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
         return super().delete_one(pk)
 
     def get_env_cases(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_test_case__api_environment=pk).all()
+        return self.model.objects.filter(api_test_case__api_environment=pk).all().order_by('-modified_time')
 
 
 crud_api_test_env = CRUDApiTestTask(ApiTestEnvironment)

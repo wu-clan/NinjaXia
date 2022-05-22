@@ -10,7 +10,7 @@ from backend.schemas.sm_api_test.sm_api_test_case import CreateApiTestCase, Upda
 class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase]):
 
     def get_all_cases(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
     def get_case_by_id(self, pk: int) -> ApiTestCase:
         return super().get(pk)

@@ -10,7 +10,7 @@ from backend.schemas.sm_api_test.sm_api_test_task import CreateApiTestTask, Upda
 class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask]):
 
     def get_all_tasks(self) -> QuerySet:
-        return super().get_all()
+        return super().get_all().order_by('-modified_time')
 
 
 crud_api_test_task = CRUDApiTestTask(ApiTestTask)
