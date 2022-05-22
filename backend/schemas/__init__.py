@@ -12,6 +12,8 @@ from ninja.renderers import BaseRenderer
 from pydantic import Field
 from pydantic import ValidationError as PydanticValidationError
 
+from backend.common.log import log
+
 
 class ORJSONParser(Parser):
     """
@@ -148,9 +150,11 @@ def register_exception(app: NinjaAPI):
         :param exc:
         :return:
         """
+        err_msg = "".join(exc.args)
+        log.error(err_msg)
         return app.create_response(
             request,
-            data=Response400(code=exc.status_code, msg="".join(exc.args)),
+            data=Response400(code=exc.status_code, msg=err_msg),
             status=exc.status_code,
         )
 
@@ -176,9 +180,11 @@ def register_exception(app: NinjaAPI):
     #     :param exc:
     #     :return:
     #     """
+    #     err_msg = "".join(exc.args)
+    #     log.error(err_msg)
     #     return app.create_response(
     #         request,
-    #         data=Response500(msg="".join(exc.args)),
+    #         data=Response500(msg=err_msg),
     #         status=500,
     #     )
 
