@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
+
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
@@ -19,10 +21,16 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
         return self.model.objects.filter(name=name).first()
 
     def create_case(self, data: CreateApiTestCase) -> ApiTestCase:
-        return super().create(data)
+        case = super().create(data)
+        case.params = json.loads(str(case.params))
+        case.headers = json.loads(str(case.headers))
+        return case
 
     def update_case(self, pk: int, data: UpdateApiTestCase) -> ApiTestCase:
-        return super().update_one(pk, data)
+        case = super().update_one(pk, data)
+        case.params = json.loads(str(case.params))
+        case.headers = json.loads(str(case.headers))
+        return case
 
     def delete_case(self, pk: list) -> tuple:
         return self.model.objects.filter(id__in=pk).delete()

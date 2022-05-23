@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
+import json
+from typing import Any
 
 from ninja import Schema
 from pydantic import validator
@@ -11,26 +13,16 @@ class ApiTestCaseBase(Schema):
     description: str = None
     url: str
     method: str
+    params: dict = None
     headers: dict = None
     body_type: str
-    body: str = None
-    assert_type: str
-    assert_text: str = None
+    body: Any = None
+    assert_text: Any = None
 
     @validator('method')
     def check_method(cls, value):
         if value not in ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']:
             raise ValueError('method param error')
-        return value
-
-    @validator('headers')
-    def check_headers(cls, value):
-        if value is None:
-            return value
-        if not isinstance(value, dict):
-            raise ValueError('headers param must be dict')
-        if not value:
-            raise ValueError('headers param must not be empty')
         return value
 
     @validator('body_type')
@@ -40,10 +32,10 @@ class ApiTestCaseBase(Schema):
             raise ValueError('body_type param error')
         return value
 
-    @validator('assert_type')
-    def check_assert_type(cls, value):
-        if value not in ['nothing', 'status_code', 'contains', 'not_contains', 'matches']:
-            raise ValueError('assert_type param error')
+    @validator('assert_text')
+    def check_assert_text(cls, value):
+        if '"' in value:
+            raise ValueError('assert_text param error')
         return value
 
 
@@ -65,3 +57,16 @@ class GetAllApiTestCase(ApiTestCaseBase):
     modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
+
+    @validator('params')
+    def loads_params(cls, value):
+        return json.loads(json.dumps(value))
+
+    @validator('headers')
+    def loads_headers(cls, value):
+        return json.loads(json.dumps(value))
+
+
+class ExtraDebugArgs(Schema):
+    cookies: dict = None
+    timeout: int = None
