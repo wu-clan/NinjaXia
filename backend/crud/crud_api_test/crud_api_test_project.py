@@ -40,7 +40,7 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
         return super().delete_one(pk)
 
     def get_project_modules(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_test_module__api_project=pk).all().order_by('-modified_time')
+        return super().get(pk).api_test_module.all().order_by('-modified_time')
 
 
 crud_api_test_project = CRUDApiTestProject(ApiTestProject)
