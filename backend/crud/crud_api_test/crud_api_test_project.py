@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
@@ -27,9 +28,11 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
     def get_project_status(self, pk: int) -> str:
         return super().get(pk=pk).status
 
+    @transaction.atomic
     def create_project(self, project: CreateApiTestProject) -> ApiTestProject:
         return super().create(project)
 
+    @transaction.atomic
     def update_project(self, pk: int, project: UpdateApiTestProject) -> ApiTestProject:
         return super().update_one(pk, project)
 

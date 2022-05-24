@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
@@ -22,9 +23,11 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
     def get_env_by_name(self, name: str) -> ApiTestEnvironment:
         return self.model.objects.filter(name=name).first()
 
+    @transaction.atomic
     def create_env(self, data: CreateApiTestEnv) -> ApiTestEnvironment:
         return super().create(data)
 
+    @transaction.atomic
     def update_env(self, pk: int, data: UpdateApiTestTask) -> ApiTestEnvironment:
         return super().update_one(pk, data)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
@@ -21,9 +22,11 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
     def get_module_name_by_id(self, pk: int) -> str:
         return self.get(pk=pk).name
 
+    @transaction.atomic
     def create_module(self, create_module: CreateApiTestModule) -> ApiTestModule:
         return super().create(create_module)
 
+    @transaction.atomic
     def update_module(self, pk: int, update_module: UpdateApiTestModule) -> ApiTestModule:
         return super().update_one(pk, update_module)
 
