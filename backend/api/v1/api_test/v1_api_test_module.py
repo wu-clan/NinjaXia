@@ -11,6 +11,7 @@ from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
 from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_project
 from backend.schemas import Response200, Response403, Response404
+from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules, CreateApiTestModule, \
     UpdateApiTestModule
 from backend.utils.serializers import serialize_data
@@ -79,10 +80,14 @@ def delete_module(request, pk: int) -> Any:
     return Response200(data=serialize_data(module))
 
 
-@v1_api_test_module.get('/{int:pk}/cases', summary='获取单个模块所有用例', auth=GetCurrentUser())
+@v1_api_test_module.get('/{int:pk}/cases', response={200: Response200, 404: Response404},
+                        summary='获取单个模块所有用例', auth=GetCurrentUser())
 def get_case_module(request, pk: int):
     _module = crud_api_test_module.get_module_by_id(pk)
     if not _module:
-        return Response404(msg='模块不存在')
-    cases = crud_api_test_module.get_module_cases(pk)
-    return Response200(data=serialize_data(cases))
+        return 404, {'msg': '模块不存在'}
+    _cases = crud_api_test_module.get_module_cases(pk)
+    cases = []
+    for case in _cases:
+        cases.append(serialize_data(case))
+    return Response200(data=cases)
