@@ -9,19 +9,19 @@ from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.schemas import Response404, Response200, Response403
-from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnv, CreateApiTestEnv
+from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnvs, CreateApiTestEnv
 from backend.utils.serialize_data import serialize_data
 
 v1_api_test_env = Router()
 
 
-@v1_api_test_env.get('', summary='获取所有环境', response=List[GetAllApiTestEnv], auth=GetCurrentUser())
+@v1_api_test_env.get('', summary='获取所有环境', response=List[GetAllApiTestEnvs], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_envs(request):
     return crud_api_test_env.get_all_envs()
 
 
-@v1_api_test_env.get('/enable', summary='获取所有已启用环境', response=List[GetAllApiTestEnv], auth=GetCurrentUser())
+@v1_api_test_env.get('/enable', summary='获取所有已启用环境', response=List[GetAllApiTestEnvs], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_enable_envs(request):
     return crud_api_test_env.get_all_enable_envs()

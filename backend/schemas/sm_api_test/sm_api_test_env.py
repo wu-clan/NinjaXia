@@ -27,7 +27,7 @@ class UpdateApiTestEnv(ApiTestEnvBase):
     ...
 
 
-class GetAllApiTestEnv(ApiTestEnvBase):
+class GetAllApiTestEnvs(ApiTestEnvBase):
     id: int
     creator: str = None
     modifier: str = None
