@@ -69,10 +69,14 @@ def delete_env(request, pk: int):
     return Response200(data=serialize_data(_env))
 
 
-@v1_api_test_env.get('/{int:pk}/cases', summary='获取单个环境所有用例', auth=GetCurrentUser())
+@v1_api_test_env.get('/{int:pk}/cases', response={200: Response200, 404: Response404},
+                     summary='获取单个环境所有用例', auth=GetCurrentUser())
 def get_case_env(request, pk: int):
     _env = crud_api_test_env.get_env_by_id(pk)
     if not _env:
         return Response404(msg='环境不存在')
-    cases = crud_api_test_env.get_env_cases(pk)
-    return Response200(data=serialize_data(cases))
+    _cases = crud_api_test_env.get_env_cases(pk)
+    cases = []
+    for case in _cases:
+        cases.append(serialize_data(case))
+    return Response200(data=cases)
