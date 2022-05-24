@@ -117,6 +117,8 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
     case = crud_api_test_case.get_case_by_id(pk)
     if not case:
         return Response404(msg='用例不存在')
+    if not case.api_environment:
+        return Response403(msg='用例未绑定环境, 请先绑定环境')
     if not case.api_environment.status:
         return Response403(msg='用例依赖环境已停用, 请更新使用环境')
     url = case.api_environment.host + case.url
