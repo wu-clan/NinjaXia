@@ -13,7 +13,7 @@ from backend.crud.crud_sys.crud_sys_user import crud_user
 from backend.schemas import Response200, Response404, Response403
 from backend.schemas.sm_sys.sm_sys_token import Token
 from backend.schemas.sm_sys.sm_sys_user import CreateUser, Login, GetAllUsers, UpdateUser
-from backend.utils.serialize_data import serialize_data
+from backend.utils.serializers import serialize_data
 
 v1_sys_user = Router()
 

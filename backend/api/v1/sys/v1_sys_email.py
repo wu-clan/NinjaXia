@@ -12,7 +12,7 @@ from backend.schemas import Response200, Response403, Response404
 from backend.schemas.sm_sys.sm_sys_email import GetAllSysEmailReceiverGroup, CreateSysEmailReceiverGroup, \
     UpdateSysEmailReceiverGroup, GetAllSysEmailReceiver, CreateSysEmailReceiver, UpdateSysEmailReceiver, \
     SysEmailSenderBase
-from backend.utils.serialize_data import serialize_data
+from backend.utils.serializers import serialize_data
 
 v1_sys_email = Router()
 

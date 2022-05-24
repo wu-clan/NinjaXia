@@ -13,7 +13,7 @@ from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_proje
 from backend.schemas import Response200, Response403, Response404
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules, CreateApiTestModule, \
     UpdateApiTestModule
-from backend.utils.serialize_data import serialize_data
+from backend.utils.serializers import serialize_data
 
 v1_api_test_module = Router()
 

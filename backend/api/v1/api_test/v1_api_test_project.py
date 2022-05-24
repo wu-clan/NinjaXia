@@ -12,7 +12,7 @@ from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_proje
 from backend.schemas import Response200, Response403
 from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects, CreateApiTestProject, \
     UpdateApiTestProject
-from backend.utils.serialize_data import serialize_data
+from backend.utils.serializers import serialize_data
 
 v1_api_test_project = Router()
 
