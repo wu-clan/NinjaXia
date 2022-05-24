@@ -4,6 +4,8 @@ import datetime
 
 from ninja import Schema
 
+from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects
+
 
 class ApiTestModuleBase(Schema):
     name: str
@@ -20,7 +22,7 @@ class UpdateApiTestModule(ApiTestModuleBase):
 
 class GetAllApiTestModules(ApiTestModuleBase):
     id: int
-    api_project_id: int
+    api_project: GetAllApiTestProjects = None
     creator: str = None
     modifier: str = None
     created_time: datetime.datetime

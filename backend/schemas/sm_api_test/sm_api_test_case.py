@@ -7,6 +7,9 @@ from typing import Any
 from ninja import Schema
 from pydantic import validator
 
+from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnvs
+from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules
+
 
 class ApiTestCaseBase(Schema):
     name: str
@@ -51,8 +54,8 @@ class UpdateApiTestCase(ApiTestCaseBase):
 
 class GetAllApiTestCase(ApiTestCaseBase):
     id: int
-    api_module_id: int
-    api_environment_id: int
+    api_module: GetAllApiTestModules = None
+    api_environment: GetAllApiTestEnvs = None
     creator: str = None
     modifier: str = None
     created_time: datetime.datetime
