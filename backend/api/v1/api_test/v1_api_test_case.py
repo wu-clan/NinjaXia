@@ -31,8 +31,6 @@ def get_one_case(request, pk: int):
     case = crud_api_test_case.get_case_by_id(pk)
     if not case:
         return Response404(msg='用例不存在')
-    case.params = json.loads(str(case.params))
-    case.headers = json.loads(str(case.headers))
     return Response200(data=serialize_data(case))
 
 
