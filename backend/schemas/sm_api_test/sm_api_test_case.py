@@ -52,7 +52,7 @@ class UpdateApiTestCase(ApiTestCaseBase):
     api_environment: int
 
 
-class GetAllApiTestCase(ApiTestCaseBase):
+class GetAllApiTestCases(ApiTestCaseBase):
     id: int
     api_module: GetAllApiTestModules = None
     api_environment: GetAllApiTestEnvs = None

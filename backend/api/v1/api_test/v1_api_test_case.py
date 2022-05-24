@@ -14,13 +14,13 @@ from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
 from backend.schemas import Response404, Response200, Response403
-from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCase, CreateApiTestCase, ExtraDebugArgs
+from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs
 from backend.utils.serializers import serialize_data
 
 v1_api_test_case = Router()
 
 
-@v1_api_test_case.get('', summary='获取所有用例', response=List[GetAllApiTestCase], auth=GetCurrentUser())
+@v1_api_test_case.get('', summary='获取所有用例', response=List[GetAllApiTestCases], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_cases(request):
     return crud_api_test_case.get_all_cases()
