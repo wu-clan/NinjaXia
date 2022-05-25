@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
+from django.http import Http404
 from ninja import Router
 from ninja.pagination import paginate
 
@@ -9,6 +10,7 @@ from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.schemas import Response404, Response200, Response403
+from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
 from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnvs, CreateApiTestEnv
 from backend.utils.serializers import serialize_data
 
@@ -69,14 +71,12 @@ def delete_env(request, pk: int):
     return Response200()
 
 
-@v1_api_test_env.get('/{int:pk}/cases', response={200: Response200, 404: Response404},
-                     summary='获取单个环境所有用例', auth=GetCurrentUser())
-def get_case_env(request, pk: int):
-    _env = crud_api_test_env.get_env_by_id(pk)
-    if not _env:
-        return Response404(msg='环境不存在')
-    _cases = crud_api_test_env.get_env_cases(pk)
-    cases = []
-    for case in _cases:
-        cases.append(serialize_data(case))
-    return Response200(data=cases)
+@v1_api_test_env.get('/{int:pk}/cases', response=List[GetAllApiTestCases], summary='获取单个环境所有用例', auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_one_env_cases(request, pk: int):
+    try:
+        _env = crud_api_test_env.get_env_or_404(pk)
+    except Http404:
+        raise Http404('环境不存在')
+    cases = crud_api_test_env.get_env_cases(pk)
+    return cases

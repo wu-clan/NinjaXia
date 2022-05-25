@@ -20,6 +20,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
     def get_env_by_id(self, pk: int) -> ApiTestEnvironment:
         return super().get(pk)
 
+    def get_env_or_404(self, pk: int) -> ApiTestEnvironment:
+        return super().get_object_or_404(pk)
+
     def get_env_by_name(self, name: str) -> ApiTestEnvironment:
         return self.model.objects.filter(name=name).first()
 
