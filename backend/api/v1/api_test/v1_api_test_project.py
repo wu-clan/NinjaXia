@@ -68,10 +68,10 @@ def update_project(request, pk: int, obj: UpdateApiTestProject) -> Any:
 @v1_api_test_project.delete('/{int:pk}', summary='删除项目', auth=GetCurrentIsSuperuser())
 def delete_project(request, pk: int) -> Any:
     try:
-        _project = crud_api_test_project.delete_project(pk)
+        crud_api_test_project.delete_project(pk)
     except Http404:
         raise Http404("未找到项目")
-    return Response200(data=serialize_data(_project))
+    return Response200()
 
 
 @v1_api_test_project.get('/{int:pk}/modules', response={200: Response200, 404: Response404},

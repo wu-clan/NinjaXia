@@ -74,10 +74,10 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
 @v1_api_test_module.delete('/{int:pk}', summary='删除模块', auth=GetCurrentIsSuperuser())
 def delete_module(request, pk: int) -> Any:
     try:
-        module = crud_api_test_module.delete_module(pk)
+        crud_api_test_module.delete_module(pk)
     except Http404:
         raise Http404("未找到模块")
-    return Response200(data=serialize_data(module))
+    return Response200()
 
 
 @v1_api_test_module.get('/{int:pk}/cases', response={200: Response200, 404: Response404},
