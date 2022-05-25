@@ -7,6 +7,7 @@ from typing import Any
 from ninja import Schema
 from pydantic import validator
 
+from backend.schemas import Response200
 from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnvs
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules
 
@@ -73,3 +74,7 @@ class GetAllApiTestCases(ApiTestCaseBase):
 class ExtraDebugArgs(Schema):
     cookies: dict = None
     timeout: int = None
+
+
+class ApiTestCaseResponse(Response200):
+    data: GetAllApiTestCases = None

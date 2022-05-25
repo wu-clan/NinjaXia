@@ -14,8 +14,8 @@ from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
 from backend.schemas import Response404, Response200, Response403
-from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs
-from backend.utils.serializers import serialize_data
+from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
+    ApiTestCaseResponse
 
 v1_api_test_case = Router()
 
@@ -28,10 +28,10 @@ def get_all_cases(request):
 
 @v1_api_test_case.get('/{int:pk}', summary='获取单个用例', auth=GetCurrentUser())
 def get_one_case(request, pk: int):
-    case = crud_api_test_case.get_case_by_id(pk)
+    case = crud_api_test_case.get_one_case(pk)
     if not case:
         return Response404(msg='用例不存在')
-    return Response200(data=serialize_data(case))
+    return ApiTestCaseResponse(data=case)
 
 
 @v1_api_test_case.post('', summary='新增用例', auth=GetCurrentIsSuperuser())
@@ -51,7 +51,12 @@ def create_case(request, obj: CreateApiTestCase):
     else:
         return Response403(msg='params格式错误')
     if isinstance(obj.headers, dict):
-        obj.headers = json.dumps(obj.headers, ensure_ascii=False)
+        if len(obj.headers) > 0:
+            for _ in obj.headers.values():
+                if not isinstance(_, str):
+                    return Response403(msg='headers格式错误')
+        else:
+            obj.headers = json.dumps(obj.headers, ensure_ascii=False)
     else:
         return Response403(msg='headers格式错误')
     if obj.body_type == 'JSON' or obj.body_type == 'form-data' or obj.body_type == 'x-www-form-urlencoded' or \
@@ -62,7 +67,7 @@ def create_case(request, obj: CreateApiTestCase):
     case = crud_api_test_case.create_case(obj)
     case.creator = request.session['username']
     case.save()
-    return Response200(data=serialize_data(case))
+    return ApiTestCaseResponse(data=case)
 
 
 @v1_api_test_case.put('/{int:pk}', summary='更新用例', auth=GetCurrentIsSuperuser())
@@ -86,7 +91,12 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     else:
         return Response403(msg='params格式错误')
     if isinstance(obj.headers, dict):
-        obj.headers = json.dumps(obj.headers, ensure_ascii=False)
+        if len(obj.headers) > 0:
+            for _ in obj.headers.values():
+                if not isinstance(_, str):
+                    return Response403(msg='headers格式错误')
+        else:
+            obj.headers = json.dumps(obj.headers, ensure_ascii=False)
     else:
         return Response403(msg='headers格式错误')
     if obj.body_type == 'JSON' or obj.body_type == 'form-data' or obj.body_type == 'x-www-form-urlencoded' or \
@@ -97,7 +107,7 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     case = crud_api_test_case.update_case(pk, obj)
     case.modifier = request.session['username']
     case.save()
-    return Response200(data=serialize_data(case))
+    return ApiTestCaseResponse(data=case)
 
 
 @v1_api_test_case.delete('', summary='批量删除用例', auth=GetCurrentIsSuperuser())
@@ -115,6 +125,8 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
     case = crud_api_test_case.get_case_by_id(pk)
     if not case:
         return Response404(msg='用例不存在')
+    if not case.api_module.api_project.status:
+        return Response403(msg='此用例所属项目已停用, 不支持此操作')
     if not case.api_environment:
         return Response403(msg='用例未绑定环境, 请先绑定环境')
     if not case.api_environment.status:

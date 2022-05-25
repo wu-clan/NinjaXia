@@ -58,6 +58,12 @@ class HttpTestCaseDebug:
         log.info(f'Body: {self.body}')
         log.info(f'Assert Text: {self.assert_text}')
 
+        # 加固请求参数
+        if len(self.headers) > 0:
+            for _ in self.headers.values():
+                if not isinstance(_, str):
+                    raise ValueError('headers格式错误')
+
         # 解析请求body
         data = None
         files = None
