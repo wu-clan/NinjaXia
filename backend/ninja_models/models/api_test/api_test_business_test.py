@@ -16,12 +16,27 @@ class ApiTestBusinessTest(BaseModel):
     api_module = models.ForeignKey(ApiTestModule, on_delete=models.SET_NULL, null=True, verbose_name='所属模块',
                                    related_name='api_test_business_test',
                                    related_query_name='api_test_business_test')
-    api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='拥有测试用例',
-                                 related_name='api_test_business_test',
-                                 related_query_name='api_test_business_test')
 
     class Meta:
         db_table = 'sys_api_test_business_test'
 
     def __str__(self):
         return self.name
+
+
+class ApiTestBusinessTestAndCase(BaseModel):
+    """
+    API业务测试及用例关联表
+    """
+    api_business_test = models.ForeignKey(ApiTestBusinessTest, on_delete=models.CASCADE, verbose_name='所属业务测试',
+                                          related_name='api_test_business_test_and_case',
+                                          related_query_name='api_test_business_test_and_case')
+    api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='所属测试用例',
+                                 related_name='api_test_business_test_and_case',
+                                 related_query_name='api_test_business_test_and_case')
+
+    class Meta:
+        db_table = 'sys_api_test_business_test_and_case'
+
+    def __str__(self):
+        return self.api_business_test.name
