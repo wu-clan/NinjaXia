@@ -13,6 +13,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
     def get_all_modules(self) -> QuerySet:
         return super().get_all().order_by('-modified_time')
 
+    def get_one_module(self, pk: int) -> QuerySet:
+        return self.model.objects.select_related('api_project').filter(id=pk).first()
+
     def get_module_by_id(self, pk: int) -> ApiTestModule:
         return super().get(pk=pk)
 

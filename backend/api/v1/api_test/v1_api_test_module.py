@@ -13,8 +13,7 @@ from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_proje
 from backend.schemas import Response200, Response403, Response404
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules, CreateApiTestModule, \
-    UpdateApiTestModule
-from backend.utils.serializers import serialize_data
+    UpdateApiTestModule, ApiTestModuleResponse
 
 v1_api_test_module = Router()
 
@@ -27,10 +26,10 @@ def get_all_modules(request) -> Any:
 
 @v1_api_test_module.get('/{int:pk}', summary='获取单个模块', auth=GetCurrentUser())
 def get_one_module(request, pk: int) -> Any:
-    module = crud_api_test_module.get_module_by_id(pk)
+    module = crud_api_test_module.get_one_module(pk)
     if not module:
         return Response404(msg='模块不存在')
-    return Response200(data=serialize_data(module))
+    return ApiTestModuleResponse(data=module)
 
 
 @v1_api_test_module.post('', summary='创建模块', auth=GetCurrentIsSuperuser())
@@ -47,7 +46,7 @@ def create_module(request, obj: CreateApiTestModule) -> Any:
     module = crud_api_test_module.create_module(obj)
     module.creator = request.session['username']
     module.save()
-    return Response200(data=serialize_data(module))
+    return ApiTestModuleResponse(data=module)
 
 
 @v1_api_test_module.put('/{int:pk}', summary='更新模块', auth=GetCurrentIsSuperuser())
@@ -68,7 +67,7 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
     module = crud_api_test_module.update_module(pk, obj)
     module.modifier = request.session['username']
     module.save()
-    return Response200(data=serialize_data(module))
+    return ApiTestModuleResponse(data=module)
 
 
 @v1_api_test_module.delete('/{int:pk}', summary='删除模块', auth=GetCurrentIsSuperuser())

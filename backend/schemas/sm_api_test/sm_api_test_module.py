@@ -4,6 +4,7 @@ import datetime
 
 from ninja import Schema
 
+from backend.schemas import Response200
 from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects
 
 
@@ -27,3 +28,7 @@ class GetAllApiTestModules(ApiTestModuleBase):
     modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
+
+
+class ApiTestModuleResponse(Response200):
+    data: GetAllApiTestModules = None
