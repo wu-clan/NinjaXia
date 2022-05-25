@@ -38,7 +38,7 @@ def create_module(request, obj: CreateApiTestModule) -> Any:
     if crud_api_test_module.get_module_by_name(obj.name):
         return Response403(msg='模块已存在, 请更改模块名称')
     try:
-        _project = crud_api_test_project.get_project_by_id(obj.api_project)
+        _project = crud_api_test_project.get_project_or_404(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
     if not _project.status:
@@ -59,7 +59,7 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
         if crud_api_test_module.get_module_by_name(obj.name):
             return Response403(msg='模块已存在，请更改模块名称')
     try:
-        _project = crud_api_test_project.get_project_by_id(obj.api_project)
+        _project = crud_api_test_project.get_project_or_404(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
     if not _project.status:

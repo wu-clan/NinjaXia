@@ -22,7 +22,7 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
     def get_project_name_by_id(self, pk: int) -> str:
         return super().get(pk=pk).name
 
-    def get_project_by_id(self, pk: int) -> ApiTestProject:
+    def get_project_or_404(self, pk: int) -> ApiTestProject:
         return super().get_object_or_404(pk=pk)
 
     def get_project_status(self, pk: int) -> str:

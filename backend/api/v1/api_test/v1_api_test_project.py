@@ -33,7 +33,7 @@ def get_all_enable_project(request) -> Any:
 @v1_api_test_project.get('/{int:pk}', summary='获取单个项目', auth=GetCurrentUser())
 def get_one_project(request, pk: int) -> Any:
     try:
-        _project = crud_api_test_project.get_project_by_id(pk)
+        _project = crud_api_test_project.get_project_or_404(pk)
     except Http404:
         raise Http404("未找到项目")
     return Response200(data=serialize_data(_project))
@@ -52,7 +52,7 @@ def create_project(request, obj: CreateApiTestProject) -> Any:
 @v1_api_test_project.put('/{int:pk}', summary='更新项目', auth=GetCurrentIsSuperuser())
 def update_project(request, pk: int, obj: UpdateApiTestProject) -> Any:
     try:
-        _project = crud_api_test_project.get_project_by_id(pk)
+        _project = crud_api_test_project.get_project_or_404(pk)
     except Http404:
         raise Http404("未找到项目")
     current_name = crud_api_test_project.get_project_name_by_id(pk)
@@ -79,7 +79,7 @@ def delete_project(request, pk: int) -> Any:
 @paginate(CustomPagination)
 def get_project_modules(request, pk: int) -> Any:
     try:
-        _project = crud_api_test_project.get_project_by_id(pk)
+        _project = crud_api_test_project.get_project_or_404(pk)
     except Http404:
         raise Http404("未找到项目")
     modules = crud_api_test_project.get_project_modules(pk)
