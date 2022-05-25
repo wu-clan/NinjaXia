@@ -16,6 +16,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
     def get_module_by_id(self, pk: int) -> ApiTestModule:
         return super().get(pk=pk)
 
+    def get_module_or_404(self, pk: int) -> ApiTestModule:
+        return super().get_object_or_404(pk)
+
     def get_module_by_name(self, module_name: int) -> str:
         return self.model.objects.filter(name=module_name).first()
 

@@ -80,14 +80,10 @@ def delete_module(request, pk: int) -> Any:
     return Response200()
 
 
-@v1_api_test_module.get('/{int:pk}/cases', response={200: Response200, 404: Response404},
-                        summary='获取单个模块所有用例', auth=GetCurrentUser())
-def get_case_module(request, pk: int):
-    _module = crud_api_test_module.get_module_by_id(pk)
-    if not _module:
-        return 404, {'msg': '模块不存在'}
-    _cases = crud_api_test_module.get_module_cases(pk)
-    cases = []
-    for case in _cases:
-        cases.append(serialize_data(case))
-    return Response200(data=cases)
+@v1_api_test_module.get('/{int:pk}/cases', response=List[GetAllApiTestCases], summary='获取单个模块所有用例',
+                        auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_one_module_cases(request, pk: int):
+    _module = crud_api_test_module.get_module_or_404(pk)
+    cases = crud_api_test_module.get_module_cases(pk)
+    return cases
