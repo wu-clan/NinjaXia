@@ -84,6 +84,9 @@ def delete_module(request, pk: int) -> Any:
                         auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_one_module_cases(request, pk: int):
-    _module = crud_api_test_module.get_module_or_404(pk)
+    try:
+        _module = crud_api_test_module.get_module_or_404(pk)
+    except Http404:
+        raise Http404("没有此模块")
     cases = crud_api_test_module.get_module_cases(pk)
     return cases
