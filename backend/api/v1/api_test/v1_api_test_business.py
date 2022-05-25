@@ -11,9 +11,8 @@ from backend.crud.crud_api_test.crud_api_test_business import crud_api_test_busi
 from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
 from backend.schemas import Response404, Response200, Response403
-from backend.schemas.sm_api_test.sm_api_test_business import GetAllApiTestBusinesses, CreateApiTestBusiness, \
-    GetAllApiTestBusinessesAndCases
-from backend.utils.serializers import serialize_data
+from backend.schemas.sm_api_test.sm_api_test_business import CreateApiTestBusiness, \
+    GetAllApiTestBusinessesAndCases, BusinessesAndCasesResponse
 
 v1_api_test_business = Router()
 
@@ -24,17 +23,13 @@ def get_all_businesses(request):
     return crud_api_test_business.get_all_businesses()
 
 
-@v1_api_test_business.get('/{int:pk}/cases', summary='获取指定业务下的用例', auth=GetCurrentUser())
-def get_all_cases_by_business_id(request, pk: int):
+@v1_api_test_business.get('/{int:pk}/cases', summary='获取单个业务', auth=GetCurrentUser())
+def get_one_business(request, pk: int):
     business = crud_api_test_business.get_business_by_id(pk)
     if not business:
         return Response404(msg='业务不存在')
-    cases_list = crud_api_test_business.get_all_cases_by_business_id(pk)
-    cases_info = []
-    for case in cases_list:
-        cases = serialize_data(case)
-        cases_info.append(cases)
-    return Response200(data={'cases': cases_info})
+    cases = crud_api_test_business.get_one_business(pk)
+    return BusinessesAndCasesResponse(data=list(cases))
 
 
 @v1_api_test_business.post('', summary='新增业务', auth=GetCurrentIsSuperuser())
@@ -54,19 +49,14 @@ def create_business(request, obj: CreateApiTestBusiness):
         else:
             case_list.append(case)
     obj.api_module = module
-    _business, _business_and_case = crud_api_test_business.create_business(obj, case_list)
+    business, business_and_case = crud_api_test_business.create_business(obj, case_list)
     # 更新创建者
-    _business.creator = request.session['username']
-    _business.save()
-    for _bc in _business_and_case:
-        _bc.creator = request.session['username']
-        _bc.save()
-    # 序列化
-    business = serialize_data(_business)
-    cases = []
-    for bc in _business_and_case:
-        cases.append(serialize_data(bc.api_case))
-    return Response200(data={'business': business, 'cases': cases})
+    business.creator = request.session['username']
+    business.save()
+    for bc in business_and_case:
+        bc.creator = request.session['username']
+        bc.save()
+    return BusinessesAndCasesResponse(data=list(business_and_case))
 
 
 @v1_api_test_business.put('/{int:pk}', summary='更新业务', auth=GetCurrentIsSuperuser())
@@ -89,19 +79,14 @@ def update_business(request, pk: int, obj: CreateApiTestBusiness):
         else:
             case_list.append(case)
     obj.api_module = module
-    _business, _business_and_case = crud_api_test_business.update_business(pk, obj, case_list)
-    _business.modifier = request.session['username']
-    _business.save()
-    for _bc in _business_and_case:
-        _bc.creator = request.session['username']
-        _bc.modifier = request.session['username']
-        _bc.save()
-    # 序列化
-    business = serialize_data(_business)
-    cases = []
-    for bc in _business_and_case:
-        cases.append(serialize_data(bc.api_case))
-    return Response200(data={'business': business, 'cases': cases})
+    business, business_and_case = crud_api_test_business.update_business(pk, obj, case_list)
+    business.modifier = request.session['username']
+    business.save()
+    for bc in business_and_case:
+        bc.creator = request.session['username']
+        bc.modifier = request.session['username']
+        bc.save()
+    return BusinessesAndCasesResponse(data=list(business_and_case))
 
 
 @v1_api_test_business.delete('/{int:pk}', summary='删除业务', auth=GetCurrentIsSuperuser())
@@ -114,7 +99,7 @@ def delete_business(request, pk: int):
 
 
 @v1_api_test_business.get('/{str:name}', summary='业务名称模糊匹配', auth=GetCurrentUser(),
-                          response=List[GetAllApiTestBusinesses])
+                          response=List[GetAllApiTestBusinessesAndCases])
 @paginate(CustomPagination)
 def get_all_businesses_by_name(request, name: str):
     return crud_api_test_business.get_all_businesses_by_name(name)

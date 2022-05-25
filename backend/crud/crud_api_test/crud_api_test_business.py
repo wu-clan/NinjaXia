@@ -16,23 +16,21 @@ class CRUDApiTestTask(CRUDBase[ApiTestBusinessTest, CreateApiTestBusiness, Updat
     def get_all_businesses() -> QuerySet:
         return ApiTestBusinessTestAndCase.objects.all().order_by('-modified_time')
 
-    def get_all_businesses_by_name(self, name: str) -> QuerySet:
-        return self.model.objects.filter(name__icontains=name).all().order_by('-modified_time')
+    @staticmethod
+    def get_one_business(pk: int) -> QuerySet:
+        return ApiTestBusinessTestAndCase.objects.filter(api_business_test_id=pk).all().order_by(
+            '-modified_time').select_related('api_business_test', 'api_case')
+
+    @staticmethod
+    def get_all_businesses_by_name(name: str) -> QuerySet:
+        return ApiTestBusinessTestAndCase.objects.filter(api_business_test__name__icontains=name).all().order_by(
+            '-modified_time').select_related('api_business_test', 'api_case')
 
     def get_business_by_name(self, name: str) -> ApiTestBusinessTest:
         return self.model.objects.filter(name=name).first()
 
     def get_business_by_id(self, pk: int) -> ApiTestBusinessTest:
         return super().get(pk)
-
-    @staticmethod
-    def get_all_cases_by_business_id(business_id: int) -> list:
-        bs_list = ApiTestBusinessTestAndCase.objects.filter(api_business_test_id=business_id).all()
-        case_list = []
-        for business in bs_list:
-            case = business.api_case
-            case_list.append(case)
-        return case_list
 
     @transaction.atomic
     def create_business(self, obj: CreateApiTestBusiness, cases: list) -> [

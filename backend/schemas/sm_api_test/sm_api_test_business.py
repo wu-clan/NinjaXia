@@ -5,6 +5,7 @@ from typing import List
 
 from ninja import Schema
 
+from backend.schemas import Response200
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules
 
@@ -38,7 +39,7 @@ class GetAllApiTestBusinesses(ApiTestBusinessBase):
     modified_time: datetime.datetime
 
 
-class GetAllApiTestBusinessesAndCases(Schema):
+class GetAllApiTestBusinessesAndCases(ApiTestBusinessBaseAndCase):
     id: int
     api_business_test: GetAllApiTestBusinesses = None
     api_case: GetAllApiTestCases = None
@@ -46,3 +47,7 @@ class GetAllApiTestBusinessesAndCases(Schema):
     modifier: str = None
     created_time: datetime.datetime
     modified_time: datetime.datetime
+
+
+class BusinessesAndCasesResponse(Response200):
+    data: List[GetAllApiTestBusinessesAndCases] = None
