@@ -9,7 +9,7 @@ from ninja.pagination import paginate
 from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_project
-from backend.schemas import Response200, Response403, Response404
+from backend.schemas import Response200, Response403
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules
 from backend.schemas.sm_api_test.sm_api_test_project import GetAllApiTestProjects, CreateApiTestProject, \
     UpdateApiTestProject
@@ -74,15 +74,13 @@ def delete_project(request, pk: int) -> Any:
     return Response200()
 
 
-@v1_api_test_project.get('/{int:pk}/modules', response={200: Response200, 404: Response404},
-                         summary='获取单个项目所有模块', auth=GetCurrentUser())
+@v1_api_test_project.get('/{int:pk}/modules', response=List[GetAllApiTestModules], summary='获取单个项目所有模块',
+                         auth=GetCurrentUser())
+@paginate(CustomPagination)
 def get_project_modules(request, pk: int) -> Any:
     try:
         _project = crud_api_test_project.get_project_by_id(pk)
     except Http404:
         raise Http404("未找到项目")
-    _project_modules = crud_api_test_project.get_project_modules(pk)
-    project_modules = []
-    for project_module in _project_modules:
-        project_modules.append(serialize_data(project_module))
-    return Response200(data=project_modules)
+    modules = crud_api_test_project.get_project_modules(pk)
+    return modules
