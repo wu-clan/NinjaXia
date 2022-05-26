@@ -11,3 +11,5 @@ orjson==3.6.8
 cryptography==37.0.2
 uvicorn==0.17.6
 httpx==0.22.0
+apscheduler==3.9.1
+redis==4.3.1
