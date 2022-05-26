@@ -7,8 +7,8 @@ from ninja import Router
 from ninja.pagination import paginate
 
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
-from backend.common.api_test.http_client import HttpClient
-from backend.common.api_test.http_test_case_debug import HttpTestCaseDebug
+from backend.utils.api_test.http_client import HttpClient
+from backend.utils.api_test.http_test_case_debug import HttpTestCaseDebug
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
