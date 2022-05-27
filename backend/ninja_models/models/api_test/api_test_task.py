@@ -17,7 +17,7 @@ class ApiTestTask(BaseModel):
     priority = models.CharField(max_length=32, verbose_name='优先级')
     starting_time = models.DateTimeField(max_length=64, verbose_name='起始时间')
     end_time = models.DateTimeField(max_length=64, verbose_name='截至时间')
-    send_report = models.IntegerField(default=0, verbose_name='发送测试报告, 0:不发送, 1:发送')
+    send_report = models.BooleanField(default=0, verbose_name='发送测试报告, 0:不发送, 1:发送')
     status = models.BooleanField(default=1, verbose_name='任务状态')
     state = models.CharField(max_length=32, verbose_name='任务运行状态')
     execute_target = models.SmallIntegerField(default=0, verbose_name='执行目标, 0: 业务, 1: 用例')
