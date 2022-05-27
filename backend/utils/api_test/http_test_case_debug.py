@@ -30,7 +30,7 @@ class HttpTestCaseDebug:
         """
         self.http_client = http_client
         self.test_case_name = test_case_name
-        self.method = method
+        self.method = str(method).upper() if method else None
         self.url = url
         self.params = orjson.loads(orjson.dumps(params)) if params else {}
         self.cookies = orjson.loads(orjson.dumps(cookies)) if cookies else {}
