@@ -37,8 +37,8 @@ def task_executor_conf():
 
     if settings.TASK_TP_STATUS and settings.TASK_PP_STATUS:
         executor = {
-            'default': pp_executor,
-            'threadpool': tp_executor
+            'default': tp_executor,
+            'processpool': pp_executor
         }
 
     if settings.TASK_PP_STATUS and not settings.TASK_TP_STATUS:
