@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.ninja_models.models.base import BaseModel
+from backend.ninja_models.models.api_test.api_test_case import ApiTestCase
 from backend.ninja_models.models.api_test.api_test_task import ApiTestTask
+from backend.ninja_models.models.base import BaseModel
 
 
 class ApiTestReport(BaseModel):
@@ -28,7 +29,7 @@ class ApiTestReportDetail(BaseModel):
     """
     API测试报告详情表
     """
-    name = models.CharField(max_length=128, unique=True, verbose_name='用例名称')
+    name = models.CharField(max_length=128, verbose_name='用例名称')
     url = models.TextField(verbose_name='用例请求URL')
     method = models.CharField(max_length=128, verbose_name='用例请求方法')
     params = models.TextField(null=True, verbose_name='用例查询参数')
@@ -40,8 +41,8 @@ class ApiTestReportDetail(BaseModel):
     elapsed = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='响应时长(ms)')
     assert_result = models.TextField(null=True, verbose_name='用例断言结果')
     run_status = models.CharField(max_length=32, default='FAIL', verbose_name='执行状态')
-    api_report = models.ForeignKey(ApiTestReport, on_delete=models.CASCADE, verbose_name='所属报告',
-                                   related_name='api_test_report_detail', related_query_name='api_test_report_detail')
+    api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='所属用例',
+                                 related_name='api_test_report_detail', related_query_name='api_test_report_detail')
 
     class Meta:
         db_table = 'sys_api_test_report_detail'

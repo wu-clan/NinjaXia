@@ -74,19 +74,19 @@ class HttpTestCaseDebugger:
             files = files
             json = json
         elif self.body_type == 'form-data':
-            data = orjson.loads(self.body)
+            data = orjson.loads(orjson.dumps(eval(self.body)))
         elif self.body_type == 'x-www-form-urlencoded':
-            data = orjson.loads(self.body)
+            data = orjson.loads(orjson.dumps(eval(self.body)))
         elif self.body_type == 'binary':
-            files = orjson.loads(self.body)
+            files = orjson.loads(orjson.dumps(eval(self.body)))
         elif self.body_type == 'GraphQL':
-            data = orjson.loads(self.body)
+            data = orjson.loads(orjson.dumps(eval(self.body)))
         elif self.body_type == 'Text':
             pass
         elif self.body_type == 'JavaScript':
             pass
         elif self.body_type == 'JSON':
-            json = orjson.loads(self.body)
+            json = orjson.loads(orjson.dumps(eval(self.body)))
         elif self.body_type == 'HTML':
             pass
         elif self.body_type == 'XML':
@@ -113,10 +113,11 @@ class HttpTestCaseDebugger:
         response_result_list = {
             "result": orjson.loads(response["response"]["result"]) if response["response"]["result"] else {},
             "content": orjson.loads(response["response"]["content"]) if response["response"]["content"] else {},
-            "text": orjson.loads(response["response"]["text"]) if response["response"]["text"] else {}
+            "text": orjson.loads(response["response"]["text"]) if response["response"]["text"] else {},
+            'cookies': response["response"]["cookies"],
         }
-        response_result = orjson.loads(orjson.dumps(response))
-        log.info(f'Response: {response_result}')
+        # response_result = orjson.loads(orjson.dumps(response))
+        # log.info(f'Response: {response_result}')
 
         # 断言
         if self.assert_text:
@@ -128,7 +129,6 @@ class HttpTestCaseDebugger:
             'url': self.url,
             'method': self.method,
             'params': self.params,
-            'cookies': orjson.loads(response["response"]["cookies"]) if response["response"]["cookies"] else {},
             'headers': self.headers,
             'body_type': self.body_type,
             'body': self.body,
