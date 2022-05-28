@@ -91,6 +91,8 @@ class HttpTestCaseDebug:
             pass
         elif self.body_type == 'XML':
             pass
+        else:
+            raise ValueError('body_type错误')
 
         request_kwargs = {
             'params': self.params,

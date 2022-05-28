@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 from json import JSONDecodeError
+from typing import Any
 
 import httpx
 from django.utils import timezone
@@ -36,6 +37,26 @@ class HttpClient:
         }
         return response_meta_data
 
+    @staticmethod
+    def requests(method, url, **kwargs) -> Any:
+        """
+        请求程序
+
+        :return:
+        """
+        try:
+            with httpx.Client(verify=False) as client:
+                response = client.request(method=method, url=url, **kwargs)
+                response.raise_for_status()
+        except httpx.RequestError as exc:
+            log.error(f"请求时出错 {exc.request.url!r}.")
+            raise RuntimeError(f"请求时出错 {exc.request.url!r}.")
+        except httpx.HTTPStatusError as exc:
+            log.error(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
+            raise RuntimeError(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
+
+        return response
+
     def send_request(self, method, url, **kwargs) -> dict:
         """
         发送请求
@@ -53,16 +74,7 @@ class HttpClient:
         meta_data["stat"]['execute_time'] = execute_time
 
         # 发送请求
-        try:
-            with httpx.Client(verify=False) as client:
-                response = client.request(method=method, url=url, **kwargs)
-                response.raise_for_status()
-        except httpx.RequestError as exc:
-            log.error(f"请求时出错 {exc.request.url!r}.")
-            raise RuntimeError(f"请求时出错 {exc.request.url!r}.")
-        except httpx.HTTPStatusError as exc:
-            log.error(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
-            raise RuntimeError(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
+        response = self.requests(method=method, url=url, **kwargs)
 
         # 记录响应的信息
         meta_data['response']['url'] = str(response.url)
