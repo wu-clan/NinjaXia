@@ -74,6 +74,7 @@ class GetAllApiTestCases(ApiTestCaseBase):
 class ExtraDebugArgs(Schema):
     cookies: dict = None
     timeout: int = Field(default=10, ge=1)
+    is_write_report: bool = False
 
 
 class ApiTestCaseResponse(Response200):
