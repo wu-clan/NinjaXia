@@ -29,6 +29,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
         case = super().create(data)
         case.params = json.loads(str(case.params))
         case.headers = json.loads(str(case.headers))
+        if data.body_type == 'JSON' or data.body_type == 'form-data' or data.body_type == 'x-www-form-urlencoded' or \
+                data.body_type == 'binary' or data.body_type == 'GraphQL':
+            case.body = json.loads(str(case.body))
         return case
 
     @transaction.atomic
@@ -36,6 +39,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
         case = super().update_one(pk, data)
         case.params = json.loads(str(case.params))
         case.headers = json.loads(str(case.headers))
+        if data.body_type == 'JSON' or data.body_type == 'form-data' or data.body_type == 'x-www-form-urlencoded' or \
+                data.body_type == 'binary' or data.body_type == 'GraphQL':
+            case.body = json.loads(str(case.body))
         return case
 
     def delete_case(self, pk: list) -> tuple:
