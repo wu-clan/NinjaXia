@@ -6,7 +6,7 @@ from backend.common.log import log
 from backend.utils.api_test.parse_assertions import handling_assertions
 
 
-class HttpTestCaseDebug:
+class HttpTestCaseDebugger:
     """
     Http测试用例调试
     """
@@ -128,7 +128,7 @@ class HttpTestCaseDebug:
             'url': self.url,
             'method': self.method,
             'params': self.params,
-            'cookies': self.cookies,
+            'cookies': orjson.loads(response["response"]["cookies"]) if response["response"]["cookies"] else {},
             'headers': self.headers,
             'body_type': self.body_type,
             'body': self.body,

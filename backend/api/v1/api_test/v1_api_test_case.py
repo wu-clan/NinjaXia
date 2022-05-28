@@ -8,7 +8,7 @@ from ninja.pagination import paginate
 
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.utils.api_test.http_client import HttpClient
-from backend.utils.api_test.http_test_case_debug import HttpTestCaseDebug
+from backend.utils.api_test.http_test_case_debugger import HttpTestCaseDebugger
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
@@ -135,10 +135,10 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
     # 实例化http请求
     http_client = HttpClient()
     # 实例化请求参数
-    http_test_case_debug = HttpTestCaseDebug(http_client=http_client, test_case_name=case.name, method=case.method,
-                                             url=url, params=case.params, headers=case.headers, cookies=extra.cookies,
-                                             body_type=case.body_type, body=case.body, assert_text=case.assert_text,
-                                             timeout=extra.timeout)
+    http_test_case_debug = HttpTestCaseDebugger(http_client=http_client, test_case_name=case.name, method=case.method,
+                                                url=url, params=case.params, headers=case.headers, cookies=extra.cookies,
+                                                body_type=case.body_type, body=case.body, assert_text=case.assert_text,
+                                                timeout=extra.timeout)
     # 调试用例
     debug_result = http_test_case_debug.debug()
 

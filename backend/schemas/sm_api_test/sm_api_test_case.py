@@ -5,7 +5,7 @@ import json
 from typing import Any
 
 from ninja import Schema
-from pydantic import validator
+from pydantic import validator, Field
 
 from backend.schemas import Response200
 from backend.schemas.sm_api_test.sm_api_test_env import GetAllApiTestEnvs
@@ -73,7 +73,7 @@ class GetAllApiTestCases(ApiTestCaseBase):
 
 class ExtraDebugArgs(Schema):
     cookies: dict = None
-    timeout: int = None
+    timeout: int = Field(default=10, ge=1)
 
 
 class ApiTestCaseResponse(Response200):
