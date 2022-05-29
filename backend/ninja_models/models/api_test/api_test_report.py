@@ -12,9 +12,9 @@ class ApiTestReport(BaseModel):
     测试报告表
     """
     name = models.CharField(max_length=128, verbose_name='测试报告名称')
-    case_num = models.BigIntegerField(null=True, verbose_name='用例总数')
-    pass_num = models.BigIntegerField(null=True, verbose_name='成功总数')
-    error_num = models.BigIntegerField(null=True, verbose_name='失败总数')
+    case_num = models.BigIntegerField(default=0, null=True, verbose_name='用例总数')
+    pass_num = models.BigIntegerField(default=0, null=True, verbose_name='成功总数')
+    fail_num = models.BigIntegerField(default=0, null=True, verbose_name='失败总数')
     api_task = models.ForeignKey(ApiTestTask, on_delete=models.CASCADE, verbose_name='所属任务',
                                  related_name='api_test_report', related_query_name='api_test_report')
 
@@ -43,6 +43,8 @@ class ApiTestReportDetail(BaseModel):
     run_status = models.CharField(max_length=32, default='FAIL', verbose_name='执行状态')
     api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='所属用例',
                                  related_name='api_test_report_detail', related_query_name='api_test_report_detail')
+    api_report = models.ForeignKey(ApiTestReport, on_delete=models.CASCADE, null=True, verbose_name='所属报告',
+                                   related_name='api_test_report_detail', related_query_name='api_test_report_detail')
 
     class Meta:
         db_table = 'sys_api_test_report_detail'

@@ -184,10 +184,11 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
             'assert_result': debug_result['assert_status'],
             'run_status': debug_result['assert_status'],
             'api_case': case,
+            'api_report': None,
             'creator': debug_result['executor'],
         }
         try:
-            write_report = threading.Thread(crud_api_test_report_detail.create_report_detail(),
+            write_report = threading.Thread(target=crud_api_test_report_detail.create_report_detail,
                                             args=(test_case_report,))
             write_report.start()
             write_report.join()
