@@ -55,6 +55,7 @@ class UpdateApiTestReportDetail(ApiTestReportDetailBase):
 class GetAllApiTestReportsDetail(ApiTestReportDetailBase):
     id: int
     api_case: GetAllApiTestCases = None
+    api_report: GetAllApiTestReports = None
     creator: str = None
     modifier: str = None
     created_time: datetime.datetime

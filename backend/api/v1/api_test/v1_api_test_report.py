@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
 from typing import List
 
 from ninja import Router
@@ -25,3 +24,10 @@ def get_all_reports(request):
 @paginate(CustomPagination)
 def get_all_reports_detail(request):
     return crud_api_test_report_detail.get_all_reports_detail()
+
+
+@v1_api_test_report.get('/{int:pk}/detail', summary='获取单个简约报告下所有测试报告详情', response=List[GetAllApiTestReportsDetail],
+                        auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_all_reports_detail_by_report_id(request, pk: int):
+    return crud_api_test_report_detail.get_all_reports_detail_by_report_id(pk)

@@ -50,5 +50,8 @@ class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport,
     def get_report_detail_count(self) -> int:
         return super().get_all().count()
 
+    def get_all_reports_detail_by_report_id(self, pk: int) -> QuerySet:
+        return self.model.objects.filter(api_report=pk).all().order_by('-created_time')
+
 
 crud_api_test_report_detail = CRUDApiTestReportDetail(ApiTestReportDetail)
