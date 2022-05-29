@@ -28,5 +28,10 @@ class CRUDCrontab(CRUDBase[Crontab, CreateCornTab, UpdateCornTab]):
     def delete_crontab(self, pk: int) -> Crontab:
         return super().delete_one(pk)
 
+    def format_crontab(self, pk: int) -> str:
+        corn = super().get(pk)
+        return '{c0} {c1} {c2} {c3} {c4} {c5}'.format(c0=corn.second, c1=corn.minute, c2=corn.hour, c3=corn.day,
+                                                      c4=corn.month, c5=corn.day_of_week)
+
 
 crud_crontab = CRUDCrontab(Crontab)
