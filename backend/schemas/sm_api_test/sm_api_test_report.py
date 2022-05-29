@@ -6,10 +6,14 @@ from typing import Any
 from ninja import Schema
 
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
+from backend.schemas.sm_api_test.sm_api_test_task import GetAllApiTestTasks
 
 
 class ApiTestReportBase(Schema):
-    ...
+    name: str
+    case_num: int
+    pass_num: int
+    fail_num: int
 
 
 class CreateApiTestReport(ApiTestReportBase):
@@ -21,7 +25,8 @@ class UpdateApiTestReport(ApiTestReportBase):
 
 
 class GetAllApiTestReports(ApiTestReportBase):
-    ...
+    id: int
+    api_task: GetAllApiTestTasks = None
 
 
 class ApiTestReportDetailBase(Schema):
