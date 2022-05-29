@@ -5,6 +5,7 @@ from typing import List
 from ninja import Router
 from ninja.pagination import paginate
 
+from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
 from backend.common.task import scheduler, MyCronTrigger
 from backend.crud.crud_api_test.crud_api_test_business import crud_api_test_business
@@ -20,7 +21,7 @@ from backend.utils.api_test.exec_api_test_case import thread_exec_api_test_cases
 v1_api_test_task = Router()
 
 
-@v1_api_test_task.get('', summary='获取所有任务', response=List[GetAllApiTestTasks])
+@v1_api_test_task.get('', summary='获取所有任务', response=List[GetAllApiTestTasks], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_tasks(request):
     tasks = crud_api_test_task.get_all_tasks()
@@ -35,7 +36,7 @@ def get_all_tasks(request):
     return tasks
 
 
-@v1_api_test_task.get('/start', summary='获取所有已启动的任务')
+@v1_api_test_task.get('/open', summary='获取所有已开启的任务', auth=GetCurrentUser())
 def get_all_running_tasks(request):
     tasks = []
     for job in scheduler.get_jobs():
@@ -56,7 +57,7 @@ def get_all_running_tasks(request):
     return Response200(data=tasks)
 
 
-@v1_api_test_task.post('', summary='添加任务')
+@v1_api_test_task.post('', summary='添加任务', auth=GetCurrentIsSuperuser())
 def create_task(request, obj: CreateApiTestTask):
     name = crud_api_test_task.get_task_by_name(obj.name)
     if name:
@@ -87,7 +88,7 @@ def create_task(request, obj: CreateApiTestTask):
     return ApiTestTaskResponse(data=task)
 
 
-@v1_api_test_task.put('/{int:pk}', summary='更新任务')
+@v1_api_test_task.put('/{int:pk}', summary='更新任务', auth=GetCurrentIsSuperuser())
 def update_task(request, pk: int, obj: UpdateApiTestTask):
     _task = crud_api_test_task.get_task_by_id(pk)
     if not _task:
@@ -125,7 +126,7 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     return ApiTestTaskResponse(data=task)
 
 
-@v1_api_test_task.post('/{int:pk}/run', summary='开启任务')
+@v1_api_test_task.post('/{int:pk}/run', summary='开启任务', auth=GetCurrentIsSuperuser())
 def run_async_task(request, pk: int):
     task = crud_api_test_task.get_task_by_id(pk)
     if not task:
@@ -163,7 +164,7 @@ def run_async_task(request, pk: int):
     return Response200()
 
 
-@v1_api_test_task.post('/{int:pk}/pause', summary='暂停任务')
+@v1_api_test_task.post('/{int:pk}/pause', summary='暂停任务', auth=GetCurrentIsSuperuser())
 def pause_task(request, pk: int):
     job = scheduler.get_job(id=str(pk))
     if not job:
@@ -172,7 +173,7 @@ def pause_task(request, pk: int):
     return Response200()
 
 
-@v1_api_test_task.post('/{int:pk}/recover', summary='恢复任务')
+@v1_api_test_task.post('/{int:pk}/recover', summary='恢复任务', auth=GetCurrentIsSuperuser())
 def recover_task(request, pk: int):
     job = scheduler.get_job(id=str(pk))
     if not job:
@@ -181,7 +182,7 @@ def recover_task(request, pk: int):
     return Response200()
 
 
-@v1_api_test_task.delete('/{int:pk}', summary='删除任务')
+@v1_api_test_task.delete('/{int:pk}', summary='删除任务', auth=GetCurrentIsSuperuser())
 def delete_task(request, pk: int):
     task = crud_api_test_task.get_task_by_id(pk)
     if not task:
