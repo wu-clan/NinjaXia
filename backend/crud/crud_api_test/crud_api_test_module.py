@@ -42,5 +42,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
     def get_module_cases(self, pk: int) -> QuerySet:
         return super().get(pk=pk).api_test_case.all().order_by('-modified_time')
 
+    def get_module_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_module = CRUDApiTestTask(ApiTestModule)

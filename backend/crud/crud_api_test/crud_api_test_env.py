@@ -40,5 +40,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
     def get_env_cases(self, pk: int) -> QuerySet:
         return super().get(pk).api_test_case.all().order_by('-modified_time')
 
+    def get_env_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_env = CRUDApiTestTask(ApiTestEnvironment)

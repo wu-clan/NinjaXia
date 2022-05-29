@@ -69,5 +69,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestBusinessTest, CreateApiTestBusiness, Updat
             cases.append(case.api_case)
         return cases
 
+    def get_business_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_business = CRUDApiTestTask(ApiTestBusinessTest)

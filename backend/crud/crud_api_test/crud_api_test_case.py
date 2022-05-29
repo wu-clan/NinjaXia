@@ -47,5 +47,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
     def delete_case(self, pk: list) -> tuple:
         return self.model.objects.filter(id__in=pk).delete()
 
+    def get_case_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_case = CRUDApiTestTask(ApiTestCase)

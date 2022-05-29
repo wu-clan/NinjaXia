@@ -10,11 +10,13 @@ from backend.api.v1.api_test.v1_api_test_project import v1_api_test_project
 from backend.api.v1.api_test.v1_api_test_report import v1_api_test_report
 from backend.api.v1.api_test.v1_api_test_task import v1_api_test_task
 from backend.api.v1.sys.v1_sys_crontab import v1_sys_crontab
+from backend.api.v1.sys.v1_sys_data_statistics import v1_sys_data_statistics
 from backend.api.v1.sys.v1_sys_email import v1_sys_email
 from backend.api.v1.sys.v1_sys_user import v1_sys_user
 
 v1 = Router()
 
+v1.add_router('/sys_data_statistics', v1_sys_data_statistics, tags=['v1_数据统计'])
 v1.add_router('/sys_users', v1_sys_user, tags=['v1_系统用户'])
 v1.add_router('/sys_emails', v1_sys_email, tags=['v1_系统邮件管理'])
 v1.add_router('/sys_crontab', v1_sys_crontab, tags=['v1_系统Crontab管理'])

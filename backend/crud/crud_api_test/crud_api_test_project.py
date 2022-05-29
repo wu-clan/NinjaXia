@@ -42,5 +42,8 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
     def get_project_modules(self, pk: int) -> QuerySet:
         return super().get(pk).api_test_module.all().order_by('-modified_time')
 
+    def get_project_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_project = CRUDApiTestProject(ApiTestProject)

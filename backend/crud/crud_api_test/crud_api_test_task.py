@@ -32,5 +32,8 @@ class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask
     def delete_task(self, task_id: int) -> ApiTestTask:
         return super().delete_one(task_id)
 
+    def get_task_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_task = CRUDApiTestTask(ApiTestTask)

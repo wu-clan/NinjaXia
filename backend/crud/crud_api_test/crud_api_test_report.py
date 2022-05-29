@@ -19,6 +19,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
     def create_report(self, data: dict) -> ApiTestReport:
         return self.model.objects.create(**data)
 
+    def get_report_count(self) -> int:
+        return super().get_all().count()
+
 
 crud_api_test_report = CRUDApiTestTask(ApiTestReport)
 
@@ -43,6 +46,9 @@ class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport,
     @transaction.atomic
     def create_report_detail_list(self, data_list: list) -> list:
         return self.model.objects.bulk_create(data_list)
+
+    def get_report_detail_count(self) -> int:
+        return super().get_all().count()
 
 
 crud_api_test_report_detail = CRUDApiTestReportDetail(ApiTestReportDetail)
