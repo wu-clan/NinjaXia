@@ -3,8 +3,10 @@
 from apscheduler.executors.pool import ProcessPoolExecutor, ThreadPoolExecutor
 from apscheduler.jobstores.redis import RedisJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from backend.ninja_xia import settings
+from backend.utils import re_verify
 
 
 def task_redis_conf():
@@ -80,4 +82,27 @@ def task_conf():
 # 调度器
 scheduler = BackgroundScheduler(**task_conf())
 
-__all__ = ['scheduler']
+
+class MyCronTrigger(CronTrigger):
+    """
+    重写 corn 表达式方法
+    """
+
+    @classmethod
+    def from_crontab(cls, expr, timezone=None):
+        """
+        将 crontab 表达式转换为 cron trigger
+
+        :param expr:
+        :param timezone:
+        :return:
+        """
+        values = expr.split()
+        # 双重校验
+        re_verify.check_crontab(expr)
+
+        return cls(second=values[0], minute=values[1], hour=values[2], day=values[3], month=values[4],
+                   day_of_week=values[5], timezone=timezone)
+
+
+__all__ = ['scheduler', MyCronTrigger]

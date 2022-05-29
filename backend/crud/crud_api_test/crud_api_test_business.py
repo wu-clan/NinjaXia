@@ -61,5 +61,13 @@ class CRUDApiTestTask(CRUDBase[ApiTestBusinessTest, CreateApiTestBusiness, Updat
         ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).delete()
         return business
 
+    @staticmethod
+    def get_business_cases(pk: int) -> list:
+        cases = []
+        tc = ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).all()
+        for case in tc:
+            cases.append(case.api_case)
+        return cases
+
 
 crud_api_test_business = CRUDApiTestTask(ApiTestBusinessTest)

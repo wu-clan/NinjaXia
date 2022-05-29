@@ -15,6 +15,10 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
     def get_all_reports(self) -> QuerySet:
         return super().get_all().order_by('-modified_time')
 
+    @transaction.atomic
+    def create_report(self, data: dict) -> ApiTestReport:
+        return self.model.objects.create(**data)
+
 
 crud_api_test_report = CRUDApiTestTask(ApiTestReport)
 
