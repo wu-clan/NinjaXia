@@ -16,8 +16,8 @@ class ApiTestTaskBase(Schema):
     name: str
     description: str = None
     priority: str
-    starting_time: datetime.datetime
-    end_time: datetime.datetime
+    start_data: datetime.datetime
+    end_date: datetime.datetime
     send_report: bool
     status: bool
     execute_target: int
