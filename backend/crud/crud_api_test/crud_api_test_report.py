@@ -15,9 +15,14 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
     def get_all_reports(self) -> QuerySet:
         return super().get_all().order_by('-modified_time')
 
-    @staticmethod
-    def get_all_reports_detail() -> QuerySet:
-        report_list = ApiTestReportDetail.objects.all().order_by('-created_time')
+
+crud_api_test_report = CRUDApiTestTask(ApiTestReport)
+
+
+class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport, UpdateApiTestReport]):
+
+    def get_all_reports_detail(self) -> QuerySet:
+        report_list = super().get_all().order_by('-created_time')
         for report in report_list:
             report.params = json.loads(json.dumps(eval(report.params))) \
                 if isinstance(report.params, str) else report.params
@@ -29,7 +34,11 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
 
     @transaction.atomic
     def create_report_detail(self, data: dict) -> ApiTestReportDetail:
-        return ApiTestReportDetail.objects.create(**data)
+        return self.model.objects.create(**data)
+
+    @transaction.atomic
+    def create_report_detail_list(self, data_list: list) -> list:
+        return self.model.objects.bulk_create(data_list)
 
 
-crud_api_test_report = CRUDApiTestTask(ApiTestReport)
+crud_api_test_report_detail = CRUDApiTestReportDetail(ApiTestReportDetail)

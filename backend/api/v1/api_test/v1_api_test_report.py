@@ -7,7 +7,7 @@ from ninja import Router
 from ninja.pagination import paginate
 
 from backend.common.pagination import CustomPagination
-from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report
+from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report, crud_api_test_report_detail
 from backend.schemas.sm_api_test.sm_api_test_report import GetAllApiTestReports, GetAllApiTestReportsDetail
 
 v1_api_test_report = Router()
@@ -22,4 +22,4 @@ def get_all_reports(request):
 @v1_api_test_report.get('/detail', summary='获取所有测试报告详情', response=List[GetAllApiTestReportsDetail])
 @paginate(CustomPagination)
 def get_all_reports_detail(request):
-    return crud_api_test_report.get_all_reports_detail()
+    return crud_api_test_report_detail.get_all_reports_detail()

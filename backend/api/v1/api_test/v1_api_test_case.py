@@ -10,10 +10,11 @@ from ninja.pagination import paginate
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.log import log
 from backend.common.pagination import CustomPagination
+from backend.common.task import scheduler
 from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
 from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
 from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
-from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report
+from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail
 from backend.schemas import Response404, Response200, Response403
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
     ApiTestCaseResponse
@@ -86,6 +87,8 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     if case.name != obj.name:
         if crud_api_test_case.get_case_by_name(obj.name):
             return Response403(msg='用例已存在, 请更换用例名称')
+    if scheduler.get_job(str(pk)):
+        return Response403(msg='用例正在分配中, 不支持更新')
     _module = crud_api_test_module.get_module_by_id(obj.api_module)
     if not _module:
         return Response404(msg='模块不存在')
@@ -124,6 +127,8 @@ def delete_case(request, pk: List[int]):
         case = crud_api_test_case.get_case_by_id(i)
         if not case:
             return Response404(msg=f'用例 {i} 不存在')
+    if scheduler.get_job(str(pk)):
+        return Response403(msg='用例正在分配中, 不支持删除')
     crud_api_test_case.delete_case(pk)
     return Response200()
 
@@ -182,7 +187,8 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
             'creator': debug_result['executor'],
         }
         try:
-            write_report = threading.Thread(crud_api_test_report.create_report_detail(), args=(test_case_report,))
+            write_report = threading.Thread(crud_api_test_report_detail.create_report_detail(),
+                                            args=(test_case_report,))
             write_report.start()
             write_report.join()
         except Exception as e:
