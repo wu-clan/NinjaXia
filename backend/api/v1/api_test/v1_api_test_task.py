@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import datetime
 from typing import List
 
 from ninja import Router
@@ -133,7 +134,7 @@ def run_async_task(request, pk: int):
         return Response404(msg=f'任务不存在')
     if not task.status:
         return Response403(msg='任务已停用, 不支持启动')
-    if task.state != '未执行':
+    if task.state != 0:
         return Response403(msg='任务已执行, 不支持重复执行')
     if not task.api_project:
         return Response404(msg=f'项目不存在')
@@ -162,6 +163,14 @@ def run_async_task(request, pk: int):
                       start_date=task.start_data, end_date=task.end_date)
 
     return Response200()
+
+
+@v1_api_test_task.post('/{int:pk}/start', summary='立即执行任务', auth=GetCurrentIsSuperuser())
+def start_task(request, pk: int):
+    job = scheduler.get_job(id=str(pk))
+    if not job:
+        return Response404(msg=f'任务不存在')
+    scheduler.modify_job(id=str(pk), next_run_time=datetime.datetime.now())
 
 
 @v1_api_test_task.post('/{int:pk}/pause', summary='暂停任务', auth=GetCurrentIsSuperuser())
