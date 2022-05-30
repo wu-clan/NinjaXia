@@ -20,23 +20,25 @@ v1_sys_email = Router()
 
 @v1_sys_email.get("/senders", summary='获取系统邮件发送者信息', auth=GetCurrentUser())
 def get_sys_email_sender(request):
-    sender = crud_sender.get_sender()
+    sender = crud_sender.get_sender()[0]
     if not sender:
         return Response404(msg='没有发送者信息')
+    sender.password = hash_password(sender.password)
     return Response200(data=serialize_data(sender))
 
 
 @v1_sys_email.post("/senders", summary='创建/更新系统邮件发送者信息', auth=GetCurrentIsSuperuser())
 def operate_sys_email_sender(request, obj: SysEmailSenderBase):
     is_have = crud_sender.get_sender()
-    obj.password = hash_password(obj.password)
     if is_have:
         sender = crud_sender.update_sender(is_have[0].id, obj)
+        sender.password = hash_password(sender.password)
         return Response200(data=serialize_data(sender))
     sender = crud_sender.create_sender(obj)
     sender.creator = request.session['username']
     sender.modifier = request.session['username']
     sender.save()
+    sender.password = hash_password(sender.password)
     return Response200(data=serialize_data(sender))
 
 
