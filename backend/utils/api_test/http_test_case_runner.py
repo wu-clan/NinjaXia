@@ -4,7 +4,6 @@ import orjson
 from django.utils import timezone
 from tenacity import retry, stop_after_attempt
 
-from backend.common.log import log
 from backend.ninja_models.models.api_test.api_test_report import ApiTestReportDetail
 from backend.utils.api_test.parse_assertions import handling_assertions
 
@@ -138,7 +137,7 @@ class HttpTestCaseRunner:
                 "result": orjson.loads(response["response"]["result"]) if response["response"]["result"] else {},
                 "content": orjson.loads(response["response"]["content"]) if response["response"]["content"] else {},
                 "text": orjson.loads(response["response"]["text"]) if response["response"]["text"] else {},
-                "cookies": orjson.loads(response["response"]["cookies"]) if response["response"]["cookies"] else {},
+                "cookies": response["response"]["cookies"],
             }
             try:
                 # 断言
