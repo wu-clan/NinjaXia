@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NinjaXia测试报告</title>
+</head>
+<body>
+<div>
+    <div>
+        <div class="open_email" style="margin: 8px;">
+            <div>
+                <br>
+                <span class="genEmailContent">
+                        <div id="cTMail-Wrap"
+                             style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:560px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px; font-family:'helvetica neue',PingFangSC-Light,arial,'hiragino sans gb','microsoft yahei ui','microsoft yahei',simsun,sans-serif">
+                            <div class="main-content" style="">
+                                <table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse">
+                                    <tbody>
+                                    <tr style="font-weight:300">
+                                        <td style="width:3%;max-width:30px;"></td>
+                                        <td style="max-width:600px;">
+                                            <div id="cTMail-logo" style="width:92px; height:25px;">
+                                                <a href="">
+                                                    <img src="https://portrait.gitee.com/uploads/avatars/user/2194/6583646_wu_cl_1628047961.png!avatar200"
+                                                         style="width:36px; height:36px;display:block" alt="">
+                                                </a>
+                                            </div>
+                                            <p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p>
+                                            <div id="cTMail-inner"
+                                                 style="background-color:#fff; padding:23px 0 20px;box-shadow: 0 1px 1px 0 rgba(122, 55, 55, 0.2);text-align:left;">
+                                                <table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;">
+                                                    <tbody>
+                                                    <tr style="font-weight:300">
+                                                        <td style="width:3.2%;max-width:30px;"></td>
+                                                        <td style="max-width:480px;text-align:left;">
+                                                            <h1 id="cTMail-title"
+                                                                style="font-size: 20px; line-height: 36px; margin: 0 0 22px;">
+                                                                测试任务【<strong>{{ task_name }}</strong>】执行完毕, 本次测试用例通过率 <span style="color: yellowgreen"><strong>{{ pass_rate }}</strong></span>
+                                                            </h1>
+
+                                                            <p id="cTMail-userName"
+                                                               style="font-size:14px;color:#333; line-height:24px; margin:0;">
+                                                                尊敬的NinjaXia用户，您好！
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    本次测试计划共执行用例<strong>&nbsp;{{ total }}&nbsp;</strong>条。
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    由<strong>&nbsp;{{ runner }}&nbsp;</strong>于&nbsp;{{ start_time }}&nbsp;开始执行，共耗时<strong>&nbsp;{{ elapsed }}&nbsp;</strong>秒。
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    成功数量 <strong
+                                                                        style="color: #67C23A">{{ success }}</strong>
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    失败数量 <strong
+                                                                        style="color: #F56C6C">{{ failed }}</strong>
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    出错数量 <strong
+                                                                        style="color: #E6A23C">{{ error }}</strong>
+                                                                </span>
+                                                            </p>
+
+                                                            <br>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">查看详细测试报告，可点击下方链接。
+                                                                    <span style="font-weight: bold;">如有打扰，请您谅解。</span>
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="font-size: 14px; color: rgb(51, 51, 51); line-height: 24px; margin: 6px 0 0; word-wrap: break-word; word-break: break-all;">
+                                                                <a id="cTMail-btn" href="{{ report_url }}" title=""
+                                                                   style="font-size: 16px; line-height: 45px; display: block; background-color: rgb(0, 164, 255); color: rgb(255, 255, 255); text-align: center; text-decoration: none; margin-top: 20px; border-radius: 3px;">
+                                                                    点击此处查看完整报告
+                                                                </a>
+                                                            </p>
+
+                                                            <p class="cTMail-content"
+                                                               style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51); font-size: 14px;">
+                                                                    <br>
+                                                                    无法正常显示？请复制以下链接至浏览器打开：
+                                                                    <br>
+                                                                    <a href="{{ report_url }}" title=""
+                                                                       style="color: rgb(0, 164, 255); text-decoration: none; word-break: break-all; overflow-wrap: normal; font-size: 14px;">
+                                                                        这里是测试报告链接
+                                                                    </a>
+                                                                </span>
+                                                            </p>
+                                                        </td>
+                                                        <td style="width:3.2%;max-width:30px;"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div id="cTMail-copy"
+                                                 style="text-align:center; font-size:12px; line-height:18px; color:#999">
+                                                <table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse">
+                                                    <tbody>
+                                                    <tr style="font-weight:300">
+                                                        <td style="width:3.2%;max-width:30px;"></td>
+                                                        <td style="max-width:540px;">
+
+                                                            <p style="text-align:center; margin:20px auto 14px auto;font-size:12px;color:#999;">
+                                                                此邮件由<strong>NinjaXia</strong>自动发出，请勿回复
+                                                            </p>
+
+                                                            <p id="cTMail-rights"
+                                                               style="max-width: 100%; margin:auto;font-size:12px;color:#999;text-align:center;line-height:22px;">
+                                                                <img src="https://portrait.gitee.com/uploads/avatars/user/2194/6583646_wu_cl_1628047961.png!avatar200"
+                                                                     style="width:99px; height:99px; margin:0 auto;"
+                                                                     alt="">
+                                                            </p>
+                                                        </td>
+                                                        <td style="width:3.2%;max-width:30px;"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                        <td style="width:3%;max-width:30px;"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

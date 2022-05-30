@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
+from backend.common.report import render_testcase_report_html
 from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail, crud_api_test_report
+from backend.ninja_xia.settings import SERVER_REPORT_PATH
 from backend.utils.api_test.http_client import HttpClient
 from backend.utils.api_test.http_test_case_runner import HttpTestCaseRunner
 from backend.utils.send_report import send_test_report
@@ -28,17 +31,21 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
         test_case_result = runner.run()
         test_case_result_list.append(test_case_result)
     # 简略报告
-    case_sum = len(test_cases)
-    success_sum = 0
+    total_num = len(test_cases)
+    pass_num = 0
+    error_num = 0
     for _tcr in test_case_result_list:
         if _tcr.run_status == 'PASS':
-            success_sum += 1
-    fail_sum = case_sum - success_sum
+            pass_num += 1
+        if _tcr.run_status == 'ERROR':
+            error_num += 1
+    fail_sum = total_num - pass_num - error_num
     report = {
         'name': task.name,
-        'case_num': case_sum,
-        'success_num': success_sum,
+        'total_num': total_num,
+        'pass_num': pass_num,
         'fail_num': fail_sum,
+        'error_num': error_num,
         'api_task': task,
     }
     # 创建简略报告
@@ -47,6 +54,25 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
     for _tcr in test_case_result_list:
         _tcr.api_task_report = task_report
     crud_api_test_report_detail.create_report_detail_list(test_case_result_list)
+
+    # 记录结果
+    elapsed = 0
+    for _ in test_case_result_list:
+        elapsed = elapsed + _.elapsed
+    result = {
+        'task_name': task.name,
+        'pass_rate': '{:.2%}'.format(pass_num / total_num),
+        'total': len(test_cases),
+        'runner': runner if runner else '定时任务',
+        'start_time': test_case_result_list[0].execute_time,
+        'elapsed': elapsed / 100,
+        'success': pass_num,
+        'failed': fail_sum,
+        'error': error_num,
+        'report_url': SERVER_REPORT_PATH.replace('{pk}', task.id),
+    }
+    content = render_testcase_report_html(**result)
+    return content
 
 
 def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None, send_report=None):
@@ -63,19 +89,34 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
     # 更新任务状态
     task.state = 2
     task.save()
-    # 创建线程
-    threads = []
-    t = threading.Thread(target=exec_api_test_cases, args=(task, test_cases, retry_num, runner))
-    threads.append(t)
 
-    for t in threads:
-        t.start()
+    # 创建线程, 暂时不使用threading.Thread
+    # threads = []
+    # for i in range(10):
+    #     t1 = threading.Thread(target=exec_api_test_cases, args=(task, test_cases, retry_num, runner))
+    #     threads.append(t1)
+    #
+    # for t1 in threads:
+    #     t1.start()
+    #
+    # for t1 in threads:
+    #     t1.join()
 
-    for t in threads:
-        t.join()
+    # 这里想要拿到返回值，所以使用线程池
+    # 如果不这样使用,也可以修改报告model,从根本上解决数据引用问题,但是记得要把其他用到报告model的地方也进行修改
+    pool = ThreadPoolExecutor(max_workers=10)
+    future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner)
+    content = future.result()
+    pool.shutdown()
+
     # 更新任务状态
     task.state = 1
     task.save()
+
     # 发送测试报告
     if send_report:
-        send_test_report()
+        subject = '【{}】API测试报告'.format(task.name)
+
+        t2 = threading.Thread(target=send_test_report, args=(subject, content))
+        t2.start()
+        t2.join()

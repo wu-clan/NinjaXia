@@ -10,14 +10,32 @@ from backend.schemas.sm_sys.sm_sys_email import CreateSysEmailSender, UpdateSysE
 
 class CRUDSender(CRUDBase[Sender, CreateSysEmailSender, UpdateSysEmailSender]):
 
-    def get_sender(self):
+    def get_sender(self) -> QuerySet:
         return super().get_all()
 
-    def create_sender(self, obj: CreateSysEmailSender):
+    def create_sender(self, obj: CreateSysEmailSender) -> Sender:
         return super().create(obj)
 
-    def update_sender(self, pk: int, obj: UpdateSysEmailSender):
+    def update_sender(self, pk: int, obj: UpdateSysEmailSender) -> Sender:
         return super().update_one(pk, obj)
+
+    def get_smtp_server(self) -> Sender:
+        return super().get_all()[0].smtp_server
+
+    def get_smtp_port(self) -> Sender:
+        return super().get_all()[0].smtp_port
+
+    def get_sender_name(self) -> str:
+        return super().get_all()[0].name
+
+    def get_sender_email(self) -> str:
+        return super().get_all()[0].email
+
+    def get_sender_password(self) -> str:
+        return super().get_all()[0].password
+
+    def get_is_ssl(self) -> bool:
+        return super().get_all()[0].is_ssl
 
 
 crud_sender = CRUDSender(Sender)
