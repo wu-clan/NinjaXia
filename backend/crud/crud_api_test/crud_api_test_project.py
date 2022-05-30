@@ -16,6 +16,9 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
     def get_all_enable_projects(self) -> QuerySet:
         return self.model.objects.filter(status=1).all().order_by('-modified_time')
 
+    def get_project_by_id(self, pk: int) -> ApiTestProject:
+        return super().get(pk=pk)
+
     def get_project_by_name(self, name: str) -> ApiTestProject:
         return self.model.objects.filter(name=name).first()
 
