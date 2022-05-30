@@ -126,7 +126,7 @@ class HttpTestCaseRunner:
                 'execute_time': execute_time,
                 'elapsed': 0,
                 'assert_result': None,
-                'run_status': 'FAIL',
+                'run_status': 'ERROR',
                 'api_case': self.test_case,
                 'api_report': None,
                 'creator': self.runner,
@@ -144,9 +144,9 @@ class HttpTestCaseRunner:
                 # 断言
                 if assert_text:
                     assert_status = handling_assertions(response['response'], assert_text)
+                    # if assert_status != 'PASS':
+                    #     log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
             except Exception as e:
-                if assert_status != 'PASS':
-                    log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
                 test_case_result = {
                     'name': name,
                     'url': url,
@@ -159,7 +159,7 @@ class HttpTestCaseRunner:
                     'execute_time': execute_time,
                     'elapsed': 0,
                     'assert_result': None,
-                    'run_status': 'FAIL',
+                    'run_status': 'ERROR',
                     'api_case': self.test_case,
                     'api_report': None,
                     'creator': self.runner,
