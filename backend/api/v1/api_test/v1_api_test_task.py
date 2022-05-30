@@ -64,7 +64,7 @@ def create_task(request, obj: CreateApiTestTask):
     if name:
         return Response403(msg='任务已存在, 请更改任务名称')
     if len(obj.api_case) != 0:
-        for _case in obj.api_case:
+        for _case in set(obj.api_case):
             case = crud_api_test_case.get_case_by_id(_case)
             if not case:
                 return Response404(msg=f'用例 {case} 不存在')
@@ -106,7 +106,7 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     if not cron:
         return Response404(msg=f'定时任务不存在')
     if len(obj.api_case) != 0:
-        for _case in obj.api_case:
+        for _case in set(obj.api_case):
             case = crud_api_test_case.get_case_by_id(_case)
             if not case:
                 return Response404(msg=f'用例 {case} 不存在')

@@ -42,7 +42,7 @@ def create_business(request, obj: CreateApiTestBusiness):
     if len(obj.api_cases) == 0:
         return Response403(msg='请选择用例')
     case_list = []
-    for _case in obj.api_cases:
+    for _case in set(obj.api_cases):
         case = crud_api_test_case.get_case_by_id(_case)
         if not case:
             return Response404(msg=f'用例 {_case} 不存在')
@@ -72,7 +72,7 @@ def update_business(request, pk: int, obj: CreateApiTestBusiness):
     if len(obj.api_cases) == 0:
         return Response403(msg='请选择用例')
     case_list = []
-    for _case in obj.api_cases:
+    for _case in set(obj.api_cases):
         case = crud_api_test_case.get_case_by_id(_case)
         if not case:
             return Response404(msg=f'用例 {_case} 不存在')
