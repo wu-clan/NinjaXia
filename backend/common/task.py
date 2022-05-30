@@ -80,7 +80,7 @@ def task_conf():
 
 
 # 调度器
-scheduler = BackgroundScheduler(**task_conf())
+scheduler = BackgroundScheduler(**task_conf(), timezone=settings.TIME_ZONE)
 
 
 class MyCronTrigger(CronTrigger):
