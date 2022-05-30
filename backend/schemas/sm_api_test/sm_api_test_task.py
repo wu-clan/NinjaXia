@@ -68,7 +68,9 @@ class GetAllApiTestTasks(ApiTestTaskBase):
 
     @staticmethod
     def resolve_api_case(value):
-        return list(map(int, str(value.api_case).split(',')))
+        if len(value.api_case) > 0:
+            return list(map(int, str(value.api_case).split(',')))
+        return
 
 
 class ApiTestTaskResponse(Response200):
