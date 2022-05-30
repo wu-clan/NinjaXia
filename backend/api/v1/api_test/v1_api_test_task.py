@@ -204,5 +204,7 @@ def delete_task(request, pk: int):
     if not task:
         return Response404(msg='任务不存在')
     crud_api_test_task.delete_task(pk)
-    scheduler.remove_job(job_id=str(task.id))
+    job = scheduler.get_job(job_id=str(pk))
+    if job:
+        job.remove()
     return Response200()
