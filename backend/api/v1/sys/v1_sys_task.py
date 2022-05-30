@@ -20,11 +20,10 @@ def get_all_running_tasks(request):
         tasks.append({
             "id": job.id,
             "func_name": job.func_ref,
-            "func": job.func,
             "trigger": str(job.trigger),
             "executor": job.executor,
-            "args": job.args,
-            "kwargs": job.kwargs,
+            # "args": str(job.args),
+            # "kwargs": job.kwargs,
             "name": job.name,
             "misfire_grace_time": job.misfire_grace_time,
             "coalesce": job.coalesce,
@@ -36,12 +35,13 @@ def get_all_running_tasks(request):
 
 @v1_sys_task.post('/{module}/{pk}/run', summary='立即执行任务', auth=GetCurrentIsSuperuser())
 def start_task(request, module: str, pk):
-    job = scheduler.get_job(job_id=str(pk))
     if module == 'sys':
+        job = scheduler.get_job(job_id=f'sys_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.modify_job(job_id=f'sys_{pk}', next_run_time=datetime.datetime.now())
     if module == 'api_test':
+        job = scheduler.get_job(job_id=f'api_test_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.modify_job(job_id=f'api_test_{pk}', next_run_time=datetime.datetime.now())
@@ -52,12 +52,13 @@ def start_task(request, module: str, pk):
 
 @v1_sys_task.post('/{module}/{pk}/pause', summary='暂停任务', auth=GetCurrentIsSuperuser())
 def pause_task(request, module: str, pk):
-    job = scheduler.get_job(job_id=str(pk))
     if module == 'sys':
+        job = scheduler.get_job(job_id=f'sys_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.pause_job(job_id=f'sys_{pk}')
     if module == 'api_test':
+        job = scheduler.get_job(job_id=f'api_test_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.pause_job(job_id=f'api_test_{pk}')
@@ -75,12 +76,13 @@ def pause_task(request, module: str, pk):
 
 @v1_sys_task.post('/{module}/{pk}/recover', summary='恢复任务', auth=GetCurrentIsSuperuser())
 def recover_task(request, module: str, pk):
-    job = scheduler.get_job(job_id=str(pk))
     if module == 'sys':
+        job = scheduler.get_job(job_id=f'sys_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.resume_job(job_id=f'sys_{pk}')
     if module == 'api_test':
+        job = scheduler.get_job(job_id=f'api_test_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.resume_job(job_id=f'api_test_{pk}')
@@ -98,12 +100,13 @@ def recover_task(request, module: str, pk):
 
 @v1_sys_task.delete('/{module}/{pk}', summary='删除任务', auth=GetCurrentIsSuperuser())
 def delete_sys_task(request, module: str, pk):
-    job = scheduler.get_job(job_id=str(pk))
     if module == 'sys':
+        job = scheduler.get_job(job_id=f'sys_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.remove_job(job_id=f'sys_{pk}')
     if module == 'api_test':
+        job = scheduler.get_job(job_id=f'api_test_{pk}')
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.remove_job(job_id=f'api_test_{pk}')
