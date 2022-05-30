@@ -66,6 +66,10 @@ class GetAllApiTestTasks(ApiTestTaskBase):
     created_time: datetime.datetime
     modified_time: datetime.datetime
 
+    @staticmethod
+    def resolve_api_case(value):
+        return list(map(int, str(value.api_case).split(',')))
+
 
 class ApiTestTaskResponse(Response200):
     data: GetAllApiTestTasks = None
