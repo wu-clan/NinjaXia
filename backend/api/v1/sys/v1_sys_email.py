@@ -32,6 +32,9 @@ def operate_sys_email_sender(request, obj: SysEmailSenderBase):
         sender = crud_sender.update_sender(is_have[0].id, obj)
         return Response200(data=serialize_data(sender))
     sender = crud_sender.create_sender(obj)
+    sender.creator = request.session['username']
+    sender.modifier = request.session['username']
+    sender.save()
     return Response200(data=serialize_data(sender))
 
 
@@ -57,6 +60,8 @@ def create_sys_email_receiver_group(request, obj: CreateSysEmailReceiverGroup):
     if group_name:
         return Response403(msg='该组名已存在, 请更换组名')
     _group = crud_receiver_group.create_receiver_group(obj)
+    _group.creator = request.session['username']
+    _group.save()
     return Response200(data=serialize_data(_group))
 
 
@@ -70,6 +75,8 @@ def update_sys_email_receiver_group(request, pk: int, obj: UpdateSysEmailReceive
         if group_name:
             return Response403(msg='该组名已存在, 请更换组名')
     _group = crud_receiver_group.update_receiver_group(pk, obj)
+    _group.modifier = request.session['username']
+    _group.save()
     return Response200(data=serialize_data(_group))
 
 
@@ -101,6 +108,8 @@ def create_sys_email_receiver(request, obj: CreateSysEmailReceiver):
         return Response404(msg='该组不存在')
     obj.receiver_group = receiver_group
     _receiver = crud_receiver.create_receiver(obj)
+    _receiver.creator = request.session['username']
+    _receiver.save()
     return Response200(data=serialize_data(_receiver))
 
 
@@ -122,6 +131,8 @@ def update_sys_email_receiver(request, pk: int, obj: UpdateSysEmailReceiver):
         return Response404(msg='该组不存在')
     obj.receiver_group = receiver_group
     _receiver = crud_receiver.update_receiver(pk, obj)
+    _receiver.modifier = request.session['username']
+    _receiver.save()
     return Response200(data=serialize_data(_receiver))
 
 
