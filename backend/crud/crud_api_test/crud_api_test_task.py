@@ -26,7 +26,9 @@ class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask
     @transaction.atomic
     def update_task(self, task_id: int, update_data: UpdateApiTestTask) -> ApiTestTask:
         state = super().get(task_id).state
-        return super().update_one(task_id, update_data.dict().setdefault('state', state))
+        task = self.model.objects.filter(id=task_id)
+        task.update(**update_data.dict(), state=state)
+        return task.first()
 
     @transaction.atomic
     def delete_task(self, task_id: int) -> ApiTestTask:
