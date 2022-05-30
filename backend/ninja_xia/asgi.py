@@ -11,6 +11,11 @@ import os
 
 from django.core.asgi import get_asgi_application
 
+from backend.common.task import scheduler
+
+# 定时任务随系统启动
+scheduler.start()
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ninja_xia.settings')
 
 application = get_asgi_application()
