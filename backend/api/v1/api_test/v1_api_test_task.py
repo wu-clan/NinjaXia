@@ -150,6 +150,8 @@ def run_async_task(request, pk: int):
     if task.execute_target == 0:
         cases = crud_api_test_business.get_business_cases(task.api_business_test)
     elif task.execute_target == 1:
+        if len(task.api_case) == 0:
+            return Response403(msg='选择执行目标为用例, 但未选择用例')
         cases = []
         cases_id = list(map(int, task.api_case.split(',')))
         for _case in cases_id:
@@ -160,7 +162,7 @@ def run_async_task(request, pk: int):
     else:
         return Response403(msg='执行目标错误')
     if not cases:
-        return Response403(msg='此任务不包含用例, 不支持启动')
+        return Response403(msg='此任务不包含用例, 不支持开启')
     corn = crud_crontab.format_crontab(task.sys_cron.id)
     # 创建任务
     scheduler.add_job(func=thread_exec_api_test_cases, trigger=MyCronTrigger.from_crontab(corn),
