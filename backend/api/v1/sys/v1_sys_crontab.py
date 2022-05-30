@@ -15,13 +15,13 @@ from backend.utils.serializers import serialize_data
 v1_sys_crontab = Router()
 
 
-@v1_sys_crontab.get('', summary='获取所有定时任务', response=List[GetAllCornTabs], auth=GetCurrentUser())
+@v1_sys_crontab.get('', summary='获取所有corn', response=List[GetAllCornTabs], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_crontab(request):
     return crud_crontab.get_all_crontab()
 
 
-@v1_sys_crontab.get('/{int:pk}', summary='获取单个定时任务', auth=GetCurrentUser())
+@v1_sys_crontab.get('/{int:pk}', summary='获取单个corn', auth=GetCurrentUser())
 def get_crontab(request, pk: int):
     corn = crud_crontab.get_crontab_by_id(pk)
     if not corn:
@@ -29,7 +29,7 @@ def get_crontab(request, pk: int):
     return Response200(data=serialize_data(corn))
 
 
-@v1_sys_crontab.post('', summary='创建定时任务', auth=GetCurrentIsSuperuser())
+@v1_sys_crontab.post('', summary='创建corn', auth=GetCurrentIsSuperuser())
 def create_crontab(request, obj: CreateCornTab):
     corn = crud_crontab.create_crontab(obj)
     corn.creator = request.session['username']
@@ -37,7 +37,7 @@ def create_crontab(request, obj: CreateCornTab):
     return Response200(data=serialize_data(corn))
 
 
-@v1_sys_crontab.put('/{int:pk}', summary='更新定时任务', auth=GetCurrentIsSuperuser())
+@v1_sys_crontab.put('/{int:pk}', summary='更新corn', auth=GetCurrentIsSuperuser())
 def update_crontab(request, pk: int, obj: UpdateCornTab):
     corn = crud_crontab.get_crontab_by_id(pk)
     if not corn:
@@ -48,7 +48,7 @@ def update_crontab(request, pk: int, obj: UpdateCornTab):
     return Response200(data=serialize_data(corn))
 
 
-@v1_sys_crontab.delete('/{int:pk}', summary='删除定时任务', auth=GetCurrentIsSuperuser())
+@v1_sys_crontab.delete('/{int:pk}', summary='删除corn', auth=GetCurrentIsSuperuser())
 def delete_crontab(request, pk: int):
     corn = crud_crontab.get_crontab_by_id(pk)
     if not corn:
