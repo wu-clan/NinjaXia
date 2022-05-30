@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import datetime
 from typing import List
 
 from ninja import Router
@@ -27,35 +26,15 @@ v1_api_test_task = Router()
 def get_all_tasks(request):
     tasks = crud_api_test_task.get_all_tasks()
     for task in tasks:
-        job = scheduler.get_job(str(task.id))
+        job = scheduler.get_job(f'api_test_{task.id}')
         if not job:
             task.state = 0
             task.save()
-        if not job.next_run_time:
-            task.state = 3
-            task.save()
+        if job:
+            if not job.next_run_time:
+                task.state = 3
+                task.save()
     return tasks
-
-
-@v1_api_test_task.get('/open', summary='获取所有已开启的任务', auth=GetCurrentUser())
-def get_all_running_tasks(request):
-    tasks = []
-    for job in scheduler.get_jobs():
-        tasks.append({
-            "id": job.id,
-            "func_name": job.func_ref,
-            "func": job.func,
-            "trigger": str(job.trigger),
-            "executor": job.executor,
-            "args": job.args,
-            "kwargs": job.kwargs,
-            "name": job.name,
-            "misfire_grace_time": job.misfire_grace_time,
-            "coalesce": job.coalesce,
-            "max_instances": job.max_instances,
-            "next_run_time": job.next_run_time,
-        })
-    return Response200(data=tasks)
 
 
 @v1_api_test_task.post('', summary='添加任务', auth=GetCurrentIsSuperuser())
@@ -95,7 +74,7 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     if not _task:
         return Response404(msg=f'任务不存在')
     # 判断任务是否已开启
-    if scheduler.get_job(job_id=str(_task.id)):
+    if scheduler.get_job(job_id=f'api_test_{pk}'):
         return Response403(msg='任务已开启, 不支持更新')
     current_name = _task.name
     if current_name != obj.name:
@@ -126,13 +105,13 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     task.modifier = request.session['username']
     task.save()
     # 同时更新任务
-    # if scheduler.get_job(job_id=str(task.id)):
+    # if scheduler.get_job(job_id=f'api_test_{pk}'):
     #     corn = crud_crontab.format_crontab(task.sys_cron.id)
-    #     scheduler.modify_job(trigger=MyCronTrigger.from_crontab(corn), job_id=str(task.id), name=task.name)
+    #     scheduler.modify_job(trigger=MyCronTrigger.from_crontab(corn), job_id=f'api_test_{pk}', name=task.name)
     return ApiTestTaskResponse(data=task)
 
 
-@v1_api_test_task.post('/{int:pk}/run', summary='开启任务', auth=GetCurrentIsSuperuser())
+@v1_api_test_task.post('/{int:pk}/enable', summary='开启任务', auth=GetCurrentIsSuperuser())
 def run_async_task(request, pk: int):
     task = crud_api_test_task.get_task_by_id(pk)
     if not task:
@@ -166,35 +145,10 @@ def run_async_task(request, pk: int):
     corn = crud_crontab.format_crontab(task.sys_cron.id)
     # 创建任务
     scheduler.add_job(func=thread_exec_api_test_cases, trigger=MyCronTrigger.from_crontab(corn),
-                      args=[task, cases, task.retry_num, None, task.send_report], id=str(task.id), name=task.name,
+                      args=[task, cases, task.retry_num, None, task.send_report], id=f'api_test_{pk}', name=task.name,
                       start_date=task.start_data, end_date=task.end_date)
-
-    return Response200()
-
-
-@v1_api_test_task.post('/{int:pk}/start', summary='立即执行任务', auth=GetCurrentIsSuperuser())
-def start_task(request, pk: int):
-    job = scheduler.get_job(id=str(pk))
-    if not job:
-        return Response404(msg=f'任务不存在')
-    scheduler.modify_job(job_id=str(pk), next_run_time=datetime.datetime.now())
-
-
-@v1_api_test_task.post('/{int:pk}/pause', summary='暂停任务', auth=GetCurrentIsSuperuser())
-def pause_task(request, pk: int):
-    job = scheduler.get_job(job_id=str(pk))
-    if not job:
-        return Response404(msg=f'任务不存在')
-    job.pause()
-    return Response200()
-
-
-@v1_api_test_task.post('/{int:pk}/recover', summary='恢复任务', auth=GetCurrentIsSuperuser())
-def recover_task(request, pk: int):
-    job = scheduler.get_job(job_id=str(pk))
-    if not job:
-        return Response404(msg=f'任务不存在')
-    job.resume()
+    task.state = 1
+    task.save()
     return Response200()
 
 
@@ -204,7 +158,7 @@ def delete_task(request, pk: int):
     if not task:
         return Response404(msg='任务不存在')
     crud_api_test_task.delete_task(pk)
-    job = scheduler.get_job(job_id=str(pk))
+    job = scheduler.get_job(job_id=f'api_test_{pk}')
     if job:
         job.remove()
     return Response200()
