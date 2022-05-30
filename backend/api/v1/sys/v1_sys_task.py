@@ -107,6 +107,13 @@ def delete_sys_task(request, module: str, pk):
         if not job:
             return Response404(msg=f'任务不存在')
         scheduler.remove_job(job_id=f'api_test_{pk}')
+        try:
+            api_test_task = crud_api_test_task.get_task_by_id(pk)
+        except Exception as e:
+            log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
+        else:
+            api_test_task.state = 0
+            api_test_task.save()
     else:
         return Response404(msg=f'不存在的模块 {module}')
     return Response200()
