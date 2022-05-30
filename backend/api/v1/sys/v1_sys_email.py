@@ -20,6 +20,8 @@ v1_sys_email = Router()
 @v1_sys_email.get("/senders", summary='获取系统邮件发送者信息', auth=GetCurrentUser())
 def get_sys_email_sender(request):
     sender = crud_sender.get_sender()
+    if not sender:
+        return Response404(msg='没有发送者信息')
     return Response200(data=serialize_data(sender))
 
 
