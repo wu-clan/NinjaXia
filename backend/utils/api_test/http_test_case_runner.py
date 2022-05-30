@@ -36,7 +36,7 @@ class HttpTestCaseRunner:
         self.http_client = http_client
         self.test_case = test_case
         StopAfter.max_attempt_number = retry_num if retry_num else 0
-        self.runner = runner if runner else '定时任务'
+        self.runner = runner if runner else 'timed_task'
 
     @retry(stop=StopAfter())
     def run(self):
