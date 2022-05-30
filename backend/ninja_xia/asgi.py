@@ -11,7 +11,11 @@ import os
 
 from django.core.asgi import get_asgi_application
 
+from backend.common.redis import RedisCli
 from backend.common.task import scheduler
+
+# 初始化redis连接
+RedisCli.init_redis_connect()
 
 # 定时任务随系统启动
 scheduler.start()

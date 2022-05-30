@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    # 请求记录中间件
     'middlewares.access_middleware.AccessMiddleware',
 ]
 
@@ -70,6 +71,20 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4'}
+    }
+}
+
+# Redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
+            "SOCKET_TIMEOUT": 5,  # seconds
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100, 'decode_responses': True},
+        }
     }
 }
 
@@ -142,7 +157,7 @@ SERVER_REPORT_PATH = 'XXX.XXX.COM/v1/api_test_reports/{pk}/detail?page=1&size=10
 TOKEN_ALGORITHM: str = 'HS256'
 TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 1  # token 时效 60 * 24 * 1 = 1 天
 
-# TASK
+# Task
 TASK_REDIS_HOST = '127.0.0.1'
 TASK_REDIS_PORT = 6379
 TASK_REDIS_PASSWORD = ''
