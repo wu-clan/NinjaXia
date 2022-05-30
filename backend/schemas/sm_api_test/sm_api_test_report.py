@@ -11,9 +11,10 @@ from backend.schemas.sm_api_test.sm_api_test_task import GetAllApiTestTasks
 
 class ApiTestReportBase(Schema):
     name: str
-    case_num: int
-    pass_num: int
-    fail_num: int
+    total_num: int = None
+    pass_num: int = None
+    error_num: int = None
+    fail_num: int = None
 
 
 class CreateApiTestReport(ApiTestReportBase):
