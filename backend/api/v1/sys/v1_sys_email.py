@@ -5,6 +5,7 @@ from typing import List
 from ninja import Router
 from ninja.pagination import paginate
 
+from backend.api.hash_security import hash_password
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.pagination import CustomPagination
 from backend.crud.crud_sys.crud_sys_email import crud_sender, crud_receiver_group, crud_receiver
@@ -28,6 +29,7 @@ def get_sys_email_sender(request):
 @v1_sys_email.post("/senders", summary='创建/更新系统邮件发送者信息', auth=GetCurrentIsSuperuser())
 def operate_sys_email_sender(request, obj: SysEmailSenderBase):
     is_have = crud_sender.get_sender()
+    obj.password = hash_password(obj.password)
     if is_have:
         sender = crud_sender.update_sender(is_have[0].id, obj)
         return Response200(data=serialize_data(sender))
