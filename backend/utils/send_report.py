@@ -5,6 +5,7 @@ import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from backend.common.log import log
 from backend.crud.crud_sys.crud_sys_email import crud_sender, crud_receiver
 
 
@@ -34,12 +35,16 @@ def send_test_report(subject, content):
     msg.attach(MIMEText(content, 'html', 'utf-8'))
 
     # 发送
+    smtp = None
     try:
-        smtp = smtplib.SMTP(host=smtp_server, port=smtp_port)
         if is_ssl:
-            smtp.starttls()
+            smtp = smtplib.SMTP_SSL(host=smtp_server, port=smtp_port)
+        else:
+            smtp = smtplib.SMTP(host=smtp_server, port=smtp_port)
         smtp.login(sender_email, sender_password)
         smtp.sendmail(sender_email, to, msg.as_string())
-        smtp.quit()
     except Exception as e:
+        log.error(f'发送邮件失败，错误信息：{e}')
         raise Exception(f'发送邮件失败，错误信息：{e}')
+    finally:
+        smtp.quit()
