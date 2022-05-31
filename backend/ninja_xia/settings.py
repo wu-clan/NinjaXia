@@ -151,7 +151,7 @@ UVICORN_RELOAD = True
 # PATH
 LOG_PATH = BASE_DIR / 'logs'
 REPORT_PATH = BASE_DIR / 'templates' / 'report.html'
-SERVER_REPORT_PATH = 'XXX.XXX.COM/v1/api_test_reports/{pk}/detail?page=1&size=10'
+SERVER_REPORT_PATH = 'https://XXX.XXX.COM/v1/api_test_reports/{pk}/detail?page=1&size=10'
 
 # Token
 TOKEN_ALGORITHM: str = 'HS256'

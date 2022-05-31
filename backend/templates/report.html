@@ -35,7 +35,7 @@
                                                         <td style="max-width:480px;text-align:left;">
                                                             <h1 id="cTMail-title"
                                                                 style="font-size: 20px; line-height: 36px; margin: 0 0 22px;">
-                                                                测试任务【<strong>{{ task_name }}</strong>】执行完毕, 本次测试用例通过率 <span style="color: yellowgreen"><strong>{{ pass_rate }}</strong></span>
+                                                                测试任务【{{ task_name }}】执行完毕, 本次测试用例通过率: <span style="color: yellowgreen">{{ pass_rate }}</span>
                                                             </h1>
 
                                                             <p id="cTMail-userName"
@@ -53,7 +53,8 @@
                                                             <p class="cTMail-content"
                                                                style="line-height: 24px; margin: 6px 0 0; overflow-wrap: break-word; word-break: break-all;">
                                                                 <span style="color: rgb(51, 51, 51); font-size: 14px;">
-                                                                    由<strong>&nbsp;{{ runner }}&nbsp;</strong>于&nbsp;{{ start_time }}&nbsp;开始执行，共耗时<strong>&nbsp;{{ elapsed }}&nbsp;</strong>秒。
+                                                                    由<strong>&nbsp;{{ runner }}&nbsp;</strong>于&nbsp;{{ start_time }}&nbsp;开始执行,&nbsp;
+                                                                    本次任务执行共耗时<strong>&nbsp;{{ elapsed }}&nbsp;</strong>秒。
                                                                 </span>
                                                             </p>
 
@@ -132,7 +133,7 @@
                                                             <p id="cTMail-rights"
                                                                style="max-width: 100%; margin:auto;font-size:12px;color:#999;text-align:center;line-height:22px;">
                                                                 <img src="https://s1.328888.xyz/2022/05/31/5DBP3.png"
-                                                                     style="width:99px; height:99px; margin:0 auto;"
+                                                                     style="width:120px; height:120px; margin:0 auto;"
                                                                      alt="">
                                                             </p>
                                                         </td>

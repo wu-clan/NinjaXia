@@ -67,7 +67,7 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
         'total': len(test_cases),
         'runner': runner if runner else '定时任务',
         'start_time': test_case_result_list[0].execute_time,
-        'elapsed': elapsed / 100,
+        'elapsed': '{:.5}'.format(elapsed / 100),
         'success': pass_num,
         'failed': fail_sum,
         'error': error_num,
