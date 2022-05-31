@@ -29,7 +29,7 @@ crud_api_test_report = CRUDApiTestTask(ApiTestReport)
 class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport, UpdateApiTestReport]):
 
     def get_all_reports_detail(self) -> QuerySet:
-        report_list = super().get_all().order_by('-created_time')
+        report_list = super().get_all().order_by('-id')
         for report in report_list:
             report.params = json.loads(json.dumps(eval(report.params))) \
                 if isinstance(report.params, str) else report.params
@@ -51,7 +51,15 @@ class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport,
         return super().get_all().count()
 
     def get_all_reports_detail_by_report_id(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(api_report=pk).all().order_by('-created_time')
+        report_list = self.model.objects.filter(api_report=pk).all().order_by('-id')
+        for report in report_list:
+            report.params = json.loads(json.dumps(eval(report.params))) \
+                if isinstance(report.params, str) else report.params
+            report.headers = json.loads(json.dumps(eval(report.headers))) \
+                if isinstance(report.headers, str) else report.params
+            report.response_data = json.loads(json.dumps(eval(report.response_data))) \
+                if isinstance(report.response_data, str) else report.params
+        return report_list
 
 
 crud_api_test_report_detail = CRUDApiTestReportDetail(ApiTestReportDetail)
