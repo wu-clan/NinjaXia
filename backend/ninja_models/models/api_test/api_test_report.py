@@ -38,7 +38,7 @@ class ApiTestReportDetail(BaseModel):
     body = models.TextField(null=True, verbose_name='用例请求参数')
     status_code = models.IntegerField(null=True, verbose_name='用例响应状态码')
     response_data = models.TextField(null=True, verbose_name='用例响应结果')
-    execute_time = models.DateTimeField(verbose_name='执行时间')
+    execute_time = models.DateTimeField(null=True, verbose_name='执行时间')
     elapsed = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='响应时长(ms)')
     assert_result = models.TextField(null=True, verbose_name='用例断言结果')
     run_status = models.CharField(max_length=32, default='FAIL', verbose_name='执行状态')
