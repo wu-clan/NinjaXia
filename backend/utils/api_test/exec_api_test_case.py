@@ -3,6 +3,7 @@
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
+from backend.common.log import log
 from backend.common.report import render_testcase_report_html
 from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail, crud_api_test_report
 from backend.ninja_xia.settings import SERVER_REPORT_PATH
@@ -22,15 +23,16 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
     :return:
     """
     test_case_result_list = []
+    # 实例化http请求客户端
+    http_client = HttpClient()
     for test_case in test_cases:
-        # 实例化http请求客户端
-        http_client = HttpClient()
         # 实例化运行器
-        runner = HttpTestCaseRunner(http_client=http_client, test_case=test_case, retry_num=retry_num, runner=runner)
+        h_runner = HttpTestCaseRunner(http_client=http_client, test_case=test_case, retry_num=retry_num, runner=runner)
         # 运行测试用例
-        test_case_result = runner.run()
+        test_case_result = h_runner.run()
         test_case_result_list.append(test_case_result)
-    # 简略报告
+
+    # 创建简略报告
     total_num = len(test_cases)
     pass_num = 0
     error_num = 0
@@ -48,8 +50,8 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
         'error_num': error_num,
         'api_task': task,
     }
-    # 创建简略报告
     task_report = crud_api_test_report.create_report(report)
+
     # 批量创建测试报告详情
     for _tcr in test_case_result_list:
         _tcr.api_task_report = task_report
@@ -69,7 +71,7 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
         'success': pass_num,
         'failed': fail_sum,
         'error': error_num,
-        'report_url': SERVER_REPORT_PATH.replace('{pk}', task.id),
+        'report_url': SERVER_REPORT_PATH.replace('{pk}', str(task.id)),
     }
     content = render_testcase_report_html(**result)
     return content
@@ -86,37 +88,44 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
     :param send_report:
     :return:
     """
+    log.info('开始执行任务：{}'.format(task.name))
     # 更新任务状态
     task.state = 2
     task.save()
-
-    # 创建线程, 暂时不使用threading.Thread
-    # threads = []
-    # for i in range(10):
-    #     t1 = threading.Thread(target=exec_api_test_cases, args=(task, test_cases, retry_num, runner))
-    #     threads.append(t1)
-    #
-    # for t1 in threads:
-    #     t1.start()
-    #
-    # for t1 in threads:
-    #     t1.join()
-
-    # 这里想要拿到返回值，所以使用线程池
-    # 如果不这样使用,也可以修改报告model,从根本上解决数据引用问题,但是记得要把其他用到报告model的地方也进行修改
-    pool = ThreadPoolExecutor(max_workers=10)
-    future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner)
-    content = future.result()
-    pool.shutdown()
-
-    # 更新任务状态
-    task.state = 1
-    task.save()
+    content = None
+    try:
+        # 创建线程, 暂时不使用threading.Thread
+        # threads = []
+        # for i in range(10):
+        #     t1 = threading.Thread(target=exec_api_test_cases, args=(task, test_cases, retry_num, runner))
+        #     threads.append(t1)
+        #
+        # for t1 in threads:
+        #     t1.start()
+        #
+        # for t1 in threads:
+        #     t1.join()
+        #
+        # 这里想要拿到返回值，所以使用线程池
+        # 如果不这样使用,也可以修改报告model,从根本上解决数据引用问题,但是记得要把其他用到报告model的地方也进行修改
+        pool = ThreadPoolExecutor(max_workers=10)
+        future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner)
+        content = future.result()
+        pool.shutdown()
+    except Exception as e:
+        log.error('多线程执行api测试用例失败: %s' % e)
+        pass
+    finally:
+        # 更新任务状态
+        task.state = 1
+        task.save()
 
     # 发送测试报告
     if send_report:
-        subject = '【{}】API测试报告'.format(task.name)
+        subject = 'API测试任务【{}】测试报告'.format(task.name)
 
-        t2 = threading.Thread(target=send_test_report, args=(subject, content))
+        t2 = threading.Thread(target=send_test_report,
+                              args=(subject, content if content else '<h1>500 Server Error</h1>'))
         t2.start()
         t2.join()
+    log.info('执行任务：{} 结束'.format(task.name))
