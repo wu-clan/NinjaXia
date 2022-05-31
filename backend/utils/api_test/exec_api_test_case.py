@@ -3,6 +3,8 @@
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
+import tenacity
+
 from backend.common.log import log
 from backend.common.report import render_testcase_report_html
 from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail, crud_api_test_report
@@ -23,14 +25,35 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
     :return:
     """
     test_case_result_list = []
+    test_case_result = None
     # 实例化http请求客户端
     http_client = HttpClient()
     for test_case in test_cases:
         # 实例化运行器
         h_runner = HttpTestCaseRunner(http_client=http_client, test_case=test_case, retry_num=retry_num, runner=runner)
         # 运行测试用例
-        test_case_result = h_runner.run()
-        test_case_result_list.append(test_case_result)
+        try:
+            test_case_result = h_runner.run()
+        except tenacity.RetryError as e:
+            test_case_result = {
+                'name': test_case.name,
+                'url': test_case.url,
+                'method': test_case.method,
+                'params': test_case.params,
+                'headers': test_case.headers,
+                'body': test_case.body,
+                'status_code': 400,
+                'response_data': str({'error_msg': f'{e}'}),
+                'execute_time': None,
+                'elapsed': 0,
+                'assert_result': None,
+                'run_status': 'ERROR',
+                'api_case': test_case,
+                'api_report': None,
+                'creator': runner if runner else 'timed_task',
+            }
+        finally:
+            test_case_result_list.append(test_case_result)
 
     # 创建简略报告
     total_num = len(test_cases)
@@ -54,7 +77,7 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
 
     # 批量创建测试报告详情
     for _tcr in test_case_result_list:
-        _tcr.api_task_report = task_report
+        _tcr.api_report = task_report
     crud_api_test_report_detail.create_report_detail_list(test_case_result_list)
 
     # 记录结果
@@ -114,7 +137,8 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
         pool.shutdown()
     except Exception as e:
         log.error('多线程执行api测试用例失败: %s' % e)
-        pass
+        # pass
+        raise e
     finally:
         # 更新任务状态
         task.state = 1
