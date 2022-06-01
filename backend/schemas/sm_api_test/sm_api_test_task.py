@@ -58,7 +58,7 @@ class UpdateApiTestTask(ApiTestTaskBase):
 class GetAllApiTestTasks(ApiTestTaskBase):
     id: int
     state: int
-    sys_corn: GetAllCornTabs = None
+    sys_cron: GetAllCornTabs = None
     api_project: GetAllApiTestProjects = None
     api_business_test: GetAllApiTestBusinesses = None
     creator: str = None
