@@ -40,7 +40,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
         return super().delete_one(pk)
 
     def get_module_cases(self, pk: int) -> QuerySet:
-        return super().get(pk=pk).api_test_case.all().order_by('-modified_time')
+        return super().get(pk=pk).api_test_cases.all().order_by('-modified_time')
 
     def get_module_count(self) -> int:
         return super().get_all().count()

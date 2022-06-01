@@ -21,9 +21,9 @@ class ApiTestCase(BaseModel):
     body = models.TextField(null=True, verbose_name='请求参数')
     assert_text = models.TextField(null=True, verbose_name='断言内容')
     api_module = models.ForeignKey(ApiTestModule, on_delete=models.SET_NULL, null=True, verbose_name='所属模块',
-                                   related_name='api_test_case', related_query_name='api_test_case')
+                                   related_name='api_test_cases', related_query_name='api_test_case')
     api_environment = models.ForeignKey(ApiTestEnvironment, on_delete=models.SET_NULL, null=True, verbose_name='所属环境',
-                                        related_name='api_test_case', related_query_name='api_test_case')
+                                        related_name='api_test_cases', related_query_name='api_test_case')
 
     class Meta:
         db_table = 'sys_api_test_case'

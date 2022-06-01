@@ -14,7 +14,7 @@ class ApiTestBusinessTest(BaseModel):
     name = models.CharField(max_length=128, unique=True, verbose_name='业务测试操作名称')
     description = models.TextField(null=True, verbose_name='业务测试操作描述')
     api_module = models.ForeignKey(ApiTestModule, on_delete=models.SET_NULL, null=True, verbose_name='所属模块',
-                                   related_name='api_test_business_test',
+                                   related_name='api_test_business_tests',
                                    related_query_name='api_test_business_test')
 
     class Meta:
@@ -29,10 +29,10 @@ class ApiTestBusinessTestAndCase(BaseModel):
     API业务测试及用例关联表
     """
     api_business_test = models.ForeignKey(ApiTestBusinessTest, on_delete=models.CASCADE, verbose_name='所属业务测试',
-                                          related_name='api_test_business_test_and_case',
+                                          related_name='api_test_business_test_and_cases',
                                           related_query_name='api_test_business_test_and_case')
     api_case = models.ForeignKey(ApiTestCase, on_delete=models.CASCADE, verbose_name='所属测试用例',
-                                 related_name='api_test_business_test_and_case',
+                                 related_name='api_test_business_test_and_cases',
                                  related_query_name='api_test_business_test_and_case')
 
     class Meta:

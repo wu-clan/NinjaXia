@@ -44,7 +44,7 @@ class Receiver(BaseModel):
     name = models.CharField(max_length=128, unique=True, verbose_name='收件人名称')
     email = models.EmailField(unique=True, verbose_name='收件人邮箱')
     receiver_group = models.ForeignKey(ReceiverGroup, on_delete=models.CASCADE, verbose_name='所属收件人组',
-                                       related_name='receiver', related_query_name='receiver')
+                                       related_name='receivers', related_query_name='receiver')
 
     def __str__(self):
         return self.name

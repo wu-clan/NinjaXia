@@ -24,7 +24,7 @@ class ApiTestTask(BaseModel):
     retry_num = models.IntegerField(default=0, verbose_name='重试次数')
     api_case = models.CharField(max_length=256, null=True, verbose_name='拥有测试用例')
     sys_cron = models.ForeignKey(Crontab, on_delete=models.SET_NULL, null=True, verbose_name='所属定时器',
-                                 related_name='api_test_task', related_query_name='api_test_task')
+                                 related_name='api_test_tasks', related_query_name='api_test_task')
     api_project = models.ForeignKey(ApiTestProject, on_delete=models.SET_NULL, null=True, verbose_name='所属项目',
                                     related_name='api_test_tasks', related_query_name='api_test_task')
     api_business_test = models.ForeignKey(ApiTestBusinessTest, on_delete=models.SET_NULL, null=True,
