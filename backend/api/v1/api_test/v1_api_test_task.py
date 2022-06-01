@@ -111,7 +111,7 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     return ApiTestTaskResponse(data=task)
 
 
-@v1_api_test_task.post('/{int:pk}/enable', summary='开启任务', auth=GetCurrentIsSuperuser())
+@v1_api_test_task.post('/{int:pk}/enable', summary='开启任务', auth=GetCurrentUser())
 def run_async_task(request, pk: int):
     task = crud_api_test_task.get_task_by_id(pk)
     if not task:
