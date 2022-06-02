@@ -39,7 +39,7 @@ class ApiTestReportDetailBase(Schema):
     body: str = None
     status_code: int = None
     response_data: Any = None
-    execute_time: datetime.datetime
+    execute_time: datetime.datetime = None
     elapsed: float
     assert_result: str = None
     run_status: str
