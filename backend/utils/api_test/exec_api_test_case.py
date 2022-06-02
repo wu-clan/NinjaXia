@@ -8,6 +8,7 @@ import tenacity
 from backend.common.log import log
 from backend.common.report import render_testcase_report_html
 from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail, crud_api_test_report
+from backend.ninja_models.models.api_test.api_test_report import ApiTestReportDetail
 from backend.ninja_xia.settings import SERVER_REPORT_PATH
 from backend.utils.api_test.http_client import HttpClient
 from backend.utils.api_test.http_test_case_runner import HttpTestCaseRunner
@@ -43,16 +44,17 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
                 'headers': test_case.headers,
                 'body': test_case.body,
                 'status_code': 400,
-                'response_data': str({'error_msg': f'{e}'}),
+                'response_data': {'error_msg': f'{e.last_attempt.exception()}'},
                 'execute_time': None,
                 'elapsed': 0,
-                'assert_result': None,
+                'assert_result': '未知',
                 'run_status': 'ERROR',
                 'api_case': test_case,
                 'api_report': None,
                 'creator': runner if runner else 'timed_task',
             }
-        finally:
+            test_case_result_list.append(ApiTestReportDetail(**test_case_result))
+        else:
             test_case_result_list.append(test_case_result)
 
     # 创建简略报告
@@ -111,11 +113,10 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
     :param send_report:
     :return:
     """
-    log.info('开始执行任务：{}'.format(task.name))
+    log.info('=> 开始执行任务：{}'.format(task.name))
     # 更新任务状态
     task.state = 2
     task.save()
-    content = None
     try:
         # 创建线程, 暂时不使用threading.Thread
         # threads = []
@@ -152,4 +153,4 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
                               args=(subject, content if content else '<h1>500 Server Error</h1>'))
         t2.start()
         t2.join()
-    log.info('执行任务：{} 结束'.format(task.name))
+    log.info('=> 执行任务：{} 结束'.format(task.name))

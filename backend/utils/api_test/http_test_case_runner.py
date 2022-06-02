@@ -1,22 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import orjson
-from django.utils import timezone
 from tenacity import retry, stop_after_attempt
 
+from backend.common.log import log
 from backend.ninja_models.models.api_test.api_test_report import ApiTestReportDetail
 from backend.utils.api_test.parse_assertions import handling_assertions
-
-
-class StopAfter(stop_after_attempt):
-    """
-    重写 stop_after_attempt 类
-    """
-    max_attempt_number = 0
-
-    def __init__(self) -> None:
-        super().__init__(self.max_attempt_number)
-        self.max_attempt_number = self.max_attempt_number
 
 
 class HttpTestCaseRunner:
@@ -35,10 +24,12 @@ class HttpTestCaseRunner:
         """
         self.http_client = http_client
         self.test_case = test_case
-        StopAfter.max_attempt_number = retry_num if retry_num else 0
+        self.retry_num = retry_num
         self.runner = runner if runner else 'timed_task'
 
-    @retry(stop=StopAfter())
+        # 实例化装饰器
+        self.run = retry(stop=stop_after_attempt(self.retry_num))(self.run)
+
     def run(self):
         """
         运行程序
@@ -107,30 +98,11 @@ class HttpTestCaseRunner:
         request_kwargs.setdefault('timeout', 10)
 
         # 发起请求
-        execute_time = timezone.now()
         assert_status = None
         try:
             response = self.http_client.send_request(method=method, url=url, **request_kwargs)
         except Exception as e:
-            # 失败情况下的结果
-            test_case_result = {
-                'name': name,
-                'url': url,
-                'method': method,
-                'params': params,
-                'headers': headers,
-                'body': body,
-                'status_code': 400,
-                'response_data': str({'error_msg': f'{e}'}),
-                'execute_time': execute_time,
-                'elapsed': 0,
-                'assert_result': None,
-                'run_status': 'ERROR',
-                'api_case': self.test_case,
-                'api_report': None,
-                'creator': self.runner,
-            }
-            return ApiTestReportDetail(**test_case_result)
+            raise Exception(e)
         else:
             # 记录响应结果
             response_result_list = {
@@ -143,27 +115,10 @@ class HttpTestCaseRunner:
                 # 断言
                 if assert_text:
                     assert_status = handling_assertions(response['response'], assert_text)
-                    # if assert_status != 'PASS':
-                    #     log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
+                    if assert_status != 'PASS':
+                        log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
             except Exception as e:
-                test_case_result = {
-                    'name': name,
-                    'url': url,
-                    'method': method,
-                    'params': params,
-                    'headers': headers,
-                    'body': body,
-                    'status_code': 400,
-                    'response_data': str({'error_msg': f'{e}'}),
-                    'execute_time': execute_time,
-                    'elapsed': 0,
-                    'assert_result': None,
-                    'run_status': 'ERROR',
-                    'api_case': self.test_case,
-                    'api_report': None,
-                    'creator': self.runner,
-                }
-                return ApiTestReportDetail(**test_case_result)
+                raise Exception(e)
             else:
                 # 成功下的结果
                 test_case_result = {
@@ -177,7 +132,7 @@ class HttpTestCaseRunner:
                     'response_data': response_result_list,
                     'execute_time': response["stat"]["execute_time"],
                     'elapsed': response['response']['elapsed'],
-                    'assert_result': assert_text,
+                    'assert_result': assert_status,
                     'run_status': assert_status,
                     'api_case': self.test_case,
                     'api_report': None,
