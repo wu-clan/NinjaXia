@@ -49,4 +49,4 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
         return super().get_all().count()
 
 
-crud_api_test_project = CRUDApiTestProject(ApiTestProject)
+ApiTestProjectDao = CRUDApiTestProject(ApiTestProject)

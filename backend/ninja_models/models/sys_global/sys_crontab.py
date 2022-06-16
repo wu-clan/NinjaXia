@@ -5,7 +5,7 @@ from django.db import models
 from backend.ninja_models.models.base import BaseModel
 
 
-class Crontab(BaseModel):
+class SysCrontab(BaseModel):
     """
     定时任务
     """

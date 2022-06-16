@@ -5,7 +5,7 @@ from django.db import models
 from backend.ninja_models.models.base import BaseModel
 
 
-class Sender(BaseModel):
+class SysEmailSender(BaseModel):
     """
     发件人
     """
@@ -23,7 +23,7 @@ class Sender(BaseModel):
         db_table = 'sys_email_sender'
 
 
-class ReceiverGroup(BaseModel):
+class SysEmailReceiverGroup(BaseModel):
     """
     收件人组
     """
@@ -37,13 +37,13 @@ class ReceiverGroup(BaseModel):
         db_table = 'sys_email_receiver_group'
 
 
-class Receiver(BaseModel):
+class SysEmailReceiver(BaseModel):
     """
     收件人
     """
     name = models.CharField(max_length=128, unique=True, verbose_name='收件人名称')
     email = models.EmailField(unique=True, verbose_name='收件人邮箱')
-    receiver_group = models.ForeignKey(ReceiverGroup, on_delete=models.CASCADE, verbose_name='所属收件人组',
+    receiver_group = models.ForeignKey(SysEmailReceiverGroup, on_delete=models.CASCADE, verbose_name='所属收件人组',
                                        related_name='receivers', related_query_name='receiver')
 
     def __str__(self):

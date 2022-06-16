@@ -44,4 +44,4 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
         return super().get_all().count()
 
 
-crud_api_test_env = CRUDApiTestTask(ApiTestEnvironment)
+ApiTestEnvDao = CRUDApiTestTask(ApiTestEnvironment)

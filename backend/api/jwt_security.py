@@ -9,7 +9,7 @@ from jose import jwt
 from ninja.security import HttpBearer
 from pydantic import ValidationError
 
-from backend.crud.crud_sys.crud_sys_user import crud_user
+from backend.crud.crud_sys.crud_sys_user import UserDao
 from backend.ninja_xia import settings
 from backend.schemas import TokenError, AuthorizationError
 
@@ -49,7 +49,7 @@ class GetCurrentUser(HttpBearer):
                 raise TokenError
         except (jwt.JWTError, ValidationError):
             raise TokenError
-        user = crud_user.get_user_by_id(user_id)
+        user = UserDao.get_user_by_id(user_id)
         # 将用户登录信息存入session
         # auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         request.session['username'] = user.username

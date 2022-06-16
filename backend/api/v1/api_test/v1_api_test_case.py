@@ -10,10 +10,10 @@ from ninja.pagination import paginate
 from backend.api.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.common.log import log
 from backend.common.pagination import CustomPagination
-from backend.crud.crud_api_test.crud_api_test_case import crud_api_test_case
-from backend.crud.crud_api_test.crud_api_test_env import crud_api_test_env
-from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
-from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail
+from backend.crud.crud_api_test.crud_api_test_case import ApiTestCaseDao
+from backend.crud.crud_api_test.crud_api_test_env import ApiTestEnvDao
+from backend.crud.crud_api_test.crud_api_test_module import ApiTestModuleDao
+from backend.crud.crud_api_test.crud_api_test_report import ApiTestReportDetailDao
 from backend.schemas import Response404, Response200, Response403
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
     ApiTestCaseResponse
@@ -26,12 +26,12 @@ v1_api_test_case = Router()
 @v1_api_test_case.get('', summary='获取所有用例', response=List[GetAllApiTestCases], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_cases(request):
-    return crud_api_test_case.get_all_cases()
+    return ApiTestCaseDao.get_all_cases()
 
 
 @v1_api_test_case.get('/{int:pk}', summary='获取单个用例', auth=GetCurrentUser())
 def get_one_case(request, pk: int):
-    case = crud_api_test_case.get_one_case(pk)
+    case = ApiTestCaseDao.get_one_case(pk)
     if not case:
         return Response404(msg='用例不存在')
     case.params = json.loads(str(case.params))
@@ -44,12 +44,12 @@ def get_one_case(request, pk: int):
 
 @v1_api_test_case.post('', summary='新增用例', auth=GetCurrentIsSuperuser())
 def create_case(request, obj: CreateApiTestCase):
-    if crud_api_test_case.get_case_by_name(obj.name):
+    if ApiTestCaseDao.get_case_by_name(obj.name):
         return Response403(msg='用例已存在, 请更换用例名称')
-    _module = crud_api_test_module.get_module_by_id(obj.api_module)
+    _module = ApiTestModuleDao.get_module_by_id(obj.api_module)
     if not _module:
         return Response404(msg='模块不存在')
-    _env = crud_api_test_env.get_env_by_id(obj.api_environment)
+    _env = ApiTestEnvDao.get_env_by_id(obj.api_environment)
     if not _env:
         return Response404(msg='环境不存在')
     if not _env.status:
@@ -72,7 +72,7 @@ def create_case(request, obj: CreateApiTestCase):
         obj.body = json.dumps(obj.body, ensure_ascii=False)
     obj.api_module = _module
     obj.api_environment = _env
-    case = crud_api_test_case.create_case(obj)
+    case = ApiTestCaseDao.create_case(obj)
     case.creator = request.session['username']
     case.save()
     return ApiTestCaseResponse(data=case)
@@ -80,16 +80,16 @@ def create_case(request, obj: CreateApiTestCase):
 
 @v1_api_test_case.put('/{int:pk}', summary='更新用例', auth=GetCurrentIsSuperuser())
 def update_case(request, pk: int, obj: CreateApiTestCase):
-    case = crud_api_test_case.get_case_by_id(pk)
+    case = ApiTestCaseDao.get_case_by_id(pk)
     if not case:
         return Response404(msg='用例不存在')
     if case.name != obj.name:
-        if crud_api_test_case.get_case_by_name(obj.name):
+        if ApiTestCaseDao.get_case_by_name(obj.name):
             return Response403(msg='用例已存在, 请更换用例名称')
-    _module = crud_api_test_module.get_module_by_id(obj.api_module)
+    _module = ApiTestModuleDao.get_module_by_id(obj.api_module)
     if not _module:
         return Response404(msg='模块不存在')
-    _env = crud_api_test_env.get_env_by_id(obj.api_environment)
+    _env = ApiTestEnvDao.get_env_by_id(obj.api_environment)
     if not _env:
         return Response404(msg='环境不存在')
     if not _env.status:
@@ -112,7 +112,7 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
         obj.body = json.dumps(obj.body, ensure_ascii=False)
     obj.api_module = _module
     obj.api_environment = _env
-    case = crud_api_test_case.update_case(pk, obj)
+    case = ApiTestCaseDao.update_case(pk, obj)
     case.modifier = request.session['username']
     case.save()
     return ApiTestCaseResponse(data=case)
@@ -121,16 +121,16 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
 @v1_api_test_case.delete('', summary='批量删除用例', auth=GetCurrentIsSuperuser())
 def delete_case(request, pk: List[int]):
     for i in pk:
-        case = crud_api_test_case.get_case_by_id(i)
+        case = ApiTestCaseDao.get_case_by_id(i)
         if not case:
             return Response404(msg=f'用例 {i} 不存在')
-    crud_api_test_case.delete_case(pk)
+    ApiTestCaseDao.delete_case(pk)
     return Response200()
 
 
 @v1_api_test_case.post('/{int:pk}/debug', summary='调试用例', auth=GetCurrentUser())
 def debug_case(request, pk: int, extra: ExtraDebugArgs):
-    case = crud_api_test_case.get_case_by_id(pk)
+    case = ApiTestCaseDao.get_case_by_id(pk)
     if not case:
         return Response404(msg='用例不存在')
     if not case.api_module.api_project.status:
@@ -183,7 +183,7 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
             'creator': debug_result['executor'],
         }
         try:
-            write_report = threading.Thread(target=crud_api_test_report_detail.create_report_detail,
+            write_report = threading.Thread(target=ApiTestReportDetailDao.create_report_detail,
                                             args=(test_case_report,))
             write_report.start()
             write_report.join()

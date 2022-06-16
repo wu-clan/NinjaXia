@@ -38,4 +38,4 @@ class CRUDUser(CRUDBase[User, CreateUser, UpdateUser]):
         return super().get_all()
 
 
-crud_user = CRUDUser(User)
+UserDao = CRUDUser(User)

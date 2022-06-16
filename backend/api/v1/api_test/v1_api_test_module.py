@@ -8,8 +8,8 @@ from ninja.pagination import paginate
 
 from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.pagination import CustomPagination
-from backend.crud.crud_api_test.crud_api_test_module import crud_api_test_module
-from backend.crud.crud_api_test.crud_api_test_project import crud_api_test_project
+from backend.crud.crud_api_test.crud_api_test_module import ApiTestModuleDao
+from backend.crud.crud_api_test.crud_api_test_project import ApiTestProjectDao
 from backend.schemas import Response200, Response403, Response404
 from backend.schemas.sm_api_test.sm_api_test_case import GetAllApiTestCases
 from backend.schemas.sm_api_test.sm_api_test_module import GetAllApiTestModules, CreateApiTestModule, \
@@ -21,12 +21,12 @@ v1_api_test_module = Router()
 @v1_api_test_module.get('', summary='获取所有模块', response=List[GetAllApiTestModules], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_modules(request) -> Any:
-    return crud_api_test_module.get_all_modules()
+    return ApiTestModuleDao.get_all_modules()
 
 
 @v1_api_test_module.get('/{int:pk}', summary='获取单个模块', auth=GetCurrentUser())
 def get_one_module(request, pk: int) -> Any:
-    module = crud_api_test_module.get_one_module(pk)
+    module = ApiTestModuleDao.get_one_module(pk)
     if not module:
         return Response404(msg='模块不存在')
     return ApiTestModuleResponse(data=module)
@@ -34,16 +34,16 @@ def get_one_module(request, pk: int) -> Any:
 
 @v1_api_test_module.post('', summary='创建模块', auth=GetCurrentIsSuperuser())
 def create_module(request, obj: CreateApiTestModule) -> Any:
-    if crud_api_test_module.get_module_by_name(obj.name):
+    if ApiTestModuleDao.get_module_by_name(obj.name):
         return Response403(msg='模块已存在, 请更改模块名称')
     try:
-        _project = crud_api_test_project.get_project_or_404(obj.api_project)
+        _project = ApiTestProjectDao.get_project_or_404(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
     if not _project.status:
         return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
-    module = crud_api_test_module.create_module(obj)
+    module = ApiTestModuleDao.create_module(obj)
     module.creator = request.session['username']
     module.save()
     return ApiTestModuleResponse(data=module)
@@ -51,20 +51,20 @@ def create_module(request, obj: CreateApiTestModule) -> Any:
 
 @v1_api_test_module.put('/{int:pk}', summary='更新模块', auth=GetCurrentIsSuperuser())
 def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
-    if not crud_api_test_module.get_module_by_id(pk):
+    if not ApiTestModuleDao.get_module_by_id(pk):
         return Response404(msg='模块不存在')
-    current_name = crud_api_test_module.get_module_name_by_id(pk)
+    current_name = ApiTestModuleDao.get_module_name_by_id(pk)
     if not current_name == obj.name:
-        if crud_api_test_module.get_module_by_name(obj.name):
+        if ApiTestModuleDao.get_module_by_name(obj.name):
             return Response403(msg='模块已存在，请更改模块名称')
     try:
-        _project = crud_api_test_project.get_project_or_404(obj.api_project)
+        _project = ApiTestProjectDao.get_project_or_404(obj.api_project)
     except Http404:
         raise Http404("未找到项目")
     if not _project.status:
         return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
-    module = crud_api_test_module.update_module(pk, obj)
+    module = ApiTestModuleDao.update_module(pk, obj)
     module.modifier = request.session['username']
     module.save()
     return ApiTestModuleResponse(data=module)
@@ -73,7 +73,7 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
 @v1_api_test_module.delete('/{int:pk}', summary='删除模块', auth=GetCurrentIsSuperuser())
 def delete_module(request, pk: int) -> Any:
     try:
-        crud_api_test_module.delete_module(pk)
+        ApiTestModuleDao.delete_module(pk)
     except Http404:
         raise Http404("未找到模块")
     return Response200()
@@ -84,8 +84,8 @@ def delete_module(request, pk: int) -> Any:
 @paginate(CustomPagination)
 def get_one_module_cases(request, pk: int):
     try:
-        _module = crud_api_test_module.get_module_or_404(pk)
+        _module = ApiTestModuleDao.get_module_or_404(pk)
     except Http404:
         raise Http404("没有此模块")
-    cases = crud_api_test_module.get_module_cases(pk)
+    cases = ApiTestModuleDao.get_module_cases(pk)
     return cases

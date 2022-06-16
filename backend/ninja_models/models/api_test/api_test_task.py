@@ -4,7 +4,7 @@ from django.db import models
 
 from backend.ninja_models.models.api_test.api_test_business_test import ApiTestBusinessTest
 from backend.ninja_models.models.api_test.api_test_project import ApiTestProject
-from backend.ninja_models.models.sys_global.sys_crontab import Crontab
+from backend.ninja_models.models.sys_global.sys_crontab import SysCrontab
 from backend.ninja_models.models.base import BaseModel
 
 
@@ -23,7 +23,7 @@ class ApiTestTask(BaseModel):
     execute_target = models.SmallIntegerField(default=0, verbose_name='执行目标, 0: 业务, 1: 用例')
     retry_num = models.IntegerField(default=0, verbose_name='重试次数')
     api_case = models.CharField(max_length=256, null=True, verbose_name='拥有测试用例')
-    sys_cron = models.ForeignKey(Crontab, on_delete=models.SET_NULL, null=True, verbose_name='所属定时器',
+    sys_cron = models.ForeignKey(SysCrontab, on_delete=models.SET_NULL, null=True, verbose_name='所属定时器',
                                  related_name='api_test_tasks', related_query_name='api_test_task')
     api_project = models.ForeignKey(ApiTestProject, on_delete=models.SET_NULL, null=True, verbose_name='所属项目',
                                     related_name='api_test_tasks', related_query_name='api_test_task')

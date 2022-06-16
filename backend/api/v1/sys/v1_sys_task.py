@@ -7,7 +7,7 @@ from ninja import Router
 from backend.api.jwt_security import GetCurrentIsSuperuser, GetCurrentUser
 from backend.common.log import log
 from backend.common.task import scheduler
-from backend.crud.crud_api_test.crud_api_test_task import crud_api_test_task
+from backend.crud.crud_api_test.crud_api_test_task import ApiTestTaskDao
 from backend.schemas import Response404, Response200
 
 v1_sys_task = Router()
@@ -63,7 +63,7 @@ def pause_task(request, module: str, pk):
             return Response404(msg=f'任务不存在')
         scheduler.pause_job(job_id=f'api_test_{pk}')
         try:
-            api_test_task = crud_api_test_task.get_task_by_id(pk)
+            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:
@@ -87,7 +87,7 @@ def recover_task(request, module: str, pk):
             return Response404(msg=f'任务不存在')
         scheduler.resume_job(job_id=f'api_test_{pk}')
         try:
-            api_test_task = crud_api_test_task.get_task_by_id(pk)
+            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:
@@ -111,7 +111,7 @@ def delete_sys_task(request, module: str, pk):
             return Response404(msg=f'任务不存在')
         scheduler.remove_job(job_id=f'api_test_{pk}')
         try:
-            api_test_task = crud_api_test_task.get_task_by_id(pk)
+            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:

@@ -3,26 +3,26 @@
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
-from backend.ninja_models.models import Sender, ReceiverGroup, Receiver
+from backend.ninja_models.models import SysEmailSender, SysEmailReceiverGroup, SysEmailReceiver
 from backend.schemas.sm_sys.sm_sys_email import CreateSysEmailSender, UpdateSysEmailSender, \
     CreateSysEmailReceiverGroup, UpdateSysEmailReceiverGroup, CreateSysEmailReceiver, UpdateSysEmailReceiver
 
 
-class CRUDSender(CRUDBase[Sender, CreateSysEmailSender, UpdateSysEmailSender]):
+class CRUDSender(CRUDBase[SysEmailSender, CreateSysEmailSender, UpdateSysEmailSender]):
 
     def get_sender(self) -> QuerySet:
         return super().get_all()
 
-    def create_sender(self, obj: CreateSysEmailSender) -> Sender:
+    def create_sender(self, obj: CreateSysEmailSender) -> SysEmailSender:
         return super().create(obj)
 
-    def update_sender(self, pk: int, obj: UpdateSysEmailSender) -> Sender:
+    def update_sender(self, pk: int, obj: UpdateSysEmailSender) -> SysEmailSender:
         return super().update_one(pk, obj)
 
-    def get_smtp_server(self) -> Sender:
+    def get_smtp_server(self) -> SysEmailSender:
         return super().get_all()[0].smtp_server
 
-    def get_smtp_port(self) -> Sender:
+    def get_smtp_port(self) -> SysEmailSender:
         return super().get_all()[0].smtp_port
 
     def get_sender_name(self) -> str:
@@ -38,10 +38,10 @@ class CRUDSender(CRUDBase[Sender, CreateSysEmailSender, UpdateSysEmailSender]):
         return super().get_all()[0].is_ssl
 
 
-crud_sender = CRUDSender(Sender)
+SysEmailSenderDao = CRUDSender(SysEmailSender)
 
 
-class CRUDReceiverGroup(CRUDBase[ReceiverGroup, CreateSysEmailReceiverGroup, UpdateSysEmailReceiverGroup]):
+class CRUDReceiverGroup(CRUDBase[SysEmailReceiverGroup, CreateSysEmailReceiverGroup, UpdateSysEmailReceiverGroup]):
 
     def get_all_receiver_group(self) -> QuerySet:
         return super().get_all()
@@ -49,47 +49,47 @@ class CRUDReceiverGroup(CRUDBase[ReceiverGroup, CreateSysEmailReceiverGroup, Upd
     def get_all_receiver_by_group_id(self, pk: int) -> QuerySet:
         return self.model.objects.filter(receiver__receiver_group=pk).all()
 
-    def get_receiver_group_by_name(self, name: str) -> ReceiverGroup:
+    def get_receiver_group_by_name(self, name: str) -> SysEmailReceiverGroup:
         return self.model.objects.filter(name=name).first()
 
-    def create_receiver_group(self, obj: CreateSysEmailReceiverGroup) -> ReceiverGroup:
+    def create_receiver_group(self, obj: CreateSysEmailReceiverGroup) -> SysEmailReceiverGroup:
         return super().create(obj)
 
-    def get_receiver_group_by_id(self, pk: int) -> ReceiverGroup:
+    def get_receiver_group_by_id(self, pk: int) -> SysEmailReceiverGroup:
         return super().get(pk)
 
-    def update_receiver_group(self, pk: int, obj: UpdateSysEmailReceiverGroup) -> ReceiverGroup:
+    def update_receiver_group(self, pk: int, obj: UpdateSysEmailReceiverGroup) -> SysEmailReceiverGroup:
         return super().update_one(pk, obj)
 
-    def delete_receiver_group(self, pk: int) -> ReceiverGroup:
+    def delete_receiver_group(self, pk: int) -> SysEmailReceiverGroup:
         return super().delete_one(pk)
 
 
-crud_receiver_group = CRUDReceiverGroup(ReceiverGroup)
+SysEmailReceiverGroupDao = CRUDReceiverGroup(SysEmailReceiverGroup)
 
 
-class CRUDReceiver(CRUDBase[Receiver, CreateSysEmailReceiver, UpdateSysEmailReceiver]):
+class CRUDReceiver(CRUDBase[SysEmailReceiver, CreateSysEmailReceiver, UpdateSysEmailReceiver]):
 
     def get_all_receiver(self) -> QuerySet:
         return super().get_all()
 
-    def get_receiver_by_name(self, name: str) -> Receiver:
+    def get_receiver_by_name(self, name: str) -> SysEmailReceiver:
         return self.model.objects.filter(name=name).first()
 
-    def get_receiver_by_email(self, email: str) -> Receiver:
+    def get_receiver_by_email(self, email: str) -> SysEmailReceiver:
         return self.model.objects.filter(email=email).first()
 
-    def create_receiver(self, obj: CreateSysEmailReceiver) -> Receiver:
+    def create_receiver(self, obj: CreateSysEmailReceiver) -> SysEmailReceiver:
         return super().create(obj)
 
-    def get_receiver_by_id(self, pk: int) -> Receiver:
+    def get_receiver_by_id(self, pk: int) -> SysEmailReceiver:
         return super().get(pk)
 
-    def update_receiver(self, pk: int, obj: UpdateSysEmailReceiver) -> Receiver:
+    def update_receiver(self, pk: int, obj: UpdateSysEmailReceiver) -> SysEmailReceiver:
         return super().update_one(pk, obj)
 
-    def delete_receiver(self, pk: int) -> Receiver:
+    def delete_receiver(self, pk: int) -> SysEmailReceiver:
         return super().delete_one(pk)
 
 
-crud_receiver = CRUDReceiver(Receiver)
+SysEmailReceiverDao = CRUDReceiver(SysEmailReceiver)

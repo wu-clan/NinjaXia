@@ -38,4 +38,4 @@ class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask
         return super().get_all().count()
 
 
-crud_api_test_task = CRUDApiTestTask(ApiTestTask)
+ApiTestTaskDao = CRUDApiTestTask(ApiTestTask)

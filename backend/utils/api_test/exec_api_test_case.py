@@ -7,7 +7,7 @@ import tenacity
 
 from backend.common.log import log
 from backend.common.report import render_testcase_report_html
-from backend.crud.crud_api_test.crud_api_test_report import crud_api_test_report_detail, crud_api_test_report
+from backend.crud.crud_api_test.crud_api_test_report import ApiTestReportDetailDao, ApiTestReportDao
 from backend.ninja_models.models.api_test.api_test_report import ApiTestReportDetail
 from backend.ninja_xia.settings import SERVER_REPORT_PATH
 from backend.utils.api_test.http_client import HttpClient
@@ -75,12 +75,12 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
         'error_num': error_num,
         'api_task': task,
     }
-    task_report = crud_api_test_report.create_report(report)
+    task_report = ApiTestReportDao.create_report(report)
 
     # 批量创建测试报告详情
     for _tcr in test_case_result_list:
         _tcr.api_report = task_report
-    crud_api_test_report_detail.create_report_detail_list(test_case_result_list)
+    ApiTestReportDetailDao.create_report_detail_list(test_case_result_list)
 
     # 记录结果
     elapsed = 0

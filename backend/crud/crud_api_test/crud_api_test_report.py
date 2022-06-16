@@ -23,7 +23,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
         return super().get_all().count()
 
 
-crud_api_test_report = CRUDApiTestTask(ApiTestReport)
+ApiTestReportDao = CRUDApiTestTask(ApiTestReport)
 
 
 class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport, UpdateApiTestReport]):
@@ -62,4 +62,4 @@ class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport,
         return report_list
 
 
-crud_api_test_report_detail = CRUDApiTestReportDetail(ApiTestReportDetail)
+ApiTestReportDetailDao = CRUDApiTestReportDetail(ApiTestReportDetail)

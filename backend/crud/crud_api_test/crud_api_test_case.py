@@ -51,4 +51,4 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
         return super().get_all().count()
 
 
-crud_api_test_case = CRUDApiTestTask(ApiTestCase)
+ApiTestCaseDao = CRUDApiTestTask(ApiTestCase)

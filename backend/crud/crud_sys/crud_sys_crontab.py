@@ -4,28 +4,28 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.crud.base import CRUDBase
-from backend.ninja_models.models import Crontab
+from backend.ninja_models.models import SysCrontab
 from backend.schemas.sm_sys.sm_sys_crontab import CreateCornTab, UpdateCornTab
 
 
-class CRUDCrontab(CRUDBase[Crontab, CreateCornTab, UpdateCornTab]):
+class CRUDSysCrontab(CRUDBase[SysCrontab, CreateCornTab, UpdateCornTab]):
 
     def get_all_crontab(self) -> QuerySet:
         return super().get_all().order_by('-modified_time')
 
-    def get_crontab_by_id(self, pk: int) -> Crontab:
+    def get_crontab_by_id(self, pk: int) -> SysCrontab:
         return super().get(pk)
 
     @transaction.atomic
-    def create_crontab(self, obj: CreateCornTab) -> Crontab:
+    def create_crontab(self, obj: CreateCornTab) -> SysCrontab:
         return super().create(obj)
 
     @transaction.atomic
-    def update_crontab(self, pk: int, obj: UpdateCornTab) -> Crontab:
+    def update_crontab(self, pk: int, obj: UpdateCornTab) -> SysCrontab:
         return super().update_one(pk, obj)
 
     @transaction.atomic
-    def delete_crontab(self, pk: int) -> Crontab:
+    def delete_crontab(self, pk: int) -> SysCrontab:
         return super().delete_one(pk)
 
     def format_crontab(self, pk: int) -> str:
@@ -34,4 +34,4 @@ class CRUDCrontab(CRUDBase[Crontab, CreateCornTab, UpdateCornTab]):
                                                       c4=corn.month, c5=corn.day_of_week)
 
 
-crud_crontab = CRUDCrontab(Crontab)
+SysCrontabDao = CRUDSysCrontab(SysCrontab)
