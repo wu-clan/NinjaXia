@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import uvicorn
-from path import Path
+from pathlib import Path
 
-from backend.common.log import log
+import uvicorn
+
 from backend.ninja_xia import settings
 from backend.ninja_xia.asgi import application
+from backend.xia.common.log import log
 
 app = application
 
@@ -27,3 +28,5 @@ if __name__ == '__main__':
                     reload=settings.UVICORN_RELOAD)
     except Exception as e:
         log.error(f'NinjaXia start filed ❗❗❗: {e}')
+    finally:
+        raise SystemError('❗ 请使用 wsgi 模式启动， asgi 模式未适配')  # noqa

@@ -11,8 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-from backend.common.redis import RedisCli
-from backend.common.task import scheduler
+from backend.xia.common.redis import RedisCli
+from backend.xia.common.task import scheduler
 
 # 初始化redis连接
 RedisCli.init_redis_connect()

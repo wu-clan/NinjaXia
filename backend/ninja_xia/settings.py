@@ -21,8 +21,8 @@ INSTALLED_APPS = [
     # 跨域
     'corsheaders',
     # apps
-    'ninja_models.apps.ModelsConfig',
-    # 本地代理Swagger文档, 详情查看源码
+    'xia.apps.ModelsConfig',
+    # 本地代理Swagger文档
     'ninja'
 ]
 
@@ -37,7 +37,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     # 请求记录中间件
-    'middlewares.access_middleware.AccessMiddleware',
+    'xia.middleware.access_middleware.AccessMiddleware',
 ]
 
 ROOT_URLCONF = 'ninja_xia.urls'
@@ -149,7 +149,7 @@ UVICORN_PORT = 8000
 UVICORN_RELOAD = True
 
 # PATH
-LOG_PATH = BASE_DIR / 'logs'
+LOG_PATH = BASE_DIR / 'xia' / 'logs'
 REPORT_PATH = BASE_DIR / 'templates' / 'report.html'
 SERVER_REPORT_PATH = 'https://XXX.XXX.COM/v1/api_test_reports/{pk}/detail?page=1&size=10'
 

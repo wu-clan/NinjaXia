@@ -15,11 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
 from django.contrib.staticfiles.views import serve
 from django.urls import path
 
-from backend.api import register_app
+from backend.xia.api.registrar import register_app
 from backend.ninja_xia import settings
 
 app = register_app()
@@ -30,6 +29,6 @@ urlpatterns = [
     # Ninja-API
     path('v1/', app.urls),
 
-    path(r'static/<path:path>', serve, {'document_root': settings.STATIC_ROOT, }, ),
-    path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}, ),
+    path(r'static/<path:path>', serve, {'document_root': settings.STATIC_ROOT}),
+    path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
