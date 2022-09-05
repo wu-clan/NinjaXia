@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
 
 SECRET_KEY = 'django-insecure-i9k)yrn5=efxuq92$9m92n=t22q16p$r^!$5ffc)92r%8aj@eg'
 
@@ -61,14 +63,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ninja_xia.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ninja_xia',
         'USER': 'root',
         'PASSWORD': '123456',
-        'HOST': '127.0.0.1',
+        'HOST': 'ninja_xia_mysql',
         'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4'}
     }
@@ -78,7 +79,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/0",
+        "LOCATION": "redis://ninja_xia_redis:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
@@ -158,7 +159,7 @@ TOKEN_ALGORITHM: str = 'HS256'
 TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 1  # token 时效 60 * 24 * 1 = 1 天
 
 # Task
-TASK_REDIS_HOST = '127.0.0.1'
+TASK_REDIS_HOST = 'ninja_xia_redis'
 TASK_REDIS_PORT = 6379
 TASK_REDIS_PASSWORD = ''
 TASK_REDIS_DATABASE = 1

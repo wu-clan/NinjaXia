@@ -1,4 +1,4 @@
-Django==3.2.13
+Django==3.2.15
 django-ninja==0.17.0
 loguru==0.5.3
 asgiref==3.4.1

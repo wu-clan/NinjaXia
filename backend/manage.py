@@ -17,6 +17,14 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+    # 初始化redis连接
+    from backend.xia.common.redis import RedisCli
+    RedisCli.init_redis_connect()
+
+    # 定时任务随系统启动
+    from backend.xia.common.task import scheduler
+    scheduler.start()
+
 
 if __name__ == '__main__':
     main()

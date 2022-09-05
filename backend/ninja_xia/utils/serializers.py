@@ -7,7 +7,7 @@ from django.core.serializers.json import Serializer as DjangoSerializer
 from django.utils.encoding import smart_str
 from django.core.serializers import BUILTIN_SERIALIZERS
 
-BUILTIN_SERIALIZERS['json'] = 'backend.utils.serializers'
+BUILTIN_SERIALIZERS['json'] = 'backend.ninja_xia.utils.serializers'
 
 
 class Serializer(DjangoSerializer):

@@ -2,7 +2,6 @@
 
 基于 [django-ninja](https://github.com/vitalik/django-ninja)
 快速开发的一个简单入门级自动化测试平台后端
----
 
 **仓库说明**:
 

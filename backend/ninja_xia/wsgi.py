@@ -11,15 +11,16 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-from backend.xia.common.redis import RedisCli
-from backend.xia.common.task import scheduler
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.ninja_xia.settings')
+
+application = get_wsgi_application()
 
 # 初始化redis连接
+from backend.xia.common.redis import RedisCli  # noqa
+
 RedisCli.init_redis_connect()
 
 # 定时任务随系统启动
+from backend.xia.common.task import scheduler  # noqa
+
 scheduler.start()
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ninja_xia.settings')
-
-application = get_wsgi_application()
