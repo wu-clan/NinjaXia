@@ -23,15 +23,14 @@ class RedisCli:
         with self.redis as redis:
             return redis
 
-    @staticmethod
-    def init_redis_connect():
+    def init_redis_connect(self):
         """
         触发初始化连接
 
         :return:
         """
         try:
-            redis_client.ping()
+            self.get_redis().ping()
         except TimeoutError as e:
             log.error("连接redis超时 {}", e)
             sys.exit()

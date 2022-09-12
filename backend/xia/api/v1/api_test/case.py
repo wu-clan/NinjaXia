@@ -15,6 +15,7 @@ from backend.xia.crud.api_test.case import ApiTestCaseDao
 from backend.xia.crud.api_test.env import ApiTestEnvDao
 from backend.xia.crud.api_test.module import ApiTestModuleDao
 from backend.xia.crud.api_test.report import ApiTestReportDetailDao
+from backend.xia.enums.request_body import BodyType
 from backend.xia.schemas.api_test.case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
     ApiTestCaseResponse
 from backend.ninja_xia.utils.api_test.http_client import HttpClient
@@ -31,15 +32,10 @@ def get_all_cases(request):
 
 @v1_api_test_case.get('/{int:pk}', summary='获取单个用例', auth=GetCurrentUser())
 def get_one_case(request, pk: int):
-    case = ApiTestCaseDao.get_one_case(pk)
-    if not case:
+    obj = ApiTestCaseDao.get_one_case(pk)
+    if not obj:
         return Response404(msg='用例不存在')
-    case.params = json.loads(str(case.params))
-    case.headers = json.loads(str(case.headers))
-    if case.body_type == 'JSON' or case.body_type == 'form-data' or case.body_type == 'x-www-form-urlencoded' or \
-            case.body_type == 'binary' or case.body_type == 'GraphQL':
-        case.body = json.loads(json.dumps(eval(case.body)))
-    return ApiTestCaseResponse(data=case)
+    return ApiTestCaseResponse(data=obj)
 
 
 @v1_api_test_case.post('', summary='新增用例', auth=GetCurrentIsSuperuser())
@@ -54,22 +50,6 @@ def create_case(request, obj: CreateApiTestCase):
         return Response404(msg='环境不存在')
     if not _env.status:
         return Response403(msg='所选环境已停用, 请选择其他环境')
-    if isinstance(obj.params, dict):
-        obj.params = json.dumps(obj.params, ensure_ascii=False)
-    else:
-        return Response403(msg='params格式错误')
-    if isinstance(obj.headers, dict):
-        if len(obj.headers) > 0:
-            for _ in obj.headers.values():
-                if not isinstance(_, str):
-                    return Response403(msg='headers格式错误')
-        else:
-            obj.headers = json.dumps(obj.headers, ensure_ascii=False)
-    else:
-        return Response403(msg='headers格式错误')
-    if obj.body_type == 'JSON' or obj.body_type == 'form-data' or obj.body_type == 'x-www-form-urlencoded' or \
-            obj.body_type == 'binary' or obj.body_type == 'GraphQL':
-        obj.body = json.dumps(obj.body, ensure_ascii=False)
     obj.api_module = _module
     obj.api_environment = _env
     case = ApiTestCaseDao.create_case(obj)
@@ -94,22 +74,6 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
         return Response404(msg='环境不存在')
     if not _env.status:
         return Response403(msg='所选环境已停用, 请选择其他环境')
-    if isinstance(obj.params, dict):
-        obj.params = json.dumps(obj.params, ensure_ascii=False)
-    else:
-        return Response403(msg='params格式错误')
-    if isinstance(obj.headers, dict):
-        if len(obj.headers) > 0:
-            for _ in obj.headers.values():
-                if not isinstance(_, str):
-                    return Response403(msg='headers格式错误')
-        else:
-            obj.headers = json.dumps(obj.headers, ensure_ascii=False)
-    else:
-        return Response403(msg='headers格式错误')
-    if obj.body_type == 'JSON' or obj.body_type == 'form-data' or obj.body_type == 'x-www-form-urlencoded' or \
-            obj.body_type == 'binary' or obj.body_type == 'GraphQL':
-        obj.body = json.dumps(obj.body, ensure_ascii=False)
     obj.api_module = _module
     obj.api_environment = _env
     case = ApiTestCaseDao.update_case(pk, obj)
@@ -140,14 +104,19 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
     if not case.api_environment.status:
         return Response403(msg='用例依赖环境已停用, 请更新使用环境')
     url = case.api_environment.host + case.url
-    # 实例化http请求
-    http_client = HttpClient()
     # 实例化请求参数
-    http_test_case_debug = HttpTestCaseDebugger(http_client=http_client, test_case_name=case.name, method=case.method,
-                                                url=url, params=case.params, headers=case.headers,
-                                                cookies=extra.cookies,
-                                                body_type=case.body_type, body=case.body, assert_text=case.assert_text,
-                                                timeout=extra.timeout)
+    http_test_case_debug = HttpTestCaseDebugger(
+        test_case_name=case.name,
+        method=case.method,
+        url=url,
+        params=case.params,
+        headers=case.headers,
+        cookies=case.cookies,
+        body_type=case.body_type,
+        body=case.body,
+        assert_text=case.assert_text,
+        timeout=case.timeout
+    )
     # 调试用例
     debug_result = http_test_case_debug.debug()
 
@@ -183,8 +152,10 @@ def debug_case(request, pk: int, extra: ExtraDebugArgs):
             'creator': debug_result['executor'],
         }
         try:
-            write_report = threading.Thread(target=ApiTestReportDetailDao.create_report_detail,
-                                            args=(test_case_report,))
+            write_report = threading.Thread(
+                target=ApiTestReportDetailDao.create_report_detail,
+                args=(test_case_report,)
+            )
             write_report.start()
             write_report.join()
         except Exception as e:

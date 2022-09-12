@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
-import json
-from typing import Any
 
 from ninja import Schema
-from pydantic import validator, Field
+from pydantic import validator
 
 from backend.xia.common.response.response_schema import Response200
+from backend.xia.enums.request_body import BodyType
+from backend.xia.enums.request_method import MethodType
 from backend.xia.schemas.api_test.env import GetAllApiTestEnvs
 from backend.xia.schemas.api_test.module import GetAllApiTestModules
 
@@ -17,30 +17,32 @@ class ApiTestCaseBase(Schema):
     description: str = None
     url: str
     method: str
-    params: dict = None
-    headers: dict = None
-    body_type: str
-    body: Any = None
-    assert_text: Any = None
+    params: str = None
+    headers: str = None
+    cookies: str = None
+    body_type: int = 0
+    body: str = None
+    assert_text: str = None
+    timeout: int = 10
 
     @validator('method')
-    def check_method(cls, value):
-        if value not in ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']:
-            raise ValueError('method param error')
-        return value
+    def check_method(cls, v):
+        if v not in MethodType._value2member_map_:  # noqa
+            raise ValueError('method value error')
+        return v
 
     @validator('body_type')
-    def check_body_type(cls, value):
-        if value not in ['none', 'form-data', 'x-www-form-urlencoded', 'binary', 'GraphQL', 'Text', 'JavaScript',
-                         'JSON', 'HTML', 'XML']:
-            raise ValueError('body_type param error')
-        return value
+    def check_body_type(cls, v):
+        if v not in BodyType._value2member_map_:  # noqa
+            raise ValueError('body_type value error')
+        return v
 
-    @validator('assert_text')
-    def check_assert_text(cls, value):
-        if '"' in value:
-            raise ValueError('assert_text param error')
-        return value
+    @validator('headers')
+    def check_headers(cls, v):
+        if v is not None:
+            if len(eval(v)) == 0:
+                raise ValueError('headers value error')
+        return v
 
 
 class CreateApiTestCase(ApiTestCaseBase):
@@ -62,18 +64,8 @@ class GetAllApiTestCases(ApiTestCaseBase):
     created_time: datetime.datetime
     modified_time: datetime.datetime
 
-    @validator('params')
-    def loads_params(cls, value):
-        return json.loads(json.dumps(value))
-
-    @validator('headers')
-    def loads_headers(cls, value):
-        return json.loads(json.dumps(value))
-
 
 class ExtraDebugArgs(Schema):
-    cookies: dict = None
-    timeout: int = Field(default=10, ge=1)
     is_write_report: bool = False
 
 

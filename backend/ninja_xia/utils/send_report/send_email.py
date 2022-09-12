@@ -9,9 +9,9 @@ from backend.xia.common.log import log
 from backend.xia.crud.sys.email import SysEmailSenderDao, SysEmailReceiverDao
 
 
-def send_test_report(subject, content):
+def send_email_test_report(subject, content):
     """
-    发送测试报告
+    发送 email 测试报告
 
     :param subject: 主题
     :param content: 内容

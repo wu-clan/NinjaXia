@@ -5,17 +5,18 @@ from concurrent.futures import ThreadPoolExecutor
 
 import tenacity
 
+from backend.ninja_xia.settings import SERVER_REPORT_PATH
+from backend.ninja_xia.utils.api_test.http_test_case_runner import HttpTestCaseRunner
+from backend.ninja_xia.utils.send_report.send_email import send_email_test_report
 from backend.xia.common.log import log
 from backend.xia.common.report import render_testcase_report_html
 from backend.xia.crud.api_test.report import ApiTestReportDetailDao, ApiTestReportDao
+from backend.xia.enums.task_state import StateType
 from backend.xia.models.api_test.report import ApiTestReportDetail
-from backend.ninja_xia.settings import SERVER_REPORT_PATH
-from backend.ninja_xia.utils.api_test.http_client import HttpClient
-from backend.ninja_xia.utils.api_test.http_test_case_runner import HttpTestCaseRunner
-from backend.ninja_xia.utils.send_report import send_test_report
+from backend.xia.models.api_test.task import ApiTestTask
 
 
-def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None):
+def exec_api_test_cases(task: ApiTestTask, test_cases: list, retry_num=None, runner=None, ):
     """
     执行 api 测试用例
 
@@ -26,15 +27,12 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
     :return:
     """
     test_case_result_list = []
-    test_case_result = None
-    # 实例化http请求客户端
-    http_client = HttpClient()
     for test_case in test_cases:
         # 实例化运行器
-        h_runner = HttpTestCaseRunner(http_client=http_client, test_case=test_case, retry_num=retry_num, runner=runner)
+        http_runner = HttpTestCaseRunner(test_case=test_case, retry_num=retry_num, runner=runner)
         # 运行测试用例
         try:
-            test_case_result = h_runner.run()
+            test_case_result = http_runner.run()
         except tenacity.RetryError as e:
             test_case_result = {
                 'name': test_case.name,
@@ -55,8 +53,7 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
             }
             test_case_result_list.append(ApiTestReportDetail(**test_case_result))
         else:
-            test_case_result_list.append(test_case_result)
-
+            test_case_result_list.append(ApiTestReportDetail(**test_case_result))
     # 创建简略报告
     total_num = len(test_cases)
     pass_num = 0
@@ -102,7 +99,15 @@ def exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None)
     return content
 
 
-def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runner=None, send_report=None):
+def thread_exec_api_test_cases(
+        task: ApiTestTask,
+        test_cases: list,
+        retry_num=None,
+        runner=None,
+        send_report: bool = 0,
+        cookies: dict = None,
+        timeout: int = 10
+):
     """
     多线程执行 api 测试用例
 
@@ -111,11 +116,13 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
     :param runner:
     :param retry_num:
     :param send_report:
+    :param cookies:
+    :param timeout:
     :return:
     """
     log.info('=> 开始执行任务：{}'.format(task.name))
     # 更新任务状态
-    task.state = 2
+    task.state = StateType.running.value
     task.save()
     try:
         # 创建线程, 暂时不使用threading.Thread
@@ -133,7 +140,7 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
         # 这里想要拿到返回值，所以使用线程池
         # 如果不这样使用,也可以修改报告model,从根本上解决数据引用问题,但是记得要把其他用到报告model的地方也进行修改
         pool = ThreadPoolExecutor(max_workers=10)
-        future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner)
+        future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner, cookies, timeout)
         content = future.result()
         pool.shutdown()
     except Exception as e:
@@ -142,15 +149,18 @@ def thread_exec_api_test_cases(task=None, test_cases=None, retry_num=None, runne
         raise e
     finally:
         # 更新任务状态
-        task.state = 1
+        task.state = StateType.pending.value
         task.save()
 
     # 发送测试报告
     if send_report:
         subject = 'API测试任务【{}】测试报告'.format(task.name)
 
-        t2 = threading.Thread(target=send_test_report,
-                              args=(subject, content if content else '<h1>500 Server Error</h1>'))
+        t2 = threading.Thread(
+            target=send_email_test_report,
+            args=(subject, content if content else '<h1>500 Server Error</h1>')
+        )
         t2.start()
         t2.join()
+
     log.info('=> 执行任务：{} 结束'.format(task.name))

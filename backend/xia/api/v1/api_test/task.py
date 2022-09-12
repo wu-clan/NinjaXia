@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
-from ninja import Router
+from ninja import Router, Body
 from ninja.pagination import paginate
 
 from backend.xia.common.pagination import CustomPagination
@@ -14,6 +14,8 @@ from backend.xia.crud.api_test.case import ApiTestCaseDao
 from backend.xia.crud.api_test.project import ApiTestProjectDao
 from backend.xia.crud.api_test.task import ApiTestTaskDao
 from backend.xia.crud.sys.crontab import SysCrontabDao
+from backend.xia.enums.task_execute_target import ExecuteTargetType
+from backend.xia.enums.task_state import StateType
 from backend.xia.schemas.api_test.task import GetAllApiTestTasks, CreateApiTestTask, ApiTestTaskResponse, \
     UpdateApiTestTask
 from backend.ninja_xia.utils.api_test.exec_api_test_case import thread_exec_api_test_cases
@@ -28,11 +30,11 @@ def get_all_tasks(request):
     for task in tasks:
         job = scheduler.get_job(f'api_test_{task.id}')
         if not job:
-            task.state = 0
+            task.state = StateType.unopened.value
             task.save()
         if job:
             if not job.next_run_time:
-                task.state = 3
+                task.state = StateType.pause.value
                 task.save()
     return tasks
 
@@ -118,7 +120,7 @@ def run_async_task(request, pk: int):
         return Response404(msg=f'任务不存在')
     if not task.status:
         return Response403(msg='任务已停用, 不支持启动')
-    if task.state != 0:
+    if task.state != StateType.unopened:
         return Response403(msg='任务已执行, 不支持重复执行')
     if not task.api_project:
         return Response404(msg=f'项目不存在')
@@ -126,9 +128,9 @@ def run_async_task(request, pk: int):
         return Response403(msg=f'项目 {task.api_project.name} 已停用')
     if not task.sys_cron:
         return Response404(msg=f'定时器不存在')
-    if task.execute_target == 0:
+    if task.execute_target == ExecuteTargetType.business:
         cases = ApiTestBusinessDao.get_business_cases(task.api_business_test)
-    elif task.execute_target == 1:
+    elif task.execute_target == ExecuteTargetType.case:
         if len(task.api_case) == 0:
             return Response403(msg='选择执行目标为用例, 但未选择用例')
         cases = []
@@ -144,10 +146,16 @@ def run_async_task(request, pk: int):
         return Response403(msg='此任务不包含用例, 不支持开启')
     corn = SysCrontabDao.format_crontab(task.sys_cron.id)
     # 创建任务
-    scheduler.add_job(func=thread_exec_api_test_cases, trigger=MyCronTrigger.from_crontab(corn),
-                      args=[task, cases, task.retry_num, None, task.send_report], id=f'api_test_{pk}', name=task.name,
-                      start_date=task.start_data, end_date=task.end_date)
-    task.state = 1
+    scheduler.add_job(
+        func=thread_exec_api_test_cases,
+        trigger=MyCronTrigger.from_crontab(corn),
+        args=[task, cases, task.retry_num, None, task.send_report],
+        id=f'api_test_{pk}',
+        name=task.name,
+        start_date=task.start_data,
+        end_date=task.end_date
+    )
+    task.state = StateType.pending.value
     task.save()
     return Response200()
 

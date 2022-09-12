@@ -7,6 +7,7 @@ from typing import Any
 import httpx
 from django.utils import timezone
 
+from backend.ninja_xia import settings
 from backend.xia.common.log import log
 
 
@@ -27,7 +28,7 @@ class HttpClient:
                 "elapsed": 0,
                 "headers": {},
                 "cookies": {},
-                "result": None,
+                "json": None,
                 "content": None,
                 "text": None,
             },
@@ -45,15 +46,19 @@ class HttpClient:
         :return:
         """
         try:
-            with httpx.Client(verify=False) as client:
+            with httpx.Client(
+                    verify=settings.VERIFY,
+                    follow_redirects=settings.FOLLOW_REDIRECTS,
+                    proxies=settings.PROXIES
+            ) as client:
                 response = client.request(method=method, url=url, **kwargs)
                 response.raise_for_status()
         except httpx.RequestError as exc:
-            log.error(f"请求时出错 {exc.request.url!r}.")
-            raise RuntimeError(f"请求时出错 {exc.request.url!r}.")
+            log.error(f"请求 {exc.request.url!r} 时出错 {exc}")
+            raise RuntimeError(f"请求 {exc.request.url!r} 时出错 {exc}")
         except httpx.HTTPStatusError as exc:
-            log.error(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
-            raise RuntimeError(f"错误响应 {exc.response.status_code} 在请求 {exc.request.url!r} 时.")
+            log.error(f"错误响应 {exc} 在请求 {exc.request.url!r} 时")
+            raise RuntimeError(f"错误响应 {exc} 在请求 {exc.request.url!r} 时")
 
         return response
 
@@ -86,7 +91,7 @@ class HttpClient:
             json_data = response.json()
         except JSONDecodeError:
             json_data = {}
-        meta_data['response']['result'] = json.dumps(json_data)
+        meta_data['response']['json'] = json.dumps(json_data)
         meta_data['response']['content'] = response.content.decode('utf-8')
         meta_data['response']['text'] = response.text
 

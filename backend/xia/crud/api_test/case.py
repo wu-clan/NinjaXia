@@ -6,6 +6,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.xia.crud.base import CRUDBase
+from backend.xia.enums.request_body import BodyType
 from backend.xia.models import ApiTestCase
 from backend.xia.schemas.api_test.case import CreateApiTestCase, UpdateApiTestCase
 
@@ -27,21 +28,11 @@ class CRUDApiTestTask(CRUDBase[ApiTestCase, CreateApiTestCase, UpdateApiTestCase
     @transaction.atomic
     def create_case(self, data: CreateApiTestCase) -> ApiTestCase:
         case = super().create(data)
-        case.params = json.loads(str(case.params))
-        case.headers = json.loads(str(case.headers))
-        if data.body_type == 'JSON' or data.body_type == 'form-data' or data.body_type == 'x-www-form-urlencoded' or \
-                data.body_type == 'binary' or data.body_type == 'GraphQL':
-            case.body = json.loads(str(case.body))
         return case
 
     @transaction.atomic
     def update_case(self, pk: int, data: UpdateApiTestCase) -> ApiTestCase:
         case = super().update_one(pk, data)
-        case.params = json.loads(str(case.params))
-        case.headers = json.loads(str(case.headers))
-        if data.body_type == 'JSON' or data.body_type == 'form-data' or data.body_type == 'x-www-form-urlencoded' or \
-                data.body_type == 'binary' or data.body_type == 'GraphQL':
-            case.body = json.loads(str(case.body))
         return case
 
     def delete_case(self, pk: list) -> tuple:

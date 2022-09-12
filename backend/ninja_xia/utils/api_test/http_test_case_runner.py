@@ -3,6 +3,8 @@
 import orjson
 from tenacity import retry, stop_after_attempt
 
+from backend.ninja_xia.utils.api_test.http_client import HttpClient
+from backend.ninja_xia.utils.api_test.parse_request_body import request_body_parser
 from backend.xia.common.log import log
 from backend.xia.models.api_test.report import ApiTestReportDetail
 from backend.ninja_xia.utils.api_test.parse_assertions import handling_assertions
@@ -13,21 +15,18 @@ class HttpTestCaseRunner:
     Http测试用例运行器
     """
 
-    def __init__(self, http_client=None, test_case=None, retry_num=None, runner=None):
+    def __init__(self, test_case, retry_num, runner):
         """
         初始化变量
 
-        :param http_client:
         :param test_case:
         :param runner:
         :param retry_num:
         """
-        self.http_client = http_client
+        self.http_client = HttpClient()
         self.test_case = test_case
         self.retry_num = retry_num
         self.runner = runner if runner else 'timed_task'
-
-        # 实例化装饰器
         self.run = retry(stop=stop_after_attempt(self.retry_num))(self.run)
 
     def run(self):
@@ -37,65 +36,32 @@ class HttpTestCaseRunner:
         :return:
         """
         if self.test_case is None:
-            raise RuntimeError('test_case is None')
+            raise RuntimeError('测试用例为空')
 
         # 解析基本请求参数
         name = self.test_case.name
-        method = str(self.test_case.method).upper() if self.test_case.method else None
+        method = str(self.test_case.method).upper()
         url = self.test_case.api_environment.host + self.test_case.url
-        params = orjson.loads(orjson.dumps(self.test_case.params)) if self.test_case.params else {}
-        headers = orjson.loads(orjson.dumps(self.test_case.headers)) if self.test_case.headers else {}
+        params = orjson.loads(orjson.dumps(self.test_case.params)) if self.test_case.params else None
+        headers = orjson.loads(orjson.dumps(self.test_case.headers)) if self.test_case.headers else None
+        cookies = orjson.loads(orjson.dumps(self.test_case.cookies)) if self.test_case.cookies else None
         body_type = self.test_case.body_type
         body = self.test_case.body
         assert_text = self.test_case.assert_text
 
-        # 加固请求参数
-        if len(self.test_case.headers) > 0:
-            for _ in self.test_case.headers.values():
-                if not isinstance(_, str):
-                    raise ValueError('headers格式错误')
-
-        # 解析请求body
-        data = None
-        files = None
-        json = None
-
-        if body_type == 'none':
-            data = data
-            files = files
-            json = json
-        elif body_type == 'form-data':
-            data = orjson.loads(body)
-        elif body_type == 'x-www-form-urlencoded':
-            data = orjson.loads(body)
-        elif body_type == 'binary':
-            files = orjson.loads(body)
-        elif body_type == 'GraphQL':
-            data = orjson.loads(body)
-        elif body_type == 'Text':
-            pass
-        elif body_type == 'JavaScript':
-            pass
-        elif body_type == 'JSON':
-            json = orjson.loads(body)
-        elif body_type == 'HTML':
-            pass
-        elif body_type == 'XML':
-            pass
-        else:
-            raise ValueError('body_type错误')
-
-        # 请求参数 end
+        # 获取请求数据
         request_kwargs = {
             'params': params,
-            'headers': headers,
-            'data': data,
-            'files': files,
-            'json': json,
+            'cookies': cookies,
+            'headers': headers
         }
-
-        # 初期版本, 默认 timeout=10
-        request_kwargs.setdefault('timeout', 10)
+        body = request_body_parser(
+            headers=headers,
+            body_type=body_type,
+            body=body
+        )
+        request_kwargs.update(body)
+        request_kwargs.update({'timeout': self.test_case.timeout})
 
         # 发起请求
         assert_status = None
@@ -106,10 +72,10 @@ class HttpTestCaseRunner:
         else:
             # 记录响应结果
             response_result_list = {
-                "result": orjson.loads(response["response"]["result"]) if response["response"]["result"] else {},
+                "json": orjson.loads(response["response"]["json"]) if response["response"]["json"] else {},
                 "content": orjson.loads(response["response"]["content"]) if response["response"]["content"] else {},
                 "text": orjson.loads(response["response"]["text"]) if response["response"]["text"] else {},
-                "cookies": response["response"]["cookies"],
+                'cookies': orjson.loads(response["response"]["cookies"]) if response["response"]["cookies"] else {},
             }
             try:
                 # 断言
@@ -138,4 +104,4 @@ class HttpTestCaseRunner:
                     'api_report': None,
                     'creator': self.runner,
                 }
-                return ApiTestReportDetail(**test_case_result)
+                return test_case_result

@@ -169,3 +169,11 @@ TASK_PP_STATUS = True
 TASK_TP_EXECUTOR_MAX_WORKERS = 10
 TASK_COALESCE = False
 TASK_MAX_INSTANCES = 1
+
+# HTTPX
+VERIFY = False
+FOLLOW_REDIRECTS = True
+PROXIES = {
+    'http://': None,  # noqa
+    'https://': None
+}

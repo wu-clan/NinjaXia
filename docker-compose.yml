@@ -20,7 +20,7 @@ services:
       - -c
       - |
         wait-for-it -s ninja_xia_mysql:3306 -s ninja_xia_redis:6379 -t 300
-        python backend/manage.py makemigrations
+        python backend/manage.py makemigrations xia
         python backend/manage.py migrate
         uwsgi --ini docker_uwsgi.ini
 

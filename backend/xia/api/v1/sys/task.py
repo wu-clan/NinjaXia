@@ -9,6 +9,7 @@ from backend.xia.common.response.response_schema import Response200, Response404
 from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.xia.common.task import scheduler
 from backend.xia.crud.api_test.task import ApiTestTaskDao
+from backend.xia.enums.task_state import StateType
 
 v1_sys_task = Router()
 
@@ -67,7 +68,7 @@ def pause_task(request, module: str, pk):
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:
-            api_test_task.state = 3
+            api_test_task.state = StateType.pause.value
             api_test_task.save()
     else:
         return Response404(msg=f'不存在的模块 {module}')
@@ -91,7 +92,7 @@ def recover_task(request, module: str, pk):
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:
-            api_test_task.state = 1
+            api_test_task.state = StateType.pending.value
             api_test_task.save()
     else:
         return Response404(msg=f'不存在的模块 {module}')
@@ -115,7 +116,7 @@ def delete_sys_task(request, module: str, pk):
         except Exception as e:
             log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
         else:
-            api_test_task.state = 0
+            api_test_task.state = StateType.unopened.value
             api_test_task.save()
     else:
         return Response404(msg=f'不存在的模块 {module}')

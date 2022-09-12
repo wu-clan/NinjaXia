@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-def handling_assertions(response, assert_text) -> str:
+def handling_assertions(response: dict, assert_text: str) -> str:
     """
     **处理断言**
 
@@ -10,20 +10,17 @@ def handling_assertions(response, assert_text) -> str:
 
     比较值说明：
 
-    - 仅有 {{response}}.get(''), ${response}.get(''), @response.get('') 三种情况
+    - 仅 pm.response.get('')
 
     示例:
 
-    - assert 200 == {{response}}.get('status_code')
-    - assert 200 != $response.get('status_code')
-    - assert 'OK' in @(response).get('url')
+    - assert 200 == pm.response.get('status_code')
+    - assert 200 != pm.response.get('status_code')
+    - assert 'OK' in pm.response.get('url')
 
     get('')取值范围::
 
-    {"url": None, "status_code": 200,"elapsed": 0,"headers": {},"cookies": {},
-    "result": None,"content": None,"text": None}
-
-    你只能在这些范围中取值, 其中result, content, text是扩展值,根据请求结果自动扩展取值范围
+    > 查看 backend/ninja_xia/utils/api_test/http_client.py
 
     :param response:
     :param assert_text:
@@ -31,18 +28,8 @@ def handling_assertions(response, assert_text) -> str:
     """
     if not assert_text.startswith('assert'):
         raise Exception('断言内容格式错误，必须以assert开头')
-    if '{{response}}.' in assert_text and '$(response).' in assert_text:
-        raise Exception('断言内容格式错误，不能同时使用{{response}}、$(response)、@response')
-    if '{{response}}.' in assert_text and '@response.' in assert_text:
-        raise Exception('断言内容格式错误，不能同时使用{{response}}、$(response)、@response')
-    if '$(response).' in assert_text and '@response.' in assert_text:
-        raise Exception('断言内容格式错误，不能同时使用{{response}}、$(response)、@response')
-    if '{{response}}.' in assert_text:
-        new_assert_text = assert_text.replace('{{response}}', str(response))
-    elif '$(response).' in assert_text:
-        new_assert_text = assert_text.replace('$(response)', str(response))
-    elif '@response.' in assert_text:
-        new_assert_text = assert_text.replace('@response', str(response))
+    if 'pm.response.' in assert_text:
+        new_assert_text = assert_text.replace('pm.response', str(response))
     else:
         raise Exception('断言内容格式错误, 缺少比较值条件')
     get_code = ''.join(assert_text).split('.')[1:]
@@ -82,7 +69,7 @@ def handling_assertions(response, assert_text) -> str:
                 return f"FAIL, {a_text[1]} > {r_text}"
             elif a_text[2] == 'in':
                 return f"FAIL, {a_text[1]} not in {r_text}"
-            elif a_text[2] == 'not in':
+            elif a_text[2] == 'not':
                 return f"FAIL, {a_text[1]} in {r_text}"
             else:
                 return f"FAIL, {a_text[2]}"
@@ -93,9 +80,7 @@ def handling_assertions(response, assert_text) -> str:
 
 
 if __name__ == '__main__':
-    a = handling_assertions('{"status_code": 200, "msg": "success"}', "assert 20 == {{response}}.get('status_code')")
+    a = handling_assertions({"status_code": 200, "msg": "success"}, "assert 200 == pm.response.get('status_code')")
     print(a)
-    a = handling_assertions('{"status_code": 20, "msg": "success"}', "assert 'fail' not in @response.get('msg'), 'err'")
-    print(a)
-    a = handling_assertions('{"status_code": 2', "assert 2 == $(response).get('status_code').get('test')")
+    a = handling_assertions({"status_code": 2}, "assert 2 == pm.response.get('status_code')")
     print(a)
