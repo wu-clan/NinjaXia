@@ -16,7 +16,7 @@ from backend.xia.models.api_test.report import ApiTestReportDetail
 from backend.xia.models.api_test.task import ApiTestTask
 
 
-def exec_api_test_cases(task: ApiTestTask, test_cases: list, retry_num=None, runner=None, ):
+def exec_api_test_cases(task: ApiTestTask, test_cases: list, retry_num=None, runner=None):
     """
     执行 api 测试用例
 
@@ -104,9 +104,7 @@ def thread_exec_api_test_cases(
         test_cases: list,
         retry_num=None,
         runner=None,
-        send_report: bool = 0,
-        cookies: dict = None,
-        timeout: int = 10
+        send_report: bool = 0
 ):
     """
     多线程执行 api 测试用例
@@ -116,8 +114,6 @@ def thread_exec_api_test_cases(
     :param runner:
     :param retry_num:
     :param send_report:
-    :param cookies:
-    :param timeout:
     :return:
     """
     log.info('=> 开始执行任务：{}'.format(task.name))

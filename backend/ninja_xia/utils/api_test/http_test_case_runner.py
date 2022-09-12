@@ -82,10 +82,7 @@ class HttpTestCaseRunner:
                     if assert_status != 'PASS':
                         log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
                 else:
-                    if int(response['response']['status_code']) == 200:
-                        assert_status = 'PASS'
-                    else:
-                        assert_status = 'FAIL'
+                    assert_status = '未添加断言'
             except Exception as e:
                 raise Exception(e)
             else:
@@ -102,7 +99,7 @@ class HttpTestCaseRunner:
                     'execute_time': response["stat"]["execute_time"],
                     'elapsed': response['response']['elapsed'],
                     'assert_result': assert_status,
-                    'run_status': assert_status,
+                    'run_status': 'PASS' if int(response['response']['status_code']) == 200 else 'FAIL',
                     'api_case': self.test_case,
                     'api_report': None,
                     'creator': self.runner,
