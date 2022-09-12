@@ -4,9 +4,11 @@ import datetime
 from typing import List
 
 from ninja import Schema
-from pydantic import validator
+from pydantic import validator, Field
 
 from backend.xia.common.response.response_schema import Response200
+from backend.xia.enums.task_execute_target import ExecuteTargetType
+from backend.xia.enums.task_priority import PriorityType
 from backend.xia.schemas.api_test.business import GetAllApiTestBusinesses
 from backend.xia.schemas.api_test.project import GetAllApiTestProjects
 from backend.xia.schemas.sys.crontab import GetAllCornTabs
@@ -21,25 +23,19 @@ class ApiTestTaskBase(Schema):
     send_report: bool
     status: bool
     execute_target: int
-    retry_num: int
+    retry_num: int = Field(..., ge=0, le=10)
     api_case: List[int] = None
 
     @validator('priority')
     def check_priority(cls, value):
-        if value not in ['P1', 'P2', 'P3', 'P4']:
+        if value not in PriorityType._value2member_map_:  # noqa
             raise ValueError('priority param error')
         return value
 
     @validator('execute_target')
     def check_execute_target(cls, value):
-        if value not in [0, 1]:
+        if value not in ExecuteTargetType._value2member_map_:  # noqa
             raise ValueError('execute_target param error')
-        return value
-
-    @validator('retry_num')
-    def check_retry_num(cls, value):
-        if value > 10:
-            raise ValueError('retry_num param error')
         return value
 
 
@@ -68,8 +64,9 @@ class GetAllApiTestTasks(ApiTestTaskBase):
 
     @staticmethod
     def resolve_api_case(value):
-        if len(value.api_case) > 0:
-            return list(map(int, str(value.api_case).split(',')))
+        if value.api_case is not None:
+            if len(value.api_case) > 0:
+                return list(map(int, str(value.api_case).split(',')))
         return
 
 

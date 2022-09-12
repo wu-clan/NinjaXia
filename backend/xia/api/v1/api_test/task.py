@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
-from ninja import Router, Body
+from ninja import Router
 from ninja.pagination import paginate
 
+from backend.ninja_xia.utils.api_test.exec_api_test_case import thread_exec_api_test_cases
 from backend.xia.common.pagination import CustomPagination
 from backend.xia.common.response.response_schema import Response403, Response404, Response200
 from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
@@ -18,7 +19,6 @@ from backend.xia.enums.task_execute_target import ExecuteTargetType
 from backend.xia.enums.task_state import StateType
 from backend.xia.schemas.api_test.task import GetAllApiTestTasks, CreateApiTestTask, ApiTestTaskResponse, \
     UpdateApiTestTask
-from backend.ninja_xia.utils.api_test.exec_api_test_case import thread_exec_api_test_cases
 
 v1_api_test_task = Router()
 
@@ -44,11 +44,12 @@ def create_task(request, obj: CreateApiTestTask):
     name = ApiTestTaskDao.get_task_by_name(obj.name)
     if name:
         return Response403(msg='任务已存在, 请更改任务名称')
-    if len(obj.api_case) != 0:
-        for _case in set(obj.api_case):
-            case = ApiTestCaseDao.get_case_by_id(_case)
-            if not case:
-                return Response404(msg=f'用例 {case} 不存在')
+    if obj.api_case is not None:
+        if len(obj.api_case) != 0:
+            for _case in set(obj.api_case):
+                case = ApiTestCaseDao.get_case_by_id(_case)
+                if not case:
+                    return Response404(msg=f'用例 {case} 不存在')
     cron = SysCrontabDao.get_crontab_by_id(obj.sys_cron)
     if not cron:
         return Response404(msg=f'定时任务不存在')
@@ -63,7 +64,8 @@ def create_task(request, obj: CreateApiTestTask):
     obj.sys_cron = cron
     obj.api_project = project
     obj.api_business_test = business_test
-    obj.api_case = ','.join(str(_) for _ in obj.api_case)
+    if obj.api_case is not None:
+        obj.api_case = ','.join(str(_) for _ in obj.api_case)
     task = ApiTestTaskDao.create_task(obj)
     task.creator = request.session['username']
     task.save()
@@ -86,11 +88,12 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     cron = SysCrontabDao.get_crontab_by_id(obj.sys_cron)
     if not cron:
         return Response404(msg=f'定时任务不存在')
-    if len(obj.api_case) != 0:
-        for _case in set(obj.api_case):
-            case = ApiTestCaseDao.get_case_by_id(_case)
-            if not case:
-                return Response404(msg=f'用例 {case} 不存在')
+    if obj.api_case is not None:
+        if len(obj.api_case) != 0:
+            for _case in set(obj.api_case):
+                case = ApiTestCaseDao.get_case_by_id(_case)
+                if not case:
+                    return Response404(msg=f'用例 {case} 不存在')
     project = ApiTestProjectDao.get_project_by_id(obj.api_project)
     if not project:
         return Response404(msg=f'项目不存在')
@@ -102,7 +105,8 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     obj.sys_cron = cron
     obj.api_project = project
     obj.api_business_test = business_test
-    obj.api_case = ','.join(str(_) for _ in obj.api_case)
+    if obj.api_case is not None:
+        obj.api_case = ','.join(str(_) for _ in obj.api_case)
     task = ApiTestTaskDao.update_task(pk, obj)
     task.modifier = request.session['username']
     task.save()

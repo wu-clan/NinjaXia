@@ -140,7 +140,7 @@ def thread_exec_api_test_cases(
         # 这里想要拿到返回值，所以使用线程池
         # 如果不这样使用,也可以修改报告model,从根本上解决数据引用问题,但是记得要把其他用到报告model的地方也进行修改
         pool = ThreadPoolExecutor(max_workers=10)
-        future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner, cookies, timeout)
+        future = pool.submit(exec_api_test_cases, task, test_cases, retry_num, runner)
         content = future.result()
         pool.shutdown()
     except Exception as e:

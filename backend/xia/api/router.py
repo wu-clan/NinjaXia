@@ -22,10 +22,6 @@ v1.add_router('/sys_users', v1_sys_user, tags=['v1_系统用户'])
 
 v1.add_router('/sys_emails', v1_sys_email, tags=['v1_系统邮件管理'])
 
-v1.add_router('/sys_crontab', v1_sys_crontab, tags=['v1_系统Crontab管理'])
-
-v1.add_router('/sys_tasks', v1_sys_task, tags=['v1_系统任务管理'])
-
 v1.add_router('/api_test_projects', v1_api_test_project, tags=['v1_api_项目管理'])
 
 v1.add_router('/api_test_modules', v1_api_test_module, tags=['v1_api_模块管理'])
@@ -36,6 +32,10 @@ v1.add_router('/api_test_cases', v1_api_test_case, tags=['v1_api_用例管理'])
 
 v1.add_router('/api_test_businesses', v1_api_test_business, tags=['v1_api_业务管理'])
 
+v1.add_router('/sys_crontab', v1_sys_crontab, tags=['v1_系统Crontab管理'])
+
 v1.add_router('/api_test_tasks', v1_api_test_task, tags=['v1_api_任务管理'])
+
+v1.add_router('/sys_tasks', v1_sys_task, tags=['v1_系统任务管理'])
 
 v1.add_router('/api_test_reports', v1_api_test_report, tags=['v1_api_报告管理'])

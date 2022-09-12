@@ -4,10 +4,9 @@ import orjson
 from tenacity import retry, stop_after_attempt
 
 from backend.ninja_xia.utils.api_test.http_client import HttpClient
+from backend.ninja_xia.utils.api_test.parse_assertions import handling_assertions
 from backend.ninja_xia.utils.api_test.parse_request_body import request_body_parser
 from backend.xia.common.log import log
-from backend.xia.models.api_test.report import ApiTestReportDetail
-from backend.ninja_xia.utils.api_test.parse_assertions import handling_assertions
 
 
 class HttpTestCaseRunner:
@@ -64,7 +63,6 @@ class HttpTestCaseRunner:
         request_kwargs.update({'timeout': self.test_case.timeout})
 
         # 发起请求
-        assert_status = None
         try:
             response = self.http_client.send_request(method=method, url=url, **request_kwargs)
         except Exception as e:
@@ -83,6 +81,11 @@ class HttpTestCaseRunner:
                     assert_status = handling_assertions(response['response'], assert_text)
                     if assert_status != 'PASS':
                         log.warning('用例运行未通过, 断言结果: {}'.format(''.join(assert_status.split(',')[-1:])))
+                else:
+                    if int(response['response']['status_code']) == 200:
+                        assert_status = 'PASS'
+                    else:
+                        assert_status = 'FAIL'
             except Exception as e:
                 raise Exception(e)
             else:

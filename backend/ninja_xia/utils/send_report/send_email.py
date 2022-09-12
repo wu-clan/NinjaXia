@@ -44,7 +44,7 @@ def send_email_test_report(subject, content):
         smtp.sendmail(sender_email, to, msg.as_string())
         smtp.quit()
     except Exception as e:
-        log.error(f'发送邮件失败，错误信息：{e}')
-        raise Exception(f'发送邮件失败，错误信息：{e}')
+        log.error(f'发送邮件测试报告失败，错误信息：{e}')
+        raise Exception(f'发送邮件测试报告失败，错误信息：{e}')
     else:
-        log.info('发送邮件成功')
+        log.info('发送邮件测试报告成功')
