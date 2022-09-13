@@ -9,7 +9,7 @@ from backend.xia.common.response.response_schema import Response200, Response404
 from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
 from backend.xia.common.task import scheduler
 from backend.xia.crud.api_test.task import ApiTestTaskDao
-from backend.xia.enums.task_state import StateType
+from backend.xia.enums.task.state import StateType
 
 v1_sys_task = Router()
 

@@ -4,11 +4,6 @@ from enum import Enum
 
 
 class MethodType(str, Enum):
-    get = 'get'
-    post = 'post'
-    put = 'put'
-    delete = 'delete'
-    patch = 'patch'
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'

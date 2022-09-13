@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
 
 from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.xia.crud.base import CRUDBase
-from backend.xia.enums.request_body import BodyType
 from backend.xia.models import ApiTestCase
 from backend.xia.schemas.api_test.case import CreateApiTestCase, UpdateApiTestCase
 

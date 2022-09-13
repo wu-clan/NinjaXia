@@ -6,8 +6,8 @@ from ninja import Schema
 from pydantic import validator
 
 from backend.xia.common.response.response_schema import Response200
-from backend.xia.enums.request_body import BodyType
-from backend.xia.enums.request_method import MethodType
+from backend.xia.enums.request.body import BodyType
+from backend.xia.enums.request.method import MethodType
 from backend.xia.schemas.api_test.env import GetAllApiTestEnvs
 from backend.xia.schemas.api_test.module import GetAllApiTestModules
 
@@ -27,7 +27,7 @@ class ApiTestCaseBase(Schema):
 
     @validator('method')
     def check_method(cls, v):
-        if v not in MethodType._value2member_map_:  # noqa
+        if v.upper() not in MethodType._value2member_map_:  # noqa
             raise ValueError('method value error')
         return v
 

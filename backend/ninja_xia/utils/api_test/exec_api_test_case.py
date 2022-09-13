@@ -11,7 +11,7 @@ from backend.ninja_xia.utils.send_report.send_email import send_email_test_repor
 from backend.xia.common.log import log
 from backend.xia.common.report import render_testcase_report_html
 from backend.xia.crud.api_test.report import ApiTestReportDetailDao, ApiTestReportDao
-from backend.xia.enums.task_state import StateType
+from backend.xia.enums.task.state import StateType
 from backend.xia.models.api_test.report import ApiTestReportDetail
 from backend.xia.models.api_test.task import ApiTestTask
 

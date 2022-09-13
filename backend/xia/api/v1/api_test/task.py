@@ -15,8 +15,8 @@ from backend.xia.crud.api_test.case import ApiTestCaseDao
 from backend.xia.crud.api_test.project import ApiTestProjectDao
 from backend.xia.crud.api_test.task import ApiTestTaskDao
 from backend.xia.crud.sys.crontab import SysCrontabDao
-from backend.xia.enums.task_execute_target import ExecuteTargetType
-from backend.xia.enums.task_state import StateType
+from backend.xia.enums.task.execute_target import ExecuteTargetType
+from backend.xia.enums.task.state import StateType
 from backend.xia.schemas.api_test.task import GetAllApiTestTasks, CreateApiTestTask, ApiTestTaskResponse, \
     UpdateApiTestTask
 

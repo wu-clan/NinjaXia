@@ -4,7 +4,7 @@ from typing import Any
 
 from orjson import orjson
 
-from backend.xia.enums.request_body import BodyType
+from backend.xia.enums.request.body import BodyType
 
 
 def request_body_parser(headers: dict, body_type: int, body: Any) -> dict:

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
 import threading
 from typing import List
 
@@ -15,10 +14,8 @@ from backend.xia.crud.api_test.case import ApiTestCaseDao
 from backend.xia.crud.api_test.env import ApiTestEnvDao
 from backend.xia.crud.api_test.module import ApiTestModuleDao
 from backend.xia.crud.api_test.report import ApiTestReportDetailDao
-from backend.xia.enums.request_body import BodyType
 from backend.xia.schemas.api_test.case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
     ApiTestCaseResponse
-from backend.ninja_xia.utils.api_test.http_client import HttpClient
 from backend.ninja_xia.utils.api_test.http_test_case_debugger import HttpTestCaseDebugger
 
 v1_api_test_case = Router()

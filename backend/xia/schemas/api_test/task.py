@@ -7,8 +7,8 @@ from ninja import Schema
 from pydantic import validator, Field
 
 from backend.xia.common.response.response_schema import Response200
-from backend.xia.enums.task_execute_target import ExecuteTargetType
-from backend.xia.enums.task_priority import PriorityType
+from backend.xia.enums.task.execute_target import ExecuteTargetType
+from backend.xia.enums.task.priority import PriorityType
 from backend.xia.schemas.api_test.business import GetAllApiTestBusinesses
 from backend.xia.schemas.api_test.project import GetAllApiTestProjects
 from backend.xia.schemas.sys.crontab import GetAllCornTabs
