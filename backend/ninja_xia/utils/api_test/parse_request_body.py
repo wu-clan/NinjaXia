@@ -49,9 +49,13 @@ def request_body_parser(headers: dict, body_type: int, body: Any) -> dict:
                     headers.update({'Content-Type': 'application/x-www-form-urlencoded'})
                 data = orjson.loads(body)
             elif body_type == BodyType.binary:
-                content = body
+                files = orjson.loads(body)
+                if isinstance(files.get('value'), list):
+                    files = files.update({files.get('key'): [open(_, 'rb') for _ in files.get('value')]})
+                else:
+                    files = files.update({files.get('key'): open(files.get('value'), 'rb')})
             elif body_type == BodyType.graphQL:
-                data = body
+                json = orjson.loads(body)
             elif body_type == BodyType.text:
                 content = body
             elif body_type == BodyType.js:
@@ -61,7 +65,7 @@ def request_body_parser(headers: dict, body_type: int, body: Any) -> dict:
                     headers['Content-Type'] = 'application/json; charset=UTF-8'
                 else:
                     headers.update({'Content-Type': 'application/json; charset=UTF-8'})
-                data = orjson.loads(body)
+                json = orjson.loads(body)
             elif body_type == BodyType.html:
                 content = body
             elif body_type == BodyType.xml:
