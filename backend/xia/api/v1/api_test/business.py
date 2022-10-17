@@ -52,10 +52,10 @@ def create_business(request, obj: CreateApiTestBusiness):
     obj.api_module = module
     business, business_and_case = ApiTestBusinessDao.create_business(obj, case_list)
     # 更新创建者
-    business.creator = request.session['username']
+    business.create_user = request.session['user']
     business.save()
     for bc in business_and_case:
-        bc.creator = request.session['username']
+        bc.create_user = request.session['user']
         bc.save()
     return BusinessesAndCasesResponse(data=list(business_and_case))
 
@@ -81,11 +81,11 @@ def update_business(request, pk: int, obj: CreateApiTestBusiness):
             case_list.append(case)
     obj.api_module = module
     business, business_and_case = ApiTestBusinessDao.update_business(pk, obj, case_list)
-    business.modifier = request.session['username']
+    business.update_user = request.session['user']
     business.save()
     for bc in business_and_case:
-        bc.creator = request.session['username']
-        bc.modifier = request.session['username']
+        bc.create_user = request.session['user']
+        bc.update_user = request.session['user']
         bc.save()
     return BusinessesAndCasesResponse(data=list(business_and_case))
 

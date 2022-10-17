@@ -11,7 +11,7 @@ from backend.xia.schemas.api_test.task import CreateApiTestTask, UpdateApiTestTa
 class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask]):
 
     def get_all_tasks(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     def get_task_by_name(self, name: str) -> ApiTestTask:
         return self.model.objects.filter(name=name).first()

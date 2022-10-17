@@ -25,7 +25,7 @@ class HttpTestCaseRunner:
         self.http_client = HttpClient()
         self.test_case = test_case
         self.retry_num = retry_num
-        self.runner = runner if runner else 'timed_task'
+        self.runner = runner if runner else 0  # 0: 任务自动创建
         self.run = retry(stop=stop_after_attempt(self.retry_num))(self.run)
 
     def run(self):
@@ -102,6 +102,6 @@ class HttpTestCaseRunner:
                     'run_status': 'PASS' if int(response['response']['status_code']) == 200 else 'FAIL',
                     'api_case': self.test_case,
                     'api_report': None,
-                    'creator': self.runner,
+                    'create_user': self.runner,
                 }
                 return test_case_result

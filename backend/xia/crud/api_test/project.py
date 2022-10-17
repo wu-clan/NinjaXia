@@ -11,10 +11,10 @@ from backend.xia.schemas.api_test.project import CreateApiTestProject, UpdateApi
 class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateApiTestProject]):
 
     def get_all_projects(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     def get_all_enable_projects(self) -> QuerySet:
-        return self.model.objects.filter(status=1).all().order_by('-modified_time')
+        return self.model.objects.filter(status=1).all().order_by('-updated_time')
 
     def get_project_by_id(self, pk: int) -> ApiTestProject:
         return super().get(pk=pk)
@@ -43,7 +43,7 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
         return super().delete_one(pk)
 
     def get_project_modules(self, pk: int) -> QuerySet:
-        return super().get(pk).api_test_modules.all().order_by('-modified_time')
+        return super().get(pk).api_test_modules.all().order_by('-updated_time')
 
     def get_project_count(self) -> int:
         return super().get_all().count()

@@ -11,7 +11,7 @@ from backend.xia.schemas.sys.crontab import CreateCornTab, UpdateCornTab
 class CRUDSysCrontab(CRUDBase[SysCrontab, CreateCornTab, UpdateCornTab]):
 
     def get_all_crontab(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     def get_crontab_by_id(self, pk: int) -> SysCrontab:
         return super().get(pk)

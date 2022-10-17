@@ -25,7 +25,7 @@ class UpdateCornTab(CornTabBase):
 
 class GetAllCornTabs(CornTabBase):
     id: int
-    creator: str = None
-    modifier: str = None
+    create_user: int
+    update_user: int = None
     created_time: datetime.datetime
-    modified_time: datetime.datetime
+    updated_time: datetime.datetime

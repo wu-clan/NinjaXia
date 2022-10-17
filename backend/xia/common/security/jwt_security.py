@@ -52,7 +52,7 @@ class GetCurrentUser(HttpBearer):
         user = UserDao.get_user_by_id(user_id)
         # 将用户登录信息存入session
         # auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        request.session['username'] = user.username  # noqa
+        request.session['user'] = user.id  # noqa
         return user
 
 

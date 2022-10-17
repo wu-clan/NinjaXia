@@ -49,7 +49,7 @@ def exec_api_test_cases(task: ApiTestTask, test_cases: list, retry_num=None, run
                 'run_status': 'ERROR',
                 'api_case': test_case,
                 'api_report': None,
-                'creator': runner if runner else 'timed_task',
+                'create_user': runner if runner else 0,  # 0: 任务自动创建
             }
             test_case_result_list.append(ApiTestReportDetail(**test_case_result))
         else:

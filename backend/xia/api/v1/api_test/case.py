@@ -50,7 +50,7 @@ def create_case(request, obj: CreateApiTestCase):
     obj.api_module = _module
     obj.api_environment = _env
     case = ApiTestCaseDao.create_case(obj)
-    case.creator = request.session['username']
+    case.create_user = request.session['user']
     case.save()
     return ApiTestCaseResponse(data=case)
 
@@ -74,7 +74,7 @@ def update_case(request, pk: int, obj: CreateApiTestCase):
     obj.api_module = _module
     obj.api_environment = _env
     case = ApiTestCaseDao.update_case(pk, obj)
-    case.modifier = request.session['username']
+    case.update_user = request.session['user']
     case.save()
     return ApiTestCaseResponse(data=case)
 

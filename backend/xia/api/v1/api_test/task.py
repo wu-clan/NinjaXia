@@ -67,7 +67,7 @@ def create_task(request, obj: CreateApiTestTask):
     if obj.api_case is not None:
         obj.api_case = ','.join(str(_) for _ in obj.api_case)
     task = ApiTestTaskDao.create_task(obj)
-    task.creator = request.session['username']
+    task.create_user = request.session['user']
     task.save()
     return ApiTestTaskResponse(data=task)
 
@@ -108,7 +108,7 @@ def update_task(request, pk: int, obj: UpdateApiTestTask):
     if obj.api_case is not None:
         obj.api_case = ','.join(str(_) for _ in obj.api_case)
     task = ApiTestTaskDao.update_task(pk, obj)
-    task.modifier = request.session['username']
+    task.update_user = request.session['user']
     task.save()
     # 同时更新任务
     # if scheduler.get_job(job_id=f'api_test_{pk}'):

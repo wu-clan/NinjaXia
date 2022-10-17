@@ -44,7 +44,7 @@ def create_module(request, obj: CreateApiTestModule) -> Any:
         return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
     module = ApiTestModuleDao.create_module(obj)
-    module.creator = request.session['username']
+    module.create_user = request.session['user']
     module.save()
     return ApiTestModuleResponse(data=module)
 
@@ -65,7 +65,7 @@ def update_module(request, pk: int, obj: UpdateApiTestModule) -> Any:
         return Response403(msg='所选项目已停用, 请选择其他项目')
     obj.api_project = _project
     module = ApiTestModuleDao.update_module(pk, obj)
-    module.modifier = request.session['username']
+    module.update_user = request.session['user']
     module.save()
     return ApiTestModuleResponse(data=module)
 

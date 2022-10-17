@@ -59,10 +59,10 @@ class GetAllApiTestCases(ApiTestCaseBase):
     id: int
     api_module: GetAllApiTestModules = None
     api_environment: GetAllApiTestEnvs = None
-    creator: str = None
-    modifier: str = None
+    create_user: int
+    update_user: int = None
     created_time: datetime.datetime
-    modified_time: datetime.datetime
+    updated_time: datetime.datetime
 
 
 class ExtraDebugArgs(Schema):

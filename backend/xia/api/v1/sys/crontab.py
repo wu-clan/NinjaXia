@@ -32,7 +32,7 @@ def get_crontab(request, pk: int):
 @v1_sys_crontab.post('', summary='创建corn', auth=GetCurrentIsSuperuser())
 def create_crontab(request, obj: CreateCornTab):
     corn = SysCrontabDao.create_crontab(obj)
-    corn.creator = request.session['username']
+    corn.create_user = request.session['user']
     corn.save()
     return Response200(data=serialize_data(corn))
 
@@ -43,7 +43,7 @@ def update_crontab(request, pk: int, obj: UpdateCornTab):
     if not corn:
         return Response404(msg='定时任务不存在')
     corn = SysCrontabDao.update_crontab(pk, obj)
-    corn.modifier = request.session['username']
+    corn.update_user = request.session['user']
     corn.save()
     return Response200(data=serialize_data(corn))
 

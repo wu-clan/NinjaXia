@@ -12,10 +12,10 @@ from backend.xia.schemas.api_test.task import UpdateApiTestTask
 class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTestTask]):
 
     def get_all_envs(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     def get_all_enable_envs(self) -> QuerySet:
-        return self.model.objects.filter(status=True).all().order_by('-modified_time')
+        return self.model.objects.filter(status=True).all().order_by('-updated_time')
 
     def get_env_by_id(self, pk: int) -> ApiTestEnvironment:
         return super().get(pk)
@@ -38,7 +38,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
         return super().delete_one(pk)
 
     def get_env_cases(self, pk: int) -> QuerySet:
-        return super().get(pk).api_test_cases.all().order_by('-modified_time')
+        return super().get(pk).api_test_cases.all().order_by('-updated_time')
 
     def get_env_count(self) -> int:
         return super().get_all().count()

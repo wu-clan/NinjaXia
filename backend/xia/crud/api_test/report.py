@@ -13,7 +13,7 @@ from backend.xia.schemas.api_test.report import CreateApiTestReport, UpdateApiTe
 class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTestReport]):
 
     def get_all_reports(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     @transaction.atomic
     def create_report(self, data: dict) -> ApiTestReport:

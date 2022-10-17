@@ -57,10 +57,10 @@ class GetAllApiTestTasks(ApiTestTaskBase):
     sys_cron: GetAllCornTabs = None
     api_project: GetAllApiTestProjects = None
     api_business_test: GetAllApiTestBusinesses = None
-    creator: str = None
-    modifier: str = None
+    create_user: int
+    update_user: int = None
     created_time: datetime.datetime
-    modified_time: datetime.datetime
+    updated_time: datetime.datetime
 
     @staticmethod
     def resolve_api_case(value):

@@ -14,17 +14,17 @@ class CRUDApiTestTask(CRUDBase[ApiTestBusinessTest, CreateApiTestBusiness, Updat
 
     @staticmethod
     def get_all_businesses() -> QuerySet:
-        return ApiTestBusinessTestAndCase.objects.all().order_by('-modified_time')
+        return ApiTestBusinessTestAndCase.objects.all().order_by('-updated_time')
 
     @staticmethod
     def get_one_business(pk: int) -> QuerySet:
         return ApiTestBusinessTestAndCase.objects.filter(api_business_test_id=pk).all().order_by(
-            '-modified_time').select_related('api_business_test', 'api_case')
+            '-updated_time').select_related('api_business_test', 'api_case')
 
     @staticmethod
     def get_all_businesses_by_name(name: str) -> QuerySet:
         return ApiTestBusinessTestAndCase.objects.filter(api_business_test__name__icontains=name).all().order_by(
-            '-modified_time').select_related('api_business_test', 'api_case')
+            '-updated_time').select_related('api_business_test', 'api_case')
 
     def get_business_by_name(self, name: str) -> ApiTestBusinessTest:
         return self.model.objects.filter(name=name).first()

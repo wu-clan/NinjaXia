@@ -43,7 +43,7 @@ def create_env(request, obj: CreateApiTestEnv):
     if env:
         return Response403(msg='环境已存在, 请更换环境名称')
     new_env = ApiTestEnvDao.create_env(obj)
-    new_env.creator = request.session['username']
+    new_env.create_user = request.session['user']
     new_env.save()
     return Response200(data=serialize_data(new_env))
 
@@ -57,7 +57,7 @@ def update_env(request, pk: int, obj: CreateApiTestEnv):
         if ApiTestEnvDao.get_env_by_name(obj.name):
             return Response403(msg='环境已存在, 请更换环境名称')
     new_env = ApiTestEnvDao.update_env(pk, obj)
-    new_env.modifier = request.session['username']
+    new_env.update_user = request.session['user']
     new_env.save()
     return Response200(data=serialize_data(new_env))
 

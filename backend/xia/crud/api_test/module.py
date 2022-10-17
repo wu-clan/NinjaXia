@@ -11,7 +11,7 @@ from backend.xia.schemas.api_test.module import CreateApiTestModule, UpdateApiTe
 class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTestModule]):
 
     def get_all_modules(self) -> QuerySet:
-        return super().get_all().order_by('-modified_time')
+        return super().get_all().order_by('-updated_time')
 
     def get_one_module(self, pk: int) -> QuerySet:
         return self.model.objects.select_related('api_project').filter(id=pk).first()
@@ -40,7 +40,7 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
         return super().delete_one(pk)
 
     def get_module_cases(self, pk: int) -> QuerySet:
-        return super().get(pk=pk).api_test_cases.all().order_by('-modified_time')
+        return super().get(pk=pk).api_test_cases.all().order_by('-updated_time')
 
     def get_module_count(self) -> int:
         return super().get_all().count()

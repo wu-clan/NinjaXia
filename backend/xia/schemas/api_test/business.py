@@ -33,20 +33,20 @@ class UpdateApiTestBusiness(ApiTestBusinessBase):
 class GetAllApiTestBusinesses(ApiTestBusinessBase):
     id: int
     api_module: GetAllApiTestModules = None
-    creator: str = None
-    modifier: str = None
+    create_user: int
+    update_user: int = None
     created_time: datetime.datetime
-    modified_time: datetime.datetime
+    updated_time: datetime.datetime
 
 
 class GetAllApiTestBusinessesAndCases(ApiTestBusinessBaseAndCase):
     id: int
     api_business_test: GetAllApiTestBusinesses = None
     api_case: GetAllApiTestCases = None
-    creator: str = None
-    modifier: str = None
+    create_user: int
+    update_user: int = None
     created_time: datetime.datetime
-    modified_time: datetime.datetime
+    updated_time: datetime.datetime
 
 
 class BusinessesAndCasesResponse(Response200):

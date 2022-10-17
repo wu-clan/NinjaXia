@@ -45,7 +45,7 @@ def create_project(request, obj: CreateApiTestProject) -> Any:
     if ApiTestProjectDao.get_project_by_name(obj.name):
         return Response403(msg='项目已存在，请更改项目名称')
     _project = ApiTestProjectDao.create_project(obj)
-    _project.creator = request.session['username']
+    _project.create_user = request.session['user']
     _project.save()
     return Response200(data=serialize_data(_project))
 
@@ -61,7 +61,7 @@ def update_project(request, pk: int, obj: UpdateApiTestProject) -> Any:
         if ApiTestProjectDao.get_project_by_name(obj.name):
             return Response403(msg='项目已存在，请更改项目名称')
     _project = ApiTestProjectDao.update_project(pk, obj)
-    _project.modifier = request.session['username']
+    _project.update_user = request.session['user']
     _project.save()
     return Response200(data=serialize_data(_project))
 
