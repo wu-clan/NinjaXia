@@ -3,7 +3,7 @@
 import datetime
 
 from ninja import Schema
-from pydantic import Field, validator
+from pydantic import Field
 
 
 class CornTabBase(Schema):

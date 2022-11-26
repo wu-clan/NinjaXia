@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
-from typing import Any
+from typing import Any, Union
 
 from ninja import Schema
+from pydantic import Json
 
 from backend.xia.schemas.api_test.case import GetAllApiTestCases
 from backend.xia.schemas.api_test.task import GetAllApiTestTasks
@@ -28,17 +29,21 @@ class UpdateApiTestReport(ApiTestReportBase):
 class GetAllApiTestReports(ApiTestReportBase):
     id: int
     api_task: GetAllApiTestTasks = None
+    create_user: int
+    update_user: int = None
+    created_time: datetime.datetime
+    updated_time: datetime.datetime
 
 
 class ApiTestReportDetailBase(Schema):
     name: str
     url: str
     method: str = None
-    params: Any = None
-    headers: Any = None
+    params: str = None
+    headers: str = None
     body: str = None
     status_code: int = None
-    response_data: Any = None
+    response_data: str = None
     execute_time: datetime.datetime = None
     elapsed: float
     assert_result: str = None
@@ -55,10 +60,13 @@ class UpdateApiTestReportDetail(ApiTestReportDetailBase):
 
 class GetAllApiTestReportsDetail(ApiTestReportDetailBase):
     id: int
+    params: Json = None
+    headers: Json = None
+    response_data: Json = None
+    body: Union[Json, Any, None] = None
     api_case: GetAllApiTestCases = None
     api_report: GetAllApiTestReports = None
     create_user: int
     update_user: int = None
     created_time: datetime.datetime
     updated_time: datetime.datetime
-

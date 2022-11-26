@@ -84,6 +84,7 @@ venv.bak/
 # log
 backend/xia/logs/
 
-backend/xia/migrations/
+/backend/xia/migrations/**
+!/backend/xia/migrations/__init__.py
 
 backend/static/media/

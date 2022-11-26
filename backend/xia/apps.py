@@ -2,6 +2,6 @@
 from django.apps import AppConfig
 
 
-class NinjaXiaConfig(AppConfig):
+class XiaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'backend.xia'

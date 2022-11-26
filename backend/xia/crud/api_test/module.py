@@ -29,15 +29,16 @@ class CRUDApiTestTask(CRUDBase[ApiTestModule, CreateApiTestModule, UpdateApiTest
         return self.get(pk=pk).name
 
     @transaction.atomic
-    def create_module(self, create_module: CreateApiTestModule) -> ApiTestModule:
-        return super().create(create_module)
+    def create_module(self, create_module: CreateApiTestModule, user_id: int) -> ApiTestModule:
+        return super().create(create_module, user_id)
 
     @transaction.atomic
-    def update_module(self, pk: int, update_module: UpdateApiTestModule) -> ApiTestModule:
-        return super().update_one(pk, update_module)
+    def update_module(self, pk: int, update_module: UpdateApiTestModule, user_id: int) -> int:
+        return super().update(pk, update_module, user_id)
 
-    def delete_module(self, pk: int) -> ApiTestModule:
-        return super().delete_one(pk)
+    @transaction.atomic
+    def delete_module(self, pk: int) -> int:
+        return super().delete(pk)
 
     def get_module_cases(self, pk: int) -> QuerySet:
         return super().get(pk=pk).api_test_cases.all().order_by('-updated_time')

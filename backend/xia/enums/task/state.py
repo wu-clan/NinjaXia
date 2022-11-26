@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from enum import IntEnum
+from backend.xia.enums.base import IntEnum
 
 
 class StateType(IntEnum):
-    unopened = 0
-    pending = 1
-    running = 2
-    pause = 3
+    waiting = 0
+    running = 1
+    pause = 2

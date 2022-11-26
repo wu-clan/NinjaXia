@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import orjson
-from django.core.serializers import serialize
-from django.db.models import QuerySet
-from django.core.serializers.json import Serializer as DjangoSerializer
-from django.utils.encoding import smart_str
 from django.core.serializers import BUILTIN_SERIALIZERS
+from django.core.serializers import serialize
+from django.core.serializers.json import Serializer as DjangoSerializer
+from django.db.models import QuerySet
+from django.utils.encoding import smart_str
 
-BUILTIN_SERIALIZERS['json'] = 'backend.ninja_xia.utils.serializers'
+BUILTIN_SERIALIZERS['json'] = 'backend.ninja_xia.utils.serializer'
 
 
 class Serializer(DjangoSerializer):

@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     # 跨域
     'corsheaders',
     # apps
-    'xia.apps.NinjaXiaConfig',
+    'xia.apps.XiaConfig',
     # 本地代理Swagger文档
     'ninja'
 ]
@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     # 请求记录中间件
-    'xia.middleware.access_middleware.AccessMiddleware',
+    # 'xia.middleware.access_middleware.AccessMiddleware',
 ]
 
 ROOT_URLCONF = 'ninja_xia.urls'

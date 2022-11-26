@@ -4,7 +4,7 @@ import datetime
 
 from ninja import Schema
 
-from backend.xia.common.response.response_schema import Response200
+from backend.xia.common.response.response_schema import ResponseModel
 from backend.xia.schemas.api_test.project import GetAllApiTestProjects
 
 
@@ -30,5 +30,5 @@ class GetAllApiTestModules(ApiTestModuleBase):
     updated_time: datetime.datetime
 
 
-class ApiTestModuleResponse(Response200):
+class GetOneApiTestModuleResponse(ResponseModel):
     data: GetAllApiTestModules = None

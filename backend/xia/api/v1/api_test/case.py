@@ -1,22 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import threading
 from typing import List
 
 from ninja import Router
 from ninja.pagination import paginate
 
-from backend.xia.common.log import log
+from backend.xia.api.jwt import GetCurrentUser, GetCurrentIsSuperuser
+from backend.xia.api.srevice.api_test import case_service
 from backend.xia.common.pagination import CustomPagination
-from backend.xia.common.response.response_schema import Response404, Response403, Response200
-from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
-from backend.xia.crud.api_test.case import ApiTestCaseDao
-from backend.xia.crud.api_test.env import ApiTestEnvDao
-from backend.xia.crud.api_test.module import ApiTestModuleDao
-from backend.xia.crud.api_test.report import ApiTestReportDetailDao
+from backend.xia.common.response.response_schema import response_base
+from backend.xia.enums.request.method import MethodType
 from backend.xia.schemas.api_test.case import GetAllApiTestCases, CreateApiTestCase, ExtraDebugArgs, \
-    ApiTestCaseResponse
-from backend.ninja_xia.utils.api_test.http_test_case_debugger import HttpTestCaseDebugger
+    GetOneApiTestCaseResponse
 
 v1_api_test_case = Router()
 
@@ -24,138 +19,45 @@ v1_api_test_case = Router()
 @v1_api_test_case.get('', summary='获取所有用例', response=List[GetAllApiTestCases], auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_cases(request):
-    return ApiTestCaseDao.get_all_cases()
+    return case_service.get_cases()
 
 
-@v1_api_test_case.get('/{int:pk}', summary='获取单个用例', auth=GetCurrentUser())
+@v1_api_test_case.get('/{pk}', summary='获取单个用例', response=GetOneApiTestCaseResponse, auth=GetCurrentUser())
 def get_one_case(request, pk: int):
-    obj = ApiTestCaseDao.get_one_case(pk)
-    if not obj:
-        return Response404(msg='用例不存在')
-    return ApiTestCaseResponse(data=obj)
+    case = case_service.get_case(pk)
+    return GetOneApiTestCaseResponse(data=case)
+
+
+@v1_api_test_case.get('/{method}/cases', summary='获取请求方式相同所有用例', response=List[GetAllApiTestCases],
+                      auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_method_same_cases(request, method: MethodType):
+    return case_service.get_cases_by_method(method=method)
 
 
 @v1_api_test_case.post('', summary='新增用例', auth=GetCurrentIsSuperuser())
 def create_case(request, obj: CreateApiTestCase):
-    if ApiTestCaseDao.get_case_by_name(obj.name):
-        return Response403(msg='用例已存在, 请更换用例名称')
-    _module = ApiTestModuleDao.get_module_by_id(obj.api_module)
-    if not _module:
-        return Response404(msg='模块不存在')
-    _env = ApiTestEnvDao.get_env_by_id(obj.api_environment)
-    if not _env:
-        return Response404(msg='环境不存在')
-    if not _env.status:
-        return Response403(msg='所选环境已停用, 请选择其他环境')
-    obj.api_module = _module
-    obj.api_environment = _env
-    case = ApiTestCaseDao.create_case(obj)
-    case.create_user = request.session['user']
-    case.save()
-    return ApiTestCaseResponse(data=case)
+    case_service.create(request=request, obj=obj)
+    return response_base.response_200()
 
 
-@v1_api_test_case.put('/{int:pk}', summary='更新用例', auth=GetCurrentIsSuperuser())
+@v1_api_test_case.put('/{pk}', summary='更新用例', auth=GetCurrentIsSuperuser())
 def update_case(request, pk: int, obj: CreateApiTestCase):
-    case = ApiTestCaseDao.get_case_by_id(pk)
-    if not case:
-        return Response404(msg='用例不存在')
-    if case.name != obj.name:
-        if ApiTestCaseDao.get_case_by_name(obj.name):
-            return Response403(msg='用例已存在, 请更换用例名称')
-    _module = ApiTestModuleDao.get_module_by_id(obj.api_module)
-    if not _module:
-        return Response404(msg='模块不存在')
-    _env = ApiTestEnvDao.get_env_by_id(obj.api_environment)
-    if not _env:
-        return Response404(msg='环境不存在')
-    if not _env.status:
-        return Response403(msg='所选环境已停用, 请选择其他环境')
-    obj.api_module = _module
-    obj.api_environment = _env
-    case = ApiTestCaseDao.update_case(pk, obj)
-    case.update_user = request.session['user']
-    case.save()
-    return ApiTestCaseResponse(data=case)
+    count = case_service.update(request=request, pk=pk, obj=obj)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
 @v1_api_test_case.delete('', summary='批量删除用例', auth=GetCurrentIsSuperuser())
-def delete_case(request, pk: List[int]):
-    for i in pk:
-        case = ApiTestCaseDao.get_case_by_id(i)
-        if not case:
-            return Response404(msg=f'用例 {i} 不存在')
-    ApiTestCaseDao.delete_case(pk)
-    return Response200()
+def delete_cases(request, pk: List[int]):
+    count = case_service.delete(pk)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
-@v1_api_test_case.post('/{int:pk}/debug', summary='调试用例', auth=GetCurrentUser())
+@v1_api_test_case.post('/{pk}/debug', summary='调试用例', auth=GetCurrentUser())
 def debug_case(request, pk: int, extra: ExtraDebugArgs):
-    case = ApiTestCaseDao.get_case_by_id(pk)
-    if not case:
-        return Response404(msg='用例不存在')
-    if not case.api_module.api_project.status:
-        return Response403(msg='此用例所属项目已停用, 不支持此操作')
-    if not case.api_environment:
-        return Response403(msg='用例未绑定环境, 请先绑定环境')
-    if not case.api_environment.status:
-        return Response403(msg='用例依赖环境已停用, 请更新使用环境')
-    url = case.api_environment.host + case.url
-    # 实例化请求参数
-    http_test_case_debug = HttpTestCaseDebugger(
-        test_case_name=case.name,
-        method=case.method,
-        url=url,
-        params=case.params,
-        headers=case.headers,
-        cookies=case.cookies,
-        body_type=case.body_type,
-        body=case.body,
-        assert_text=case.assert_text,
-        timeout=case.timeout
-    )
-    # 调试用例
-    debug_result = http_test_case_debug.debug()
-
-    # 更新结果
-    debug_result.update({
-        'project': case.api_module.api_project.name,
-        'module': case.api_module.name,
-        'environment': case.api_environment.host,
-        'case': case.id,
-        'case_name': case.name,
-        'description': case.description,
-        'executor': request.session['username'],
-        'is_task': False,
-    })
-
-    if extra.is_write_report:
-        # 创建调试测试报告
-        test_case_report = {
-            'name': debug_result['case_name'],
-            'url': debug_result['url'],
-            'method': debug_result['method'],
-            'params': debug_result['params'],
-            'headers': debug_result['headers'],
-            'body': debug_result['body'],
-            'status_code': debug_result['status_code'],
-            'response_data': debug_result['results'],
-            'execute_time': debug_result['execute_time'],
-            'elapsed': debug_result['elapsed'],
-            'assert_result': debug_result['assert_status'],
-            'run_status': debug_result['assert_status'],
-            'api_case': case,
-            'api_report': None,
-            'creator': debug_result['executor'],
-        }
-        try:
-            write_report = threading.Thread(
-                target=ApiTestReportDetailDao.create_report_detail,
-                args=(test_case_report,)
-            )
-            write_report.start()
-            write_report.join()
-        except Exception as e:
-            log.error(f'write api case <{case.name}> report error, {e}')
-
-    return Response200(data=debug_result)
+    result = case_service.debug(request=request, pk=pk, extra=extra)
+    return response_base.response_200(data=result)

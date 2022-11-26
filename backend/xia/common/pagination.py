@@ -6,11 +6,6 @@ from typing import List, Any
 from ninja import Schema, Field
 from ninja.pagination import PaginationBase
 
-"""
-自定义分页类
-docs: https://django-ninja.rest-framework.com/tutorial/pagination/#creating-custom-pagination-class
-"""
-
 
 class CustomPagination(PaginationBase):
     class Input(Schema):

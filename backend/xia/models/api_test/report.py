@@ -4,10 +4,10 @@ from django.db import models
 
 from backend.xia.models.api_test.case import ApiTestCase
 from backend.xia.models.api_test.task import ApiTestTask
-from backend.xia.models.base import BaseModel
+from backend.xia.models.base import Base
 
 
-class ApiTestReport(BaseModel):
+class ApiTestReport(Base):
     """
     测试报告表
     """
@@ -31,7 +31,7 @@ class ApiTestReport(BaseModel):
         return self.name
 
 
-class ApiTestReportDetail(BaseModel):
+class ApiTestReportDetail(Base):
     """
     API测试报告详情表
     """

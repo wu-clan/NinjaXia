@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.xia.crud.base import CRUDBase
@@ -10,14 +11,16 @@ from backend.xia.schemas.sys.email import CreateSysEmailSender, UpdateSysEmailSe
 
 class CRUDSender(CRUDBase[SysEmailSender, CreateSysEmailSender, UpdateSysEmailSender]):
 
-    def get_sender(self) -> QuerySet:
-        return super().get_all()
+    def get_sender(self) -> SysEmailSender:
+        return super().get_all().first()
 
-    def create_sender(self, obj: CreateSysEmailSender) -> SysEmailSender:
-        return super().create(obj)
+    @transaction.atomic
+    def create_sender(self, obj: CreateSysEmailSender, user_id: int) -> SysEmailSender:
+        return super().create(obj, user_id)
 
-    def update_sender(self, pk: int, obj: UpdateSysEmailSender) -> SysEmailSender:
-        return super().update_one(pk, obj)
+    @transaction.atomic
+    def update_sender(self, pk: int, obj: UpdateSysEmailSender, user_id: int) -> int:
+        return super().update(pk, obj, user_id)
 
     def get_smtp_server(self) -> SysEmailSender:
         return super().get_all()[0].smtp_server
@@ -47,22 +50,26 @@ class CRUDReceiverGroup(CRUDBase[SysEmailReceiverGroup, CreateSysEmailReceiverGr
         return super().get_all()
 
     def get_all_receiver_by_group_id(self, pk: int) -> QuerySet:
-        return self.model.objects.filter(receiver__receiver_group=pk).all()
+        group = super().get(pk)
+        return group.receivers.all()
 
     def get_receiver_group_by_name(self, name: str) -> SysEmailReceiverGroup:
         return self.model.objects.filter(name=name).first()
 
-    def create_receiver_group(self, obj: CreateSysEmailReceiverGroup) -> SysEmailReceiverGroup:
-        return super().create(obj)
-
     def get_receiver_group_by_id(self, pk: int) -> SysEmailReceiverGroup:
         return super().get(pk)
 
-    def update_receiver_group(self, pk: int, obj: UpdateSysEmailReceiverGroup) -> SysEmailReceiverGroup:
-        return super().update_one(pk, obj)
+    @transaction.atomic
+    def create_receiver_group(self, obj: CreateSysEmailReceiverGroup, user_id: int) -> SysEmailReceiverGroup:
+        return super().create(obj, user_id)
 
-    def delete_receiver_group(self, pk: int) -> SysEmailReceiverGroup:
-        return super().delete_one(pk)
+    @transaction.atomic
+    def update_receiver_group(self, pk: int, obj: UpdateSysEmailReceiverGroup, user_id: int) -> int:
+        return super().update(pk, obj, user_id)
+
+    @transaction.atomic
+    def delete_receiver_group(self, pk: int) -> int:
+        return super().delete(pk)
 
 
 SysEmailReceiverGroupDao = CRUDReceiverGroup(SysEmailReceiverGroup)
@@ -79,17 +86,20 @@ class CRUDReceiver(CRUDBase[SysEmailReceiver, CreateSysEmailReceiver, UpdateSysE
     def get_receiver_by_email(self, email: str) -> SysEmailReceiver:
         return self.model.objects.filter(email=email).first()
 
-    def create_receiver(self, obj: CreateSysEmailReceiver) -> SysEmailReceiver:
-        return super().create(obj)
-
     def get_receiver_by_id(self, pk: int) -> SysEmailReceiver:
         return super().get(pk)
 
-    def update_receiver(self, pk: int, obj: UpdateSysEmailReceiver) -> SysEmailReceiver:
-        return super().update_one(pk, obj)
+    @transaction.atomic
+    def create_receiver(self, obj: CreateSysEmailReceiver, user_id: int) -> SysEmailReceiver:
+        return super().create(obj, user_id)
 
-    def delete_receiver(self, pk: int) -> SysEmailReceiver:
-        return super().delete_one(pk)
+    @transaction.atomic
+    def update_receiver(self, pk: int, obj: UpdateSysEmailReceiver, user_id: int) -> int:
+        return super().update(pk, obj, user_id)
+
+    @transaction.atomic
+    def delete_receiver(self, pk: int) -> int:
+        return super().delete(pk)
 
 
 SysEmailReceiverDao = CRUDReceiver(SysEmailReceiver)

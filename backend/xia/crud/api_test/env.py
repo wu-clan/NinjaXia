@@ -27,15 +27,16 @@ class CRUDApiTestTask(CRUDBase[ApiTestEnvironment, CreateApiTestEnv, UpdateApiTe
         return self.model.objects.filter(name=name).first()
 
     @transaction.atomic
-    def create_env(self, data: CreateApiTestEnv) -> ApiTestEnvironment:
-        return super().create(data)
+    def create_env(self, data: CreateApiTestEnv, user_id: int) -> ApiTestEnvironment:
+        return super().create(data, user_id)
 
     @transaction.atomic
-    def update_env(self, pk: int, data: UpdateApiTestTask) -> ApiTestEnvironment:
-        return super().update_one(pk, data)
+    def update_env(self, pk: int, data: UpdateApiTestTask, user_id: int) -> int:
+        return super().update(pk, data, user_id)
 
-    def delete_env(self, pk: int) -> ApiTestEnvironment:
-        return super().delete_one(pk)
+    @transaction.atomic
+    def delete_env(self, pk: int) -> int:
+        return super().delete(pk)
 
     def get_env_cases(self, pk: int) -> QuerySet:
         return super().get(pk).api_test_cases.all().order_by('-updated_time')

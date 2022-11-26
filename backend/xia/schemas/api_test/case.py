@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
+from typing import Union, Any
 
 from ninja import Schema
-from pydantic import validator
+from pydantic import validator, Json
 
-from backend.xia.common.response.response_schema import Response200
+from backend.xia.common.response.response_schema import ResponseModel
 from backend.xia.enums.request.body import BodyType
 from backend.xia.enums.request.method import MethodType
 from backend.xia.schemas.api_test.env import GetAllApiTestEnvs
@@ -15,33 +16,28 @@ from backend.xia.schemas.api_test.module import GetAllApiTestModules
 class ApiTestCaseBase(Schema):
     name: str
     description: str = None
-    url: str
-    method: str
+    path: str
+    method: MethodType = MethodType.GET
     params: str = None
     headers: str = None
     cookies: str = None
-    body_type: int = 0
+    body_type: BodyType = BodyType.none
     body: str = None
     assert_text: str = None
     timeout: int = 10
 
     @validator('method')
     def check_method(cls, v):
-        if v.upper() not in MethodType._value2member_map_:  # noqa
-            raise ValueError('method value error')
-        return v
+        if v.upper() not in MethodType.get_member_values():
+            raise ValueError('请求方式错误')
+        return v.upper()
 
     @validator('body_type')
     def check_body_type(cls, v):
-        if v not in BodyType._value2member_map_:  # noqa
-            raise ValueError('body_type value error')
-        return v
-
-    @validator('headers')
-    def check_headers(cls, v):
-        if v is not None:
-            if len(eval(v)) == 0:
-                raise ValueError('headers value error')
+        if v not in BodyType.get_member_values():
+            raise ValueError('请求类型错误')
+        if v == BodyType.binary:
+            raise ValueError('请求类型 binary 尚未支持')
         return v
 
 
@@ -57,6 +53,10 @@ class UpdateApiTestCase(ApiTestCaseBase):
 
 class GetAllApiTestCases(ApiTestCaseBase):
     id: int
+    params: Json = None
+    headers: Json = None
+    cookies: Json = None
+    body: Union[Json, Any, None] = None
     api_module: GetAllApiTestModules = None
     api_environment: GetAllApiTestEnvs = None
     create_user: int
@@ -69,5 +69,5 @@ class ExtraDebugArgs(Schema):
     is_write_report: bool = False
 
 
-class ApiTestCaseResponse(Response200):
+class GetOneApiTestCaseResponse(ResponseModel):
     data: GetAllApiTestCases = None

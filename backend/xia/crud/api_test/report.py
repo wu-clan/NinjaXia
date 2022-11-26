@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
-
 from django.db import transaction
 from django.db.models import QuerySet
 
 from backend.xia.crud.base import CRUDBase
 from backend.xia.models.api_test.report import ApiTestReport, ApiTestReportDetail
-from backend.xia.schemas.api_test.report import CreateApiTestReport, UpdateApiTestReport
+from backend.xia.schemas.api_test.report import CreateApiTestReport, UpdateApiTestReport, CreateApiTestReportDetail, \
+    UpdateApiTestReportDetail
 
 
 class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTestReport]):
@@ -26,18 +25,10 @@ class CRUDApiTestTask(CRUDBase[ApiTestReport, CreateApiTestReport, UpdateApiTest
 ApiTestReportDao = CRUDApiTestTask(ApiTestReport)
 
 
-class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport, UpdateApiTestReport]):
+class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReportDetail, UpdateApiTestReportDetail]):
 
     def get_all_reports_detail(self) -> QuerySet:
-        report_list = super().get_all().order_by('-id')
-        for report in report_list:
-            report.params = json.loads(json.dumps(eval(report.params))) \
-                if isinstance(report.params, str) else report.params
-            report.headers = json.loads(json.dumps(eval(report.headers))) \
-                if isinstance(report.headers, str) else report.params
-            report.response_data = json.loads(json.dumps(eval(report.response_data))) \
-                if isinstance(report.response_data, str) else report.params
-        return report_list
+        return super().get_all().order_by('-id')
 
     @transaction.atomic
     def create_report_detail(self, data: dict) -> ApiTestReportDetail:
@@ -51,15 +42,14 @@ class CRUDApiTestReportDetail(CRUDBase[ApiTestReportDetail, CreateApiTestReport,
         return super().get_all().count()
 
     def get_all_reports_detail_by_report_id(self, pk: int) -> QuerySet:
-        report_list = self.model.objects.filter(api_report=pk).all().order_by('-id')
-        for report in report_list:
-            report.params = json.loads(json.dumps(eval(report.params))) \
-                if isinstance(report.params, str) else report.params
-            report.headers = json.loads(json.dumps(eval(report.headers))) \
-                if isinstance(report.headers, str) else report.params
-            report.response_data = json.loads(json.dumps(eval(report.response_data))) \
-                if isinstance(report.response_data, str) else report.params
-        return report_list
+        return self.model.objects.filter(api_report=pk).all().order_by('-id')
+
+    def get_report_by_id(self, pk: int):
+        return super().get(pk)
+
+    @transaction.atomic
+    def delete_reports(self, pk: list) -> int:
+        return self.model.objects.filter(id__in=pk).delete()[0]
 
 
 ApiTestReportDetailDao = CRUDApiTestReportDetail(ApiTestReportDetail)

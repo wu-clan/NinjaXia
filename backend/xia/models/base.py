@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class BaseModel(models.Model):
+class Base(models.Model):
     """
     基本模型
     """

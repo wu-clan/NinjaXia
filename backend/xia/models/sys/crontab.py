@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
+from backend.xia.models.base import Base
 
 
-class SysCrontab(BaseModel):
+class SysCrontab(Base):
     """
     定时任务
     """

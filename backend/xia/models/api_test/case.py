@@ -2,24 +2,24 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
 from backend.xia.models.api_test.environment import ApiTestEnvironment
 from backend.xia.models.api_test.module import ApiTestModule
+from backend.xia.models.base import Base
 
 
-class ApiTestCase(BaseModel):
+class ApiTestCase(Base):
     """
     用例表
     """
     name = models.CharField(max_length=128, unique=True, verbose_name='用例名称')
     description = models.TextField(null=True, verbose_name='用例描述')
-    url = models.TextField(verbose_name='请求URL')
+    path = models.TextField(verbose_name='请求路径')
     method = models.CharField(max_length=32, verbose_name='请求方法')
     params = models.TextField(null=True, verbose_name='查询参数')
     headers = models.TextField(null=True, verbose_name='请求头')
     cookies = models.TextField(null=True, verbose_name='cookies')
     body_type = models.IntegerField(verbose_name='请求参数类型, 0: none, 1: form, 2: x_form, 3: binary, 4: graphQL, '
-                                                 '5: text, 6: text, 7: json, 8: html, 9: xml')
+                                                 '5: text, 6: js, 7: json, 8: html, 9: xml')
     body = models.TextField(null=True, verbose_name='请求参数')
     assert_text = models.TextField(null=True, verbose_name='断言内容')
     timeout = models.IntegerField(default=10, verbose_name='请求超时时长')

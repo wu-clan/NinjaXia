@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
+from backend.xia.models.base import Base
 
 
-class SysEmailSender(BaseModel):
+class SysEmailSender(Base):
     """
     发件人
     """
@@ -23,7 +23,7 @@ class SysEmailSender(BaseModel):
         db_table = 'sys_email_sender'
 
 
-class SysEmailReceiverGroup(BaseModel):
+class SysEmailReceiverGroup(Base):
     """
     收件人组
     """
@@ -37,7 +37,7 @@ class SysEmailReceiverGroup(BaseModel):
         db_table = 'sys_email_receiver_group'
 
 
-class SysEmailReceiver(BaseModel):
+class SysEmailReceiver(Base):
     """
     收件人
     """

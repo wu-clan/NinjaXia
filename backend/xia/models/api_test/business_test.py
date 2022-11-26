@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
 from backend.xia.models.api_test.case import ApiTestCase
 from backend.xia.models.api_test.module import ApiTestModule
+from backend.xia.models.base import Base
 
 
-class ApiTestBusinessTest(BaseModel):
+class ApiTestBusinessTest(Base):
     """
     API业务测试表
     """
@@ -29,7 +29,7 @@ class ApiTestBusinessTest(BaseModel):
         return self.name
 
 
-class ApiTestBusinessTestAndCase(BaseModel):
+class ApiTestBusinessTestAndCase(Base):
     """
     API业务测试及用例关联表
     """

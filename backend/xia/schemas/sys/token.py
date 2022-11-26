@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from typing import Optional
 
 from ninja import Schema
 
 
 class Token(Schema):
     code: int = 200
-    msg: str = None
+    msg: str = 'Success'
     access_token: str
-    token_type: str
-    is_superuser: bool = None
+    token_type: str = 'Bearer'
+    is_superuser: Optional[bool] = None

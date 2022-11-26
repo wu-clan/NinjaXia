@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from ninja import Router
+
 from backend.xia.api.v1.api_test.business import v1_api_test_business
 from backend.xia.api.v1.api_test.case import v1_api_test_case
 from backend.xia.api.v1.api_test.env import v1_api_test_env
@@ -8,10 +9,10 @@ from backend.xia.api.v1.api_test.module import v1_api_test_module
 from backend.xia.api.v1.api_test.project import v1_api_test_project
 from backend.xia.api.v1.api_test.report import v1_api_test_report
 from backend.xia.api.v1.api_test.task import v1_api_test_task
-from backend.xia.api.v1.sys.task import v1_sys_task
 from backend.xia.api.v1.sys.crontab import v1_sys_crontab
 from backend.xia.api.v1.sys.data_statistics import v1_sys_data_statistics
 from backend.xia.api.v1.sys.email import v1_sys_email
+from backend.xia.api.v1.sys.task import v1_sys_task
 from backend.xia.api.v1.sys.user import v1_sys_user
 
 v1 = Router()
@@ -32,7 +33,7 @@ v1.add_router('/api_test_cases', v1_api_test_case, tags=['v1_api_用例管理'])
 
 v1.add_router('/api_test_businesses', v1_api_test_business, tags=['v1_api_业务管理'])
 
-v1.add_router('/sys_crontab', v1_sys_crontab, tags=['v1_系统Crontab管理'])
+v1.add_router('/sys_crontabs', v1_sys_crontab, tags=['v1_系统Crontab管理'])
 
 v1.add_router('/api_test_tasks', v1_api_test_task, tags=['v1_api_任务管理'])
 

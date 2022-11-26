@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from enum import Enum
+from backend.xia.enums.base import StrEnum
 
 
-class MethodType(str, Enum):
+class MethodType(StrEnum):
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'

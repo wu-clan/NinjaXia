@@ -4,8 +4,8 @@ from typing import Any
 
 import orjson
 
+from backend.ninja_xia.utils.api_test.assert_control import exec_assert
 from backend.ninja_xia.utils.api_test.http_client import HttpClient
-from backend.ninja_xia.utils.api_test.parse_assertions import handling_assertions
 from backend.ninja_xia.utils.api_test.parse_request_body import request_body_parser
 from backend.xia.common.log import log
 
@@ -20,9 +20,9 @@ class HttpTestCaseDebugger:
             test_case_name: str = None,
             method: str = None,
             url: str = None,
-            params: dict = None,
-            cookies: dict = None,
-            headers: dict = None,
+            params: str = None,
+            cookies: str = None,
+            headers: str = None,
             body_type: int = None,
             body: Any = None,
             assert_text: str = None,
@@ -44,11 +44,11 @@ class HttpTestCaseDebugger:
         """
         self.http_client = HttpClient()
         self.test_case_name = test_case_name
-        self.method = str(method).upper()
+        self.method = method
         self.url = url
-        self.params = orjson.loads(orjson.dumps(params)) if params else None
-        self.headers = orjson.loads(orjson.dumps(headers)) if headers else None
-        self.cookies = orjson.loads(orjson.dumps(cookies)) if cookies else None
+        self.params = params
+        self.headers = headers
+        self.cookies = cookies
         self.body_type = body_type
         self.body = body
         self.assert_text = assert_text
@@ -73,17 +73,13 @@ class HttpTestCaseDebugger:
         log.info(f'Assert Text: {self.assert_text}')
 
         # 获取请求数据
-        request_kwargs = {
-            'params': self.params,
-            'cookies': self.cookies,
-            'headers': self.headers
-        }
-        body = request_body_parser(
+        request_kwargs = request_body_parser(
+            params=self.params,
+            cookies=self.cookies,
             headers=self.headers,
             body_type=self.body_type,
             body=self.body
         )
-        request_kwargs.update(body)
         request_kwargs.update({'timeout': self.timeout})
 
         # 发送请求
@@ -91,15 +87,15 @@ class HttpTestCaseDebugger:
 
         # 记录响应结果
         response_result_list = {
-            "json": orjson.loads(response["response"]["json"]) if response["response"]["json"] else {},
-            "content": orjson.loads(response["response"]["content"]) if response["response"]["content"] else {},
-            "text": orjson.loads(response["response"]["text"]) if response["response"]["text"] else {},
-            'cookies': orjson.loads(response["response"]["cookies"]) if response["response"]["cookies"] else {},
+            'json': orjson.loads(response['json']),
+            'content': orjson.loads(response['content']),
+            'text': orjson.loads(response['text']),
+            'cookies': response['cookies'],
         }
 
         # 断言
         if self.assert_text:
-            self.assert_status = handling_assertions(response['response'], self.assert_text)
+            self.assert_status = exec_assert(response, self.assert_text)
             if self.assert_status != 'PASS':
                 log.warning('用例调试未通过, 断言结果: {}'.format(''.join(self.assert_status.split(',')[-1:])))
 
@@ -111,9 +107,9 @@ class HttpTestCaseDebugger:
             'headers': self.headers,
             'body_type': self.body_type,
             'body': self.body,
-            'status_code': response['response']['status_code'],
+            'status_code': response['status_code'],
             'execute_time': response["stat"]["execute_time"],
-            'elapsed': response['response']['elapsed'],
+            'elapsed': response['elapsed'],
             'results': response_result_list,
             'assert_text': self.assert_text,
             "assert_status": self.assert_status,

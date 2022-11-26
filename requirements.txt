@@ -1,8 +1,8 @@
 Django==3.2.15
-django-ninja==0.17.0
+django-ninja==0.19.0
 loguru==0.5.3
 asgiref==3.4.1
-pydantic==1.8.2
+pydantic==1.10.2
 pymysql==1.0.2
 django-cors-headers==3.11.0
 email-validator==1.2.1

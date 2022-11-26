@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 from ninja import NinjaAPI
 
-from backend.xia.api.router import v1
 from backend.ninja_xia import settings
-from backend.xia.common.exception.exception_handler import register_exception
+from backend.xia.api.routers import v1
 
 
 def register_app():
@@ -26,7 +25,7 @@ def register_app():
     register_router(app)
 
     # 全局异常处理
-    register_exception(app)
+    # register_exception(app)
 
     return app
 

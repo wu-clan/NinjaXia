@@ -32,21 +32,24 @@ class CRUDApiTestProject(CRUDBase[ApiTestProject, CreateApiTestProject, UpdateAp
         return super().get(pk=pk).status
 
     @transaction.atomic
-    def create_project(self, project: CreateApiTestProject) -> ApiTestProject:
-        return super().create(project)
+    def create_project(self, project: CreateApiTestProject, user_id: int) -> ApiTestProject:
+        return super().create(project, user_id)
 
     @transaction.atomic
-    def update_project(self, pk: int, project: UpdateApiTestProject) -> ApiTestProject:
-        return super().update_one(pk, project)
+    def update_project(self, pk: int, project: UpdateApiTestProject, user_id: int) -> int:
+        return super().update(pk, project, user_id)
 
-    def delete_project(self, pk: int) -> ApiTestProject:
-        return super().delete_one(pk)
+    def delete_project(self, pk: int) -> int:
+        return super().delete(pk)
 
     def get_project_modules(self, pk: int) -> QuerySet:
         return super().get(pk).api_test_modules.all().order_by('-updated_time')
 
     def get_project_count(self) -> int:
         return super().get_all().count()
+
+    def get_project_tasks(self, pk: int) -> QuerySet:
+        return super().get(pk).api_test_tasks.all().order_by('-updated_time')
 
 
 ApiTestProjectDao = CRUDApiTestProject(ApiTestProject)

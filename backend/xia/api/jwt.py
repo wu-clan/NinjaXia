@@ -9,9 +9,9 @@ from jose import jwt
 from ninja.security import HttpBearer
 from pydantic import ValidationError
 
-from backend.xia.common.exception.exception_class import AuthorizationException, TokenException
-from backend.xia.crud.sys.user import UserDao
 from backend.ninja_xia import settings
+from backend.xia.common.exception.errors import AuthorizationError, TokenError
+from backend.xia.crud.sys.user import UserDao
 
 
 def create_access_token(data: int, expires_delta: Optional[timedelta] = None) -> str:
@@ -46,10 +46,12 @@ class GetCurrentUser(HttpBearer):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.TOKEN_ALGORITHM])
             user_id = payload.get('sub')
             if not user_id:
-                raise TokenException
+                raise TokenError
         except (jwt.JWTError, ValidationError):
-            raise TokenException
+            raise TokenError
         user = UserDao.get_user_by_id(user_id)
+        if not user:
+            raise TokenError
         # 将用户登录信息存入session
         # auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         request.session['user'] = user.id  # noqa
@@ -68,5 +70,5 @@ class GetCurrentIsSuperuser(GetCurrentUser):
         """
         user = super().authenticate(request, token)
         if not user.is_superuser:
-            raise AuthorizationException
+            raise AuthorizationError
         return user

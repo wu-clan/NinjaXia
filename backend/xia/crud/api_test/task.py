@@ -13,26 +13,34 @@ class CRUDApiTestTask(CRUDBase[ApiTestTask, CreateApiTestTask, UpdateApiTestTask
     def get_all_tasks(self) -> QuerySet:
         return super().get_all().order_by('-updated_time')
 
+    def get_all_tasks_by_project(self, pk: int) -> QuerySet:
+        return self.model.objects.filter(api_project=pk).all().order_by('-updated_time')
+
     def get_task_by_name(self, name: str) -> ApiTestTask:
         return self.model.objects.filter(name=name).first()
 
     def get_task_by_id(self, task_id: int) -> ApiTestTask:
         return super().get(task_id)
 
-    @transaction.atomic
-    def create_task(self, create_data: CreateApiTestTask) -> ApiTestTask:
-        return self.model.objects.create(**create_data.dict(), state=0)
+    def get_one_task(self, pk: int):
+        return self.model.objects.filter(id=pk).order_by('-updated_time'). \
+            select_related('sys_cron', 'api_project', 'api_business_test').first()
 
     @transaction.atomic
-    def update_task(self, task_id: int, update_data: UpdateApiTestTask) -> ApiTestTask:
-        state = super().get(task_id).state
-        task = self.model.objects.filter(id=task_id)
-        task.update(**update_data.dict(), state=state)
-        return task.first()
+    def create_task(self, create_data: CreateApiTestTask, user_id: int) -> ApiTestTask:
+        return super().create(create_data, user_id)
 
     @transaction.atomic
-    def delete_task(self, task_id: int) -> ApiTestTask:
-        return super().delete_one(task_id)
+    def update_task(self, task_id: int, update_data: UpdateApiTestTask, user_id: int) -> int:
+        return super().update(task_id, update_data, user_id)
+
+    @transaction.atomic
+    def update_task_state(self, task_id: int, state: int, user_id: int) -> int:
+        return super().update(task_id, {'state': state}, user_id)
+
+    @transaction.atomic
+    def delete_task(self, task_id: int) -> int:
+        return super().delete(task_id)
 
     def get_task_count(self) -> int:
         return super().get_all().count()

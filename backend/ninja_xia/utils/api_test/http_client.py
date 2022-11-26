@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
 from json import JSONDecodeError
 from typing import Any
 
 import httpx
 from django.utils import timezone
+from orjson import orjson
 
 from backend.ninja_xia import settings
 from backend.xia.common.log import log
@@ -22,16 +22,14 @@ class HttpClient:
         初始化响应元数据
         """
         response_meta_data = {
-            "response": {
-                "url": None,
-                "status_code": 200,
-                "elapsed": 0,
-                "headers": {},
-                "cookies": {},
-                "json": None,
-                "content": None,
-                "text": None,
-            },
+            "url": None,
+            "status_code": 200,
+            "elapsed": 0,
+            "headers": None,
+            "cookies": None,
+            "json": None,
+            "content": None,
+            "text": None,
             "stat": {
                 "execute_time": None,
             }
@@ -39,9 +37,9 @@ class HttpClient:
         return response_meta_data
 
     @staticmethod
-    def requests(method, url, **kwargs) -> Any:
+    def _httpx_engin(method, url, **kwargs) -> Any:
         """
-        请求程序
+        httpx 引擎
 
         :return:
         """
@@ -53,12 +51,15 @@ class HttpClient:
             ) as client:
                 response = client.request(method=method, url=url, **kwargs)
                 response.raise_for_status()
-        except httpx.RequestError as exc:
-            log.error(f"请求 {exc.request.url!r} 时出错 {exc}")
-            raise RuntimeError(f"请求 {exc.request.url!r} 时出错 {exc}")
-        except httpx.HTTPStatusError as exc:
-            log.error(f"错误响应 {exc} 在请求 {exc.request.url!r} 时")
-            raise RuntimeError(f"错误响应 {exc} 在请求 {exc.request.url!r} 时")
+        except httpx.RequestError as e:
+            log.error(f"请求 {e.request.url!r} 时出错: {e}")
+            raise RuntimeError(f"请求 {e.request.url!r} 时出错: {e}")
+        except httpx.HTTPStatusError as e:
+            log.error(f"错误响应 {e}")
+            raise RuntimeError(f"错误响应 {e}")
+        except Exception as e:
+            log.error(f'发送请求异常: {e}')
+            raise RuntimeError(f'发送请求异常: {e}')
 
         return response
 
@@ -75,24 +76,23 @@ class HttpClient:
         meta_data = self.__init_response_meta_data()
 
         # 执行时间
-        execute_time = timezone.now()
-        meta_data["stat"]['execute_time'] = execute_time
+        meta_data["stat"]['execute_time'] = timezone.now()
 
         # 发送请求
-        response = self.requests(method=method, url=url, **kwargs)
+        response = self._httpx_engin(method=method, url=url, **kwargs)
 
         # 记录响应的信息
-        meta_data['response']['url'] = str(response.url)
-        meta_data['response']['status_code'] = int(response.status_code)
-        meta_data['response']['elapsed'] = response.elapsed.microseconds / 1000.0
-        meta_data['response']['headers'] = dict(response.headers)
-        meta_data['response']['cookies'] = dict(response.cookies)
+        meta_data['url'] = str(response.url)
+        meta_data['status_code'] = int(response.status_code)
+        meta_data['elapsed'] = response.elapsed.microseconds / 1000.0
+        meta_data['headers'] = dict(response.headers)
+        meta_data['cookies'] = dict(response.cookies)
         try:
             json_data = response.json()
         except JSONDecodeError:
             json_data = {}
-        meta_data['response']['json'] = json.dumps(json_data)
-        meta_data['response']['content'] = response.content.decode('utf-8')
-        meta_data['response']['text'] = response.text
+        meta_data['json'] = orjson.dumps(json_data)
+        meta_data['content'] = response.content.decode('utf-8')
+        meta_data['text'] = response.text
 
         return meta_data

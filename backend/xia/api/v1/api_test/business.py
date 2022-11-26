@@ -2,105 +2,64 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
-from ninja import Router
+from ninja import Router, Query
 from ninja.pagination import paginate
 
+from backend.xia.api.jwt import GetCurrentUser, GetCurrentIsSuperuser
+from backend.xia.api.srevice.api_test import business_service
 from backend.xia.common.pagination import CustomPagination
-from backend.xia.common.response.response_schema import Response404, Response403, Response200
-from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
-from backend.xia.crud.api_test.business import ApiTestBusinessDao
-from backend.xia.crud.api_test.case import ApiTestCaseDao
-from backend.xia.crud.api_test.module import ApiTestModuleDao
+from backend.xia.common.response.response_schema import response_base
 from backend.xia.schemas.api_test.business import CreateApiTestBusiness, \
-    GetAllApiTestBusinessesAndCases, BusinessesAndCasesResponse
+    UpdateApiTestBusiness, GetOneBusinessesAndCasesResponse, GetAllApiTestBusinesses, GetAllApiTestBusinessesAndCases
 
 v1_api_test_business = Router()
 
 
-@v1_api_test_business.get('', summary='获取所有业务', response=List[GetAllApiTestBusinessesAndCases],
+@v1_api_test_business.get('', summary='获取所有业务', response=List[GetAllApiTestBusinesses],
                           auth=GetCurrentUser())
 @paginate(CustomPagination)
 def get_all_businesses(request):
-    return ApiTestBusinessDao.get_all_businesses()
+    return business_service.get_businesses()
 
 
-@v1_api_test_business.get('/{int:pk}/cases', summary='获取单个业务', auth=GetCurrentUser())
+@v1_api_test_business.get('/{int:pk}', summary='获取单个业务', response=GetOneBusinessesAndCasesResponse,
+                          auth=GetCurrentUser())
 def get_one_business(request, pk: int):
-    business = ApiTestBusinessDao.get_business_by_id(pk)
-    if not business:
-        return Response404(msg='业务不存在')
-    cases = ApiTestBusinessDao.get_one_business(pk)
-    return BusinessesAndCasesResponse(data=list(cases))
+    business = business_service.get_business(pk)
+    return GetOneBusinessesAndCasesResponse(data=business)
 
 
 @v1_api_test_business.post('', summary='新增业务', auth=GetCurrentIsSuperuser())
 def create_business(request, obj: CreateApiTestBusiness):
-    if ApiTestBusinessDao.get_business_by_name(obj.name):
-        return Response403(msg='业务已存在, 请更改模块名称')
-    module = ApiTestModuleDao.get_module_by_id(obj.api_module)
-    if not module:
-        return Response404(msg='模块不存在')
-    if len(obj.api_cases) == 0:
-        return Response403(msg='请选择用例')
-    case_list = []
-    for _case in set(obj.api_cases):
-        case = ApiTestCaseDao.get_case_by_id(_case)
-        if not case:
-            return Response404(msg=f'用例 {_case} 不存在')
-        else:
-            case_list.append(case)
-    obj.api_module = module
-    business, business_and_case = ApiTestBusinessDao.create_business(obj, case_list)
-    # 更新创建者
-    business.create_user = request.session['user']
-    business.save()
-    for bc in business_and_case:
-        bc.create_user = request.session['user']
-        bc.save()
-    return BusinessesAndCasesResponse(data=list(business_and_case))
+    business_service.create(request, obj)
+    return response_base.response_200()
 
 
 @v1_api_test_business.put('/{int:pk}', summary='更新业务', auth=GetCurrentIsSuperuser())
-def update_business(request, pk: int, obj: CreateApiTestBusiness):
-    business = ApiTestBusinessDao.get_business_by_id(pk)
-    if not business:
-        return Response404(msg='业务不存在')
-    if business.name != obj.name and ApiTestBusinessDao.get_business_by_name(obj.name):
-        return Response403(msg='业务已存在, 请更改业务名称')
-    module = ApiTestModuleDao.get_module_by_id(obj.api_module)
-    if not module:
-        return Response404(msg='模块不存在')
-    if len(obj.api_cases) == 0:
-        return Response403(msg='请选择用例')
-    case_list = []
-    for _case in set(obj.api_cases):
-        case = ApiTestCaseDao.get_case_by_id(_case)
-        if not case:
-            return Response404(msg=f'用例 {_case} 不存在')
-        else:
-            case_list.append(case)
-    obj.api_module = module
-    business, business_and_case = ApiTestBusinessDao.update_business(pk, obj, case_list)
-    business.update_user = request.session['user']
-    business.save()
-    for bc in business_and_case:
-        bc.create_user = request.session['user']
-        bc.update_user = request.session['user']
-        bc.save()
-    return BusinessesAndCasesResponse(data=list(business_and_case))
+def update_business(request, pk: int, obj: UpdateApiTestBusiness):
+    count = business_service.update(request=request, pk=pk, obj=obj)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
 @v1_api_test_business.delete('/{int:pk}', summary='删除业务', auth=GetCurrentIsSuperuser())
 def delete_business(request, pk: int):
-    business = ApiTestBusinessDao.get_business_by_id(pk)
-    if not business:
-        return Response404(msg='业务不存在')
-    ApiTestBusinessDao.delete_business(pk)
-    return Response200()
+    count = business_service.delete(pk)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
-@v1_api_test_business.get('/{str:name}', summary='业务名称模糊匹配', auth=GetCurrentUser(),
-                          response=List[GetAllApiTestBusinessesAndCases])
+@v1_api_test_business.get('/name', summary='业务名称模糊匹配', auth=GetCurrentUser(),
+                          response=List[GetAllApiTestBusinesses])
 @paginate(CustomPagination)
-def get_all_businesses_by_name(request, name: str):
-    return ApiTestBusinessDao.get_all_businesses_by_name(name)
+def get_all_businesses_by_name(request, name: str = Query(...)):
+    return business_service.get_businesses_by_name(name)
+
+
+@v1_api_test_business.get('/{pk}/cases', summary='获取业务下所有测试用例',
+                          response=List[GetAllApiTestBusinessesAndCases], auth=GetCurrentUser())
+@paginate(CustomPagination)
+def get_all_cases_by_business(request, pk: int):
+    return business_service.get_cases_by_business(pk)

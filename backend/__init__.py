@@ -7,7 +7,7 @@ import sys
 from django.dispatch import Signal
 
 
-def shutdown_event(*args):
+def shutdown_event(*args):  # noqa
     # server
     Signal().send('system')
     # runserver

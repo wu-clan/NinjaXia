@@ -18,8 +18,8 @@ Including another URLconf
 from django.contrib.staticfiles.views import serve
 from django.urls import path
 
-from backend.xia.api.registrar import register_app
 from backend.ninja_xia import settings
+from backend.xia.api.registrar import register_app
 
 app = register_app()
 

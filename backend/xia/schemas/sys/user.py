@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from django.contrib.auth.models import User
 from ninja import ModelSchema
 

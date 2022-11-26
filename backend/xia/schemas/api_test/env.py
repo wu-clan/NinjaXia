@@ -15,7 +15,7 @@ class ApiTestEnvBase(Schema):
     @validator('host')
     def check_host(cls, v):
         if not v.startswith('http'):
-            raise ValueError('链接地址输入有误')
+            raise ValueError('地址输入有误')
         return v
 
 

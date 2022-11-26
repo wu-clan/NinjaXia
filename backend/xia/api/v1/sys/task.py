@@ -1,123 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import datetime
-
 from ninja import Router
 
-from backend.xia.common.log import log
-from backend.xia.common.response.response_schema import Response200, Response404
-from backend.xia.common.security.jwt_security import GetCurrentUser, GetCurrentIsSuperuser
-from backend.xia.common.task import scheduler
-from backend.xia.crud.api_test.task import ApiTestTaskDao
-from backend.xia.enums.task.state import StateType
+from backend.xia.api.jwt import GetCurrentUser, GetCurrentIsSuperuser
+from backend.xia.api.srevice.sys import task_service
+from backend.xia.common.response.response_schema import response_base
+from backend.xia.enums.task.module import TaskType
 
 v1_sys_task = Router()
 
 
-@v1_sys_task.get('/enable', summary='获取所有已开启的任务', auth=GetCurrentUser())
+@v1_sys_task.get('/register', summary='获取所有已注册的任务', auth=GetCurrentUser())
 def get_all_running_tasks(request):
-    tasks = []
-    for job in scheduler.get_jobs():
-        tasks.append({
-            "id": job.id,
-            "func_name": job.func_ref,
-            "trigger": str(job.trigger),
-            "executor": job.executor,
-            # "args": str(job.args),
-            # "kwargs": job.kwargs,
-            "name": job.name,
-            "misfire_grace_time": job.misfire_grace_time,
-            "coalesce": job.coalesce,
-            "max_instances": job.max_instances,
-            "next_run_time": job.next_run_time,
-        })
-    return Response200(data=tasks)
+    tasks = task_service.get_running_tasks()
+    return response_base.response_200(data=tasks, is_queryset=True)
 
 
 @v1_sys_task.post('/{module}/{pk}/run', summary='立即执行任务', auth=GetCurrentIsSuperuser())
-def start_task(request, module: str, pk):
-    if module == 'sys':
-        job = scheduler.get_job(job_id=f'sys_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.modify_job(job_id=f'sys_{pk}', next_run_time=datetime.datetime.now())
-    if module == 'api_test':
-        job = scheduler.get_job(job_id=f'api_test_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.modify_job(job_id=f'api_test_{pk}', next_run_time=datetime.datetime.now())
-    else:
-        return Response404(msg=f'不存在的模块 {module}')
-    return Response200()
+def run_task_now(request, module: TaskType, pk: int):
+    count = task_service.run(request=request, module=module, pk=pk)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
 @v1_sys_task.post('/{module}/{pk}/pause', summary='暂停任务', auth=GetCurrentIsSuperuser())
-def pause_task(request, module: str, pk):
-    if module == 'sys':
-        job = scheduler.get_job(job_id=f'sys_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.pause_job(job_id=f'sys_{pk}')
-    if module == 'api_test':
-        job = scheduler.get_job(job_id=f'api_test_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.pause_job(job_id=f'api_test_{pk}')
-        try:
-            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
-        except Exception as e:
-            log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
-        else:
-            api_test_task.state = StateType.pause.value
-            api_test_task.save()
-    else:
-        return Response404(msg=f'不存在的模块 {module}')
-    return Response200()
+def pause_task(request, module: TaskType, pk: int):
+    count = task_service.pause(request=request, module=module, pk=pk)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()
 
 
 @v1_sys_task.post('/{module}/{pk}/recover', summary='恢复任务', auth=GetCurrentIsSuperuser())
-def recover_task(request, module: str, pk):
-    if module == 'sys':
-        job = scheduler.get_job(job_id=f'sys_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.resume_job(job_id=f'sys_{pk}')
-    if module == 'api_test':
-        job = scheduler.get_job(job_id=f'api_test_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.resume_job(job_id=f'api_test_{pk}')
-        try:
-            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
-        except Exception as e:
-            log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
-        else:
-            api_test_task.state = StateType.pending.value
-            api_test_task.save()
-    else:
-        return Response404(msg=f'不存在的模块 {module}')
-    return Response200()
-
-
-@v1_sys_task.delete('/{module}/{pk}', summary='删除任务', auth=GetCurrentIsSuperuser())
-def delete_sys_task(request, module: str, pk):
-    if module == 'sys':
-        job = scheduler.get_job(job_id=f'sys_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.remove_job(job_id=f'sys_{pk}')
-    if module == 'api_test':
-        job = scheduler.get_job(job_id=f'api_test_{pk}')
-        if not job:
-            return Response404(msg=f'任务不存在')
-        scheduler.remove_job(job_id=f'api_test_{pk}')
-        try:
-            api_test_task = ApiTestTaskDao.get_task_by_id(pk)
-        except Exception as e:
-            log.warning('此任务的所属案例已不存在, 建议删除此任务 {}', e)
-        else:
-            api_test_task.state = StateType.unopened.value
-            api_test_task.save()
-    else:
-        return Response404(msg=f'不存在的模块 {module}')
-    return Response200()
+def recover_task(request, module: TaskType, pk: int):
+    count = task_service.recover(request=request, module=module, pk=pk)
+    if count > 0:
+        return response_base.response_200()
+    return response_base.fail()

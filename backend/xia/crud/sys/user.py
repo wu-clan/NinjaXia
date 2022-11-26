@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -22,15 +23,18 @@ class CRUDUser(CRUDBase[User, CreateUser, UpdateUser]):
         return User.objects.filter(email=email).first()
 
     @staticmethod
+    @transaction.atomic
     def update_user_last_login(user: User) -> User:
         user.last_login = timezone.now()
         user.save()
         return user
 
-    def put_user(self, pk: int, data: UpdateUser) -> User:
-        return super().update_one(pk, data)
+    @transaction.atomic
+    def update_user(self, pk: int, data: UpdateUser) -> int:
+        return super().update(pk, data)
 
     @staticmethod
+    @transaction.atomic
     def create_user(create_user: CreateUser) -> User:
         return User.objects.create_user(**create_user.dict())
 

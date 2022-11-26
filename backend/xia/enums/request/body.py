@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-from enum import IntEnum
+from backend.xia.enums.base import IntEnum
 
 
 class BodyType(IntEnum):

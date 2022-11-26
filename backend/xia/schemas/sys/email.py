@@ -23,7 +23,7 @@ class UpdateSysEmailSender(SysEmailSenderBase):
 
 class SysEmailReceiverGroupBase(Schema):
     name: str
-    description: str
+    description: str = None
 
 
 class CreateSysEmailReceiverGroup(SysEmailReceiverGroupBase):
@@ -53,4 +53,4 @@ class UpdateSysEmailReceiver(SysEmailReceiverBase):
 
 class GetAllSysEmailReceiver(SysEmailReceiverBase):
     id: int
-    receiver_group_id: int
+    receiver_group: GetAllSysEmailReceiverGroup = None

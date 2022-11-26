@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
+from backend.xia.models.base import Base
 
 
-class ApiTestEnvironment(BaseModel):
+class ApiTestEnvironment(Base):
     """
     API环境表
     """

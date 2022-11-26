@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
+from backend.xia.models.base import Base
 
 
-class ApiTestProject(BaseModel):
+class ApiTestProject(Base):
     """
     API项目表
     """

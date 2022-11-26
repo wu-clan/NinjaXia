@@ -12,16 +12,7 @@ from backend.xia.common.log import log
 class RedisCli:
 
     def __init__(self):
-        self.redis = get_redis_connection()
-
-    def get_redis(self) -> Redis:
-        """
-        获取redis连接
-
-        :return:
-        """
-        with self.redis as redis:
-            return redis
+        self.redis: Redis = get_redis_connection()
 
     def init_redis_connect(self):
         """
@@ -30,7 +21,7 @@ class RedisCli:
         :return:
         """
         try:
-            self.get_redis().ping()
+            self.redis.ping()
         except TimeoutError as e:
             log.error("连接redis超时 {}", e)
             sys.exit()
@@ -43,4 +34,4 @@ class RedisCli:
 
 
 # 获取redis连接
-redis_client = RedisCli().get_redis()
+redis_client = RedisCli().redis

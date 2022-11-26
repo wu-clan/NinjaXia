@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from backend.xia.models.base import BaseModel
 from backend.xia.models.api_test.project import ApiTestProject
+from backend.xia.models.base import Base
 
 
-class ApiTestModule(BaseModel):
+class ApiTestModule(Base):
     """
     API模块表
     """

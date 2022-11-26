@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-i9k)yrn5=efxuq92$9m92n=t22q16p$r^!$5ffc)92r%8aj@eg'
@@ -21,7 +20,7 @@ INSTALLED_APPS = [
     # 跨域
     'corsheaders',
     # apps
-    'xia.apps.NinjaXiaConfig',
+    'xia',
     # 本地代理Swagger文档
     'ninja'
 ]
@@ -37,7 +36,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     # 请求记录中间件
-    'xia.middleware.access_middleware.AccessMiddleware',
+    # 'xia.middleware.access_middleware.AccessMiddleware',
 ]
 
 ROOT_URLCONF = 'ninja_xia.urls'
