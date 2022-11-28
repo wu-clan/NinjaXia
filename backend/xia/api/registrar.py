@@ -4,6 +4,7 @@ from ninja import NinjaAPI
 
 from backend.ninja_xia import settings
 from backend.xia.api.routers import v1
+from backend.xia.common.exception.exception_handler import register_exception
 
 
 def register_app():
@@ -25,7 +26,7 @@ def register_app():
     register_router(app)
 
     # 全局异常处理
-    # register_exception(app)
+    register_exception(app)
 
     return app
 
