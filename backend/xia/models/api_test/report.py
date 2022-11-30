@@ -18,7 +18,8 @@ class ApiTestReport(Base):
     fail_num = models.BigIntegerField(default=0, null=True, verbose_name='失败总数')
     api_task = models.ForeignKey(
         ApiTestTask,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='所属任务',
         related_name='api_test_reports',
         related_query_name='api_test_report'
