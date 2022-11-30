@@ -34,35 +34,35 @@ class CRUDApiTestTask(CRUDBase[ApiTestBusinessTest, CreateApiTestBusiness, Updat
         business = self.model.objects.create(**obj.dict(exclude={'api_cases'}), create_user=user_id)
         business_and_cases = []
         for case in cases:
-            business_and_case = ApiTestBusinessTestAndCase.objects.create(
-                api_business_test=business, api_case=case, create_user=user_id
+            business_and_cases.append(
+                ApiTestBusinessTestAndCase(api_business_test=business, api_case=case, create_user=user_id)
             )
-            business_and_cases.append(business_and_case)
+        ApiTestBusinessTestAndCase.objects.bulk_create(business_and_cases)
         return business, business_and_cases
 
     @transaction.atomic
     def update_business(self, pk: int, obj: UpdateApiTestBusiness, cases: list, user_id: int) -> int:
         count = super().update(pk, obj.dict(exclude={'api_cases'}), user_id)
         ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).delete()
+        business_and_cases = []
+        api_business_test = super().get(pk)
         for case in cases:
-            api_business_test = super().get(pk)
-            ApiTestBusinessTestAndCase.objects.create(
-                api_business_test=api_business_test, api_case=case, create_user=user_id, update_user=user_id
+            business_and_cases.append(
+                ApiTestBusinessTestAndCase(
+                    api_business_test=api_business_test, api_case=case, create_user=user_id, update_user=user_id
+                )
             )
+        ApiTestBusinessTestAndCase.objects.bulk_create(business_and_cases)
         return count
 
     @transaction.atomic
     def delete_business(self, pk: int) -> int:
         count = super().delete(pk)
-        ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).delete()
         return count
 
     @staticmethod
     def get_business_case_list(pk: int) -> list:
-        cases = []
-        tc = ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).all()
-        for case in tc:
-            cases.append(case.api_case)
+        cases = [ApiTestBusinessTestAndCase.objects.filter(api_business_test=pk).all()]
         return cases
 
     def get_business_count(self) -> int:
