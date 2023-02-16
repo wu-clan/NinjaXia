@@ -1,6 +1,6 @@
-Django==3.2.16
+Django==3.2.18
 django-ninja==0.19.0
-loguru==0.5.3
+loguru==0.6.0
 asgiref==3.4.1
 pydantic==1.10.2
 pymysql==1.0.2
@@ -8,7 +8,7 @@ django-cors-headers==3.11.0
 email-validator==1.2.1
 python-jose==3.3.0
 orjson==3.6.8
-cryptography==38.0.3
+cryptography==39.0.1
 uvicorn[standard]==0.17.6
 httpx==0.23.0
 apscheduler==3.9.1
